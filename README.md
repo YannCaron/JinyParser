@@ -26,4 +26,16 @@ Need a new parer node for specific purpose ? Don't worry ! You always be able to
 
 ## Fast ?
 **JinyParser** was created with another idea in head. Because a parser is a state machine (in a recursive descent way). Why not compiling it into JVM bytecode and avoiding the java call stack by using a Goto bytecode statement instead ?
-It is faster and not constraint by the stack overflow problem. Thanks to https://github.com/Godin to reveal the problem ;)
+It is faster and not constraint by the stack overflow problem. Thanks to [Evgeny Mandrikov
+](https://github.com/Godin) to reveal the problem ;-)
+
+### .parse() or .toJar()
+**JP** Is able to runs in two ways:
+As a classic parser, that interpret the Source code in a **Recursive Descent** way (**Packrat** optimized).
+Or build a Jar, for several reasons:
+  * less footprint
+  * parsing execution fastness
+  * avoid stack overflow problem of recursive descent parsing way
+
+
+
