@@ -25,5 +25,5 @@ So it is faster in this way. And Safer too. Because it do not need to parse and 
 Need a new parer node for specific purpose ? Don't worry ! You always be able to inherit from the ParserNode abstract class and create you own nodes. I proof it was possible to enhance JinyParser to create a context sensitive parser. *Tutorial comming soon !*
 
 ## Fast ?
-**JinyParser** was created another idea in head. Because a parser is a state machine (in a recursive descent way). Why not compilimng it into JVM bytecode and avoiding the java call stack by using a Goto bytecode statement ?
-It is faster and not constraint by the stack overflow problem. Thanks to **Evgeny Madrikov** for this idea ;)
+**JinyParser** was created with another idea in head. Because a parser is a state machine (in a recursive descent way). Why not compiling it into JVM bytecode and avoiding the java call stack by using a Goto bytecode statement instead ?
+It is faster and not constraint by the stack overflow problem. Thanks to https://github.com/Godin to reveal the problem ;)
