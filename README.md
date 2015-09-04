@@ -1,4 +1,4 @@
-# WORK IN PROGRESS - PARSER DOES NOT WORKS YET - COMMING SOON (I HOPE)
+# WORK IN PROGRESS - PARSER DOES NOT WORKS YET - COMING SOON (I HOPE)
 
 # JinyParser
 
@@ -6,7 +6,7 @@ A Packrat parser (optimized PEG) on the top of a combinatoric framework (elegant
 
 ## Why a new Parser in Java ?
 
-Because **JinyParser** was architectured on an elegant way, on the top of a combinatoric framework (no need of Backus-Naur Form or enhenced **BNF** that are external domain specific languages and not compiled).
+Because **JinyParser** architecture was build on an elegant way, on the top of a combinatoric framework (no need of Backus-Naur Form or enhanced **BNF** that are external domain specific languages and not compiled).
 Because **JinyParser** was built to be the fastest Java parser.
 
 ## Combinatoric framework ?
@@ -20,11 +20,11 @@ Non terminal decorators are Optional and Repeat
 Terminal nodes are for example Symbol or Word
 
 ### Fast & Safe
-**Combinatoric framework** do not need an "old scool" **interpreted** language like BNF, eBNF and so on.
-So it is faster in this way. And Safer too. Because it do not need to parse and external language without errors cheking. CF is compiled into Java and pass through Type checker and is auto-completed by your favourit IDE as well as any Java class.
+**Combinatoric framework** do not need an "old school" **interpreted** language like BNF, eBNF and so on.
+So it is faster in this way. And Safer too. Because it do not need to parse and external language without errors checking. CF is compiled into Java and pass through Type checker and is auto-completed by your favourite IDE as well as any Java class.
 
 ### Scalable & flexible
-Need a new parer node for specific purpose ? Don't worry ! You always be able to inherit from the ParserNode abstract class and create you own nodes. I proof it was possible to enhance JinyParser to create a context sensitive parser. *Tutorial comming soon !*
+Need a new parer node for specific purpose ? Don't worry ! You always be able to inherit from the ParserNode abstract class and create you own nodes. I proof it was possible to enhance JinyParser to create a context sensitive parser. *Tutorial coming soon !*
 
 ## Fast ?
 **JinyParser** was created with another idea in head. Because a parser is a state machine (in a recursive descent way). Why not compiling it into JVM bytecode and avoiding the java call stack by using a Goto bytecode statement instead ?
@@ -35,9 +35,6 @@ It is faster and not constraint by the stack overflow problem. Thanks to [Evgeny
 **JP** Is able to runs in two ways:
 As a classic parser, that interpret the Source code in a **Recursive Descent** way (**Packrat** optimized).
 Or build a Jar, for several reasons:
-  * less footprint
+  * less footprint in your project
   * parsing execution fastness
   * avoid stack overflow problem of recursive descent parsing way
-
-
-
