@@ -17,6 +17,37 @@ public class CharLookaheadIteratorTest extends TestCase {
 		String source = "hi !";
 		CharLookaheadIterator it = new CharLookaheadIterator(source);
 
+		assertEquals(new Character('h'), it.current());
+		assertTrue(it.hasNext());
+		assertFalse(it.hasPrevious());
+
+		it.next();
+		assertEquals(new Character('i'), it.current());
+		assertTrue(it.hasNext());
+		assertTrue(it.hasPrevious());
+
+		it.next();
+		assertEquals(new Character(' '), it.current());
+		assertTrue(it.hasNext());
+		assertTrue(it.hasPrevious());
+
+		it.next();
+		assertEquals(new Character('!'), it.current());
+		assertFalse(it.hasNext());
+		assertTrue(it.hasPrevious());
+
+		it.previous();
+		assertEquals(new Character(' '), it.current());
+		assertTrue(it.hasNext());
+		assertTrue(it.hasPrevious());
+
+		it.previous();
+		assertEquals(new Character('i'), it.current());
+		assertTrue(it.hasNext());
+		assertTrue(it.hasPrevious());
+
+		it.previous();
+		assertEquals(new Character('h'), it.current());
 		assertTrue(it.hasNext());
 		assertFalse(it.hasPrevious());
 	}

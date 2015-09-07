@@ -17,7 +17,12 @@ public class CharLookaheadIterator implements LookaheadIterator<Character> {
 
 	public CharLookaheadIterator(String source) {
 		this.source = source;
-		index = -1;
+		index = 0;
+	}
+
+	@Override
+	public Character current() {
+		return source.charAt(index);
 	}
 
 	@Override
@@ -27,17 +32,19 @@ public class CharLookaheadIterator implements LookaheadIterator<Character> {
 
 	@Override
 	public Character next() {
+		if (!hasNext()) return DONE;
 		index++;
 		return source.charAt(index);
 	}
 
 	@Override
 	public boolean hasPrevious() {
-		return index >= 0;
+		return index > 0;
 	}
 
 	@Override
 	public Character previous() {
+		if (!hasPrevious()) return DONE;
 		index--;
 		return source.charAt(index);
 	}

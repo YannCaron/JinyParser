@@ -7,12 +7,17 @@ package fr.cyann.jinyparser.utils;/**
  * ou écrivez à Creative Commons, 444 Castro Street, Suite 900, Mountain View, California, 94041, USA.
  **/
 
+import java.text.CharacterIterator;
 import java.util.Iterator;
 
 /**
  * The LookaheadIterator definition.
  */
 public interface LookaheadIterator<E> extends Iterator<E> {
+
+	char DONE = CharacterIterator.DONE;
+
+	Character current();
 
 	boolean hasPrevious();
 
