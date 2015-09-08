@@ -1,5 +1,5 @@
 package fr.cyann.jinyparser.utils;/**
- * Copyright (C) 07/09/15 Yann Caron aka cyann
+ * Copyright (C) 08/09/15 Yann Caron aka cyann
  * <p/>
  * Cette œuvre est mise à disposition sous licence Attribution -
  * Pas d’Utilisation Commerciale - Partage dans les Mêmes Conditions 3.0 France.
@@ -7,20 +7,43 @@ package fr.cyann.jinyparser.utils;/**
  * ou écrivez à Creative Commons, 444 Castro Street, Suite 900, Mountain View, California, 94041, USA.
  **/
 
-import java.text.CharacterIterator;
-import java.util.Iterator;
-
 /**
  * The LookaheadIterator definition.
  */
-public interface LookaheadIterator<E> extends Iterator<E> {
+public interface LookaheadIterator<T> {
 
-	char DONE = CharacterIterator.DONE;
+	/**
+	 * Get the current element.
+	 *
+	 * @return the current element.
+	 */
+	T current();
 
-	Character current();
+	/**
+	 * Jump to the next element.
+	 */
+	void next();
 
-	boolean hasPrevious();
+	/**
+	 * Verify a next element exists.
+	 *
+	 * @return if next is possible.
+	 */
+	boolean hasNext();
 
-	Character previous();
+	/**
+	 * Store (put) the actual position.
+	 */
+	void store();
+
+	/**
+	 * Restore (pop) the stored position to the actual one.
+	 */
+	void restore();
+
+	/**
+	 * Garbage (pop) the stored position.
+	 */
+	void dump();
 
 }

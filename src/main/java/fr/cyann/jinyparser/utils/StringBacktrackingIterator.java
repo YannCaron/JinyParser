@@ -8,16 +8,27 @@ package fr.cyann.jinyparser.utils;/**
  **/
 
 /**
- * The CharLookaheadIterator definition.
+ * The StringBacktrackingIterator definition.
  */
-public class CharLookaheadIterator implements LookaheadIterator<Character> {
+public class StringBacktrackingIterator implements BacktrackingIterator<Character> {
 
 	private final String source;
 	private int index;
 
-	public CharLookaheadIterator(String source) {
+	public StringBacktrackingIterator(String source) {
 		this.source = source;
 		index = 0;
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+
+		StringBacktrackingIterator that = (StringBacktrackingIterator) o;
+
+		return (index != that.index) && !(source != null ? !source.equals(that.source) : that.source != null);
+
 	}
 
 	@Override
