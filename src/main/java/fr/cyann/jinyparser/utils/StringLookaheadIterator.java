@@ -7,10 +7,11 @@ package fr.cyann.jinyparser.utils;/**
  * ou écrivez à Creative Commons, 444 Castro Street, Suite 900, Mountain View, California, 94041, USA.
  **/
 
+import java.util.Locale;
 import java.util.Stack;
 
 /**
- * The StringLookaheadIterator definition.
+ * The StringLookaheadIterator class definition.
  */
 public class StringLookaheadIterator implements LookaheadIterator<Character> {
 
@@ -24,33 +25,54 @@ public class StringLookaheadIterator implements LookaheadIterator<Character> {
 		indexes = new Stack<Integer>();
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public boolean hasNext() {
 		return index + 1 < string.length();
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public Character current() {
 		return string.charAt(index);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void next() {
 		if (!hasNext())
-			throw new IndexOutOfBoundsException(String.format("String bound reached [%d] !", string.length()));
+			throw new IndexOutOfBoundsException(
+					MultilingualMessage.create("String bound reached [%d] !")
+							.translate(Locale.FRENCH, "La fin de la chaîne de caractère à été atteinte [%d] !")
+							.setArgs(string.length()).toString());
 		index++;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void store() {
 		indexes.push(index);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void restore() {
 		index = indexes.pop();
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void dump() {
 		indexes.pop();

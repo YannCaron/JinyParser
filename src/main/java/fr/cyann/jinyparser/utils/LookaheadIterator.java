@@ -8,7 +8,8 @@ package fr.cyann.jinyparser.utils;/**
  **/
 
 /**
- * The LookaheadIterator definition.
+ * The LookaheadIterator interface definition.
+ * Give the ability to iterate on elements and during that, storing some positions to backtrack to them if parsing failed.
  */
 public interface LookaheadIterator<T> {
 

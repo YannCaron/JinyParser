@@ -54,6 +54,14 @@ public class StringLookaheadIteratorTest extends TestCase {
 		it.store();
 		assertEquals(new Character('!'), it.current());
 		assertFalse(it.hasNext());
+
+		try {
+			it.next();
+			fail("Exception should be thrown");
+		} catch (Exception ex) {
+			// do nothing
+		}
+
 		it.dump();
 
 		it.restore();
