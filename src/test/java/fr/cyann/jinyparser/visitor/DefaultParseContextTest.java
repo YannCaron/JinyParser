@@ -9,8 +9,6 @@ package fr.cyann.jinyparser.visitor;/**
 
 import junit.framework.TestCase;
 
-import java.util.Stack;
-
 /**
  * The DefaultParseContextTest definition.
  */
@@ -20,85 +18,102 @@ public class DefaultParseContextTest extends TestCase {
 
 		class RecursiveDescentParser {
 
-			public boolean parsePlus(Context c) {
-				it.store();
-				if (!parseNumber(it, p)) {
-					it.restore();
+			// tools
+			private boolean isBinary(DefaultParseContext c, Character symbol) {
+				c.store();
+				if (!isNumber(c)) {
+					c.restore();
 					return false;
 				}
-				if (!parseSymbol(it, p, '+', "PLUS")) {
-					it.restore();
-					p.pop();
+				if (!isSymbol(c, symbol)) {
+					c.restore();
 					return false;
 				}
-				if (!parseExpression(it, p)) {
-					it.restore();
-					p.pop();
-					p.pop();
+				if (!isExpression(c)) {
+					c.restore();
 					return false;
 				}
-				it.dump();
+				c.restore();
 				return true;
 			}
 
-			public boolean parseMinus(Context c) {
-				it.store();
-				if (!parseNumber(it, p)) {
-					it.restore();
-					return false;
-				}
-				if (!parseSymbol(it, p, '-', "MINUS")) {
-					it.restore();
-					p.pop();
-					return false;
-				}
-				if (!parseExpression(it, p)) {
-					it.restore();
-					p.pop();
-					p.pop();
-					return false;
-				}
-				it.dump();
-				return true;
-			}
-
-			public boolean parseSymbol(Context c, Character symbol, String s) {
-				if (it.current().equals(symbol)) {
-					p.push(s);
-					if (it.hasNext()) it.next();
+			private boolean isSymbol(DefaultParseContext c, Character symbol) {
+				if (c.current().equals(symbol)) {
+					if (c.hasNext()) c.next();
 					return true;
 				}
 				return false;
 			}
 
-			public boolean parseNumber(Context c) {
-				return parseSymbol(it, p, '7', "NUM");
+			// lookahead
+			public boolean isPlus(DefaultParseContext c) {
+				return isBinary(c, '+');
 			}
 
-			public boolean parseExpression(Context c) {
-				if (parsePlus(it, p)) {
+			public boolean isMinus(DefaultParseContext c) {
+				return isBinary(c, '-');
+			}
+
+			public boolean isNumber(DefaultParseContext c) {
+				return isSymbol(c, '7');
+			}
+
+			public boolean isExpression(DefaultParseContext c) {
+				if (isPlus(c)) {
 					return true;
-				} else if (parseMinus(it, p)) {
+				} else if (isMinus(c)) {
 					return true;
-				} else if (parseNumber(it, p)) {
+				} else if (isNumber(c)) {
 					return true;
 				}
 				return false;
 			}
+
+			public void parseSymbol(DefaultParseContext c, String token) {
+				c.pushToken(token);
+				if (c.hasNext()) c.next();
+			}
+
+			public void parsePlus(DefaultParseContext c) {
+				parseNumber(c);
+				parseSymbol(c, "PLUS");
+				parseExpression(c);
+			}
+
+			public void parseMinus(DefaultParseContext c) {
+				parseNumber(c);
+				parseSymbol(c, "MINUS");
+				parseExpression(c);
+			}
+
+			public void parseNumber(DefaultParseContext c) {
+				parseSymbol(c, "NUM");
+			}
+
+			public void parseExpression(DefaultParseContext c) {
+				if (isPlus(c)) {
+					parsePlus(c);
+				} else if (isMinus(c)) {
+					parseMinus(c);
+				} else if (isNumber(c)) {
+					parseNumber(c);
+				} else {
+					throw new RuntimeException("Parsing error: no candidate to expression !");
+				}
+			}
+
 
 		}
 
-		boolean result = new RecursiveDescentParser().parseExpression(it, production);
+		DefaultParseContext c = new DefaultParseContext("7+7-7");
+		new RecursiveDescentParser().parseExpression(c);
 
-		Stack<String> expected = new Stack<String>();
-		expected.push("NUM");
-		expected.push("MINUS");
-		expected.push("NUM");
-		expected.push("PLUS");
-		expected.push("NUM");
+		for (String token : c) {
+			System.out.println(token);
+		}
 
-		assertEquals(expected, production);
-		assertTrue(result);
+		//assertEquals(expected, production);
+		//assertTrue(result);
 
 	}
 

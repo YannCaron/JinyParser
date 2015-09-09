@@ -35,7 +35,7 @@ public class MultilingualMessage {
 	 * @param defaultEnglish the default message in english.
 	 * @return the message object.
 	 */
-	public static final MultilingualMessage create(String defaultEnglish) {
+	public static MultilingualMessage create(String defaultEnglish) {
 		return new MultilingualMessage(defaultEnglish);
 	}
 

@@ -17,7 +17,7 @@ public abstract class Context {
 	 *
 	 * @param source The source to parse.
 	 */
-	public Context(String source) {
+	Context(String source) {
 		this.source = source;
 	}
 }

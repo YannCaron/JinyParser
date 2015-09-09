@@ -10,5 +10,5 @@ package fr.cyann.jinyparser.parseTree;/**
 /**
  * The ParseLeaf definition.
  */
-public abstract class ParseLeaf extends ParseElement {
+abstract class ParseLeaf extends ParseElement {
 }

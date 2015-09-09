@@ -18,7 +18,7 @@ public abstract class ParseElement {
 	 * @param context the parsing context that contains all necessary resources to the parsing (iterators, flags and so on).
 	 * @return true if lookahead succeed, false otherwise.
 	 */
-	public abstract boolean lookahead(Context context);
+	abstract boolean lookahead(Context context);
 
 	/**
 	 * The parsing method.
@@ -26,6 +26,6 @@ public abstract class ParseElement {
 	 * @param context the parsing context that contains all necessary resources to the parsing (iterators, flags and so on).
 	 * @return true if parsing succeed, false otherwise.
 	 */
-	public abstract boolean parse(Context context);
+	abstract boolean parse(Context context);
 
 }

@@ -9,12 +9,16 @@ package fr.cyann.jinyparser.visitor;/**
 
 import fr.cyann.jinyparser.utils.StringLookaheadIterator;
 
+import java.util.Iterator;
+import java.util.Stack;
+
 /**
  * The DefaultParseContext class definition.
  */
-public class DefaultParseContext extends Context {
+class DefaultParseContext extends Context implements Iterable<String> {
 
 	private final StringLookaheadIterator it;
+	private final Stack<String> tokens;
 
 	/**
 	 * Default constructor.
@@ -24,5 +28,45 @@ public class DefaultParseContext extends Context {
 	public DefaultParseContext(String source) {
 		super(source);
 		it = new StringLookaheadIterator(source);
+		tokens = new Stack<String>();
 	}
+
+	public boolean hasNext() {
+		return it.hasNext();
+	}
+
+	/**
+	 * Returns an iterator over a set of elements of type T.
+	 *
+	 * @return an Iterator.
+	 */
+	@Override
+	public Iterator<String> iterator() {
+		return tokens.listIterator();
+	}
+
+	public Character current() {
+		return it.current();
+	}
+
+	public void dump() {
+		it.dump();
+	}
+
+	public void store() {
+		it.store();
+	}
+
+	public void next() {
+		it.next();
+	}
+
+	public void restore() {
+		it.restore();
+	}
+
+	public void pushToken(String token) {
+		tokens.push(token);
+	}
+
 }
