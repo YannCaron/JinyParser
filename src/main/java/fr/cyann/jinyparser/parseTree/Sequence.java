@@ -10,7 +10,7 @@ import fr.cyann.jinyparser.visitor.Context;
  * Pour voir une copie de cette licence, visitez http://creativecommons.org/licenses/by-nc-sa/3.0/fr/
  * ou écrivez à Creative Commons, 444 Castro Street, Suite 900, Mountain View, California, 94041, USA.
  **/
-public class Sequence extends ParseNode {
+public class Sequence extends GrammarNode {
 
 	/**
 	 * {@inheritDoc}
@@ -28,7 +28,7 @@ public class Sequence extends ParseNode {
 	 */
 	@Override
 	public boolean parse(Context context) {
-		for (ParseElement child : this) {
+		for (GrammarElement child : this) {
 			if (!child.parse(context)) {
 				return false;
 			}

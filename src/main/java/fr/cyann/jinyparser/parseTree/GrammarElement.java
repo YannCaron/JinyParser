@@ -10,7 +10,7 @@ import fr.cyann.jinyparser.visitor.Context;
  * Pour voir une copie de cette licence, visitez http://creativecommons.org/licenses/by-nc-sa/3.0/fr/
  * ou écrivez à Creative Commons, 444 Castro Street, Suite 900, Mountain View, California, 94041, USA.
  **/
-public abstract class ParseElement {
+public abstract class GrammarElement {
 
 	/**
 	 * The backtracking method. Use a lookahead to find if following term / grammar is valid.

@@ -11,23 +11,23 @@ import java.util.List;
  * Pour voir une copie de cette licence, visitez http://creativecommons.org/licenses/by-nc-sa/3.0/fr/
  * ou écrivez à Creative Commons, 444 Castro Street, Suite 900, Mountain View, California, 94041, USA.
  **/
-public abstract class ParseNode extends ParseElement implements Iterable<ParseElement> {
+public abstract class GrammarNode extends GrammarElement implements Iterable<GrammarElement> {
 
-	private List<ParseElement> children;
+	private List<GrammarElement> children;
 
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
-	public Iterator<ParseElement> iterator() {
+	public Iterator<GrammarElement> iterator() {
 		return children.iterator();
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
-	public ParseNode add(ParseElement parseElement) {
-		children.add(parseElement);
+	public GrammarNode add(GrammarElement grammarElement) {
+		children.add(grammarElement);
 		return this;
 	}
 }

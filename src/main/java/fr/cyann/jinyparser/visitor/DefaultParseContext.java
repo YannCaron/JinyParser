@@ -17,6 +17,7 @@ import java.util.Stack;
  */
 class DefaultParseContext extends Context implements Iterable<String> {
 
+	// TODO : Refactor, rename, hide and delegate
 	private final StringLookaheadIterator it;
 	private final Stack<String> tokens;
 

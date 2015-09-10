@@ -8,7 +8,7 @@ package fr.cyann.jinyparser.parseTree;/**
  **/
 
 /**
- * The ParseLeaf definition.
+ * The GrammarLeaf definition.
  */
-abstract class ParseLeaf extends ParseElement {
+abstract class GrammarLeaf extends GrammarElement {
 }

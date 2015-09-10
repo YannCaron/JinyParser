@@ -12,7 +12,7 @@ import fr.cyann.jinyparser.visitor.Context;
 /**
  * The Term definition.
  */
-public class Term extends ParseLeaf {
+public class Term extends GrammarLeaf {
 
 	private String term;
 

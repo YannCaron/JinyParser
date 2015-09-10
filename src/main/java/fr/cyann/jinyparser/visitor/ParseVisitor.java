@@ -9,13 +9,13 @@ package fr.cyann.jinyparser.visitor;
  * ou écrivez à Creative Commons, 444 Castro Street, Suite 900, Mountain View, California, 94041, USA.
  **/
 
-import fr.cyann.jinyparser.parseTree.ParseElement;
+import fr.cyann.jinyparser.parseTree.GrammarElement;
 
 /**
  * The ParseVisitor definition.
  */
 public abstract class ParseVisitor<C extends Context> {
 
-	public abstract boolean visite(Class<? extends ParseElement> clazz, C context);
+	public abstract boolean visite(Class<? extends GrammarElement> clazz, C context);
 
 }
