@@ -16,7 +16,7 @@ public class DefaultParseContextTest extends TestCase {
 
 	public void testProofOfConcept() {
 
-		class RecursiveDescentParser {
+		class ParsingExpressionGrammarLLk {
 
 			// tools
 			private boolean isBinary(DefaultParseContext c, Character symbol) {
@@ -69,6 +69,7 @@ public class DefaultParseContextTest extends TestCase {
 				return false;
 			}
 
+			// product
 			public void parseSymbol(DefaultParseContext c, String token) {
 				c.pushToken(token);
 				if (c.hasNext()) c.next();
@@ -106,7 +107,7 @@ public class DefaultParseContextTest extends TestCase {
 		}
 
 		DefaultParseContext c = new DefaultParseContext("7+7-7");
-		new RecursiveDescentParser().parseExpression(c);
+		new ParsingExpressionGrammarLLk().parseExpression(c);
 
 		for (String token : c) {
 			System.out.println(token);
