@@ -46,12 +46,12 @@ public class StringLookaheadIteratorTest extends TestCase {
 		assertTrue(it.hasNext());
 
 		it.next();
-		it.store();
+		it.mark();
 		assertEquals(new Character(' '), it.current());
 		assertTrue(it.hasNext());
 
 		it.next();
-		it.store();
+		it.mark();
 		assertEquals(new Character('!'), it.current());
 		assertFalse(it.hasNext());
 
@@ -62,9 +62,9 @@ public class StringLookaheadIteratorTest extends TestCase {
 			// do nothing
 		}
 
-		it.dump();
+		it.resume();
 
-		it.restore();
+		it.rollback();
 		assertEquals(new Character(' '), it.current());
 		assertTrue(it.hasNext());
 
@@ -75,44 +75,44 @@ public class StringLookaheadIteratorTest extends TestCase {
 		class RecursiveDescentParser {
 
 			public boolean parsePlus(LookaheadIterator it, Stack<String> p) {
-				it.store();
+				it.mark();
 				if (!parseNumber(it, p)) {
-					it.restore();
+					it.rollback();
 					return false;
 				}
 				if (!parseSymbol(it, p, '+', "PLUS")) {
-					it.restore();
+					it.rollback();
 					p.pop();
 					return false;
 				}
 				if (!parseExpression(it, p)) {
-					it.restore();
+					it.rollback();
 					p.pop();
 					p.pop();
 					return false;
 				}
-				it.dump();
+				it.resume();
 				return true;
 			}
 
 			public boolean parseMinus(LookaheadIterator it, Stack<String> p) {
-				it.store();
+				it.mark();
 				if (!parseNumber(it, p)) {
-					it.restore();
+					it.rollback();
 					return false;
 				}
 				if (!parseSymbol(it, p, '-', "MINUS")) {
-					it.restore();
+					it.rollback();
 					p.pop();
 					return false;
 				}
 				if (!parseExpression(it, p)) {
-					it.restore();
+					it.rollback();
 					p.pop();
 					p.pop();
 					return false;
 				}
-				it.dump();
+				it.resume();
 				return true;
 			}
 

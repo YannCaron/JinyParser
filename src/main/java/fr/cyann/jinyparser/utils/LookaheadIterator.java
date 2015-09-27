@@ -35,16 +35,11 @@ public interface LookaheadIterator<T> {
 	/**
 	 * Store (put) the actual position.
 	 */
-	void store();
+	void mark();
 
 	/**
 	 * Restore (pop) the stored position to the actual one.
 	 */
-	void restore();
-
-	/**
-	 * Garbage (pop) the stored position.
-	 */
-	void dump();
+	void rollback();
 
 }

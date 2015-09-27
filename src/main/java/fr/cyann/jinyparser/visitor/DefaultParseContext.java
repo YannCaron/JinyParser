@@ -17,7 +17,6 @@ import java.util.Stack;
  */
 class DefaultParseContext extends Context implements Iterable<String> {
 
-	// TODO : Refactor, rename, hide and delegate
 	private final StringLookaheadIterator it;
 	private final Stack<String> tokens;
 
@@ -32,10 +31,6 @@ class DefaultParseContext extends Context implements Iterable<String> {
 		tokens = new Stack<String>();
 	}
 
-	public boolean hasNext() {
-		return it.hasNext();
-	}
-
 	/**
 	 * Returns an iterator over a set of elements of type T.
 	 *
@@ -46,24 +41,24 @@ class DefaultParseContext extends Context implements Iterable<String> {
 		return tokens.listIterator();
 	}
 
+	public boolean hasNext() {
+		return it.hasNext();
+	}
+
 	public Character current() {
 		return it.current();
 	}
 
-	public void dump() {
-		it.dump();
+	public void mark() {
+		it.mark();
 	}
 
-	public void store() {
-		it.store();
+	public void rollback() {
+		it.rollback();
 	}
 
 	public void next() {
 		it.next();
-	}
-
-	public void restore() {
-		it.restore();
 	}
 
 	public void pushToken(String token) {

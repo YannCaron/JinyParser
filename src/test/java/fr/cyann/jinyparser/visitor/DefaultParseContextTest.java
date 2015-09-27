@@ -20,20 +20,20 @@ public class DefaultParseContextTest extends TestCase {
 
 			// tools
 			private boolean isBinary(DefaultParseContext c, Character symbol) {
-				c.store();
+				c.mark();
 				if (!isNumber(c)) {
-					c.restore();
+					c.rollback();
 					return false;
 				}
 				if (!isSymbol(c, symbol)) {
-					c.restore();
+					c.rollback();
 					return false;
 				}
 				if (!isExpression(c)) {
-					c.restore();
+					c.rollback();
 					return false;
 				}
-				c.restore();
+				c.rollback(); // always rollback because it is in look ahead section
 				return true;
 			}
 
@@ -106,7 +106,7 @@ public class DefaultParseContextTest extends TestCase {
 
 		}
 
-		DefaultParseContext c = new DefaultParseContext("7+7-7");
+		DefaultParseContext c = new DefaultParseContext("7+7-7+7");
 		new ParsingExpressionGrammarLLk().parseExpression(c);
 
 		for (String token : c) {

@@ -58,7 +58,7 @@ public class StringLookaheadIterator implements LookaheadIterator<Character> {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public void store() {
+	public void mark() {
 		indexes.push(index);
 	}
 
@@ -66,7 +66,7 @@ public class StringLookaheadIterator implements LookaheadIterator<Character> {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public void restore() {
+	public void rollback() {
 		index = indexes.pop();
 	}
 
@@ -74,7 +74,14 @@ public class StringLookaheadIterator implements LookaheadIterator<Character> {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public void dump() {
+	public void resume() {
 		indexes.pop();
+	}
+
+	@Override
+	public String toString() {
+		return "StringLookaheadIterator{" +
+				"index=" + index +
+				'}';
 	}
 }
