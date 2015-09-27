@@ -25,7 +25,7 @@ class DefaultParseContext extends Context implements Iterable<String> {
 	 *
 	 * @param source The source to parse.
 	 */
-	public DefaultParseContext(String source) {
+	public DefaultParseContext(@SuppressWarnings("SameParameterValue") String source) {
 		super(source);
 		it = new StringLookaheadIterator(source);
 		tokens = new Stack<String>();

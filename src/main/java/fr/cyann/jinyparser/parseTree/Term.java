@@ -14,10 +14,10 @@ import fr.cyann.jinyparser.visitor.Context;
  */
 public class Term extends GrammarLeaf {
 
-	private String term;
+	final String term;
 
-	public Term(String word) {
-		this.term = word;
+	public Term(String term) {
+		this.term = term;
 	}
 
 	@Override

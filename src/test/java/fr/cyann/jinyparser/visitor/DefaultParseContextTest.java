@@ -16,6 +16,7 @@ public class DefaultParseContextTest extends TestCase {
 
 	public void testProofOfConcept() {
 
+		@SuppressWarnings("BooleanMethodIsAlwaysInverted")
 		class ParsingExpressionGrammarLLk {
 
 			// tools

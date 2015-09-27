@@ -10,7 +10,7 @@ package fr.cyann.jinyparser.visitor;
  **/
 public abstract class Context {
 
-	private final String source;
+	final String source;
 
 	/**
 	 * Default constructor.
