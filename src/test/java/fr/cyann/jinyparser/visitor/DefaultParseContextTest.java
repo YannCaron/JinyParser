@@ -146,12 +146,8 @@ public class DefaultParseContextTest extends TestCase {
 			assertEquals(expected.get(i), token);
 			i++;
 		}
-		//assertTrue(result);
 
 		assertEquals("(+ (N 7) (- (N 7) (+ (N 7) (N 7))))", c.getAst().toString());
-
-		//assertEquals(expected, production);
-		//assertTrue(result);
 
 	}
 
