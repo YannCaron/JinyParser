@@ -42,4 +42,9 @@ public interface LookaheadIterator<T> {
 	 */
 	void rollback();
 
+	/**
+	 * Garbage (pop) the stored position.
+	 */
+	void resume();
+
 }

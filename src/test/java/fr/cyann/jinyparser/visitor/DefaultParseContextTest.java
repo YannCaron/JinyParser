@@ -1,4 +1,5 @@
-package fr.cyann.jinyparser.visitor;/**
+package fr.cyann.jinyparser.visitor;
+/**
  * Copyright (C) 09/09/15 Yann Caron aka cyann
  * <p/>
  * Cette œuvre est mise à disposition sous licence Attribution -
@@ -7,7 +8,12 @@ package fr.cyann.jinyparser.visitor;/**
  * ou écrivez à Creative Commons, 444 Castro Street, Suite 900, Mountain View, California, 94041, USA.
  **/
 
+import fr.cyann.jinyparser.ast.Ast;
+import fr.cyann.jinyparser.ast.NonTerminal;
+import fr.cyann.jinyparser.ast.Terminal;
 import junit.framework.TestCase;
+
+import java.util.ArrayList;
 
 /**
  * The DefaultParseContextTest definition.
@@ -80,16 +86,25 @@ public class DefaultParseContextTest extends TestCase {
 				parseNumber(c);
 				parseSymbol(c, "PLUS");
 				parseExpression(c);
+
+				AstBinaryExpression ast = new AstBinaryExpression("+");
+				ast.buildAst(c);
 			}
 
 			public void parseMinus(DefaultParseContext c) {
 				parseNumber(c);
 				parseSymbol(c, "MINUS");
 				parseExpression(c);
+
+				AstBinaryExpression ast = new AstBinaryExpression("-");
+				ast.buildAst(c);
 			}
 
 			public void parseNumber(DefaultParseContext c) {
 				parseSymbol(c, "NUM");
+
+				AstNumber ast = new AstNumber(7);
+				ast.buildAst(c);
 			}
 
 			public void parseExpression(DefaultParseContext c) {
@@ -111,11 +126,86 @@ public class DefaultParseContextTest extends TestCase {
 		new ParsingExpressionGrammarLLk().parseExpression(c);
 
 		for (String token : c) {
-			System.out.println(token);
+			System.out.print(token + " ");
 		}
+		System.out.println();
+
+		System.out.println(c.getAst());
+
+		ArrayList<String> expected = new ArrayList<String>();
+		expected.add("NUM");
+		expected.add("PLUS");
+		expected.add("NUM");
+		expected.add("MINUS");
+		expected.add("NUM");
+		expected.add("PLUS");
+		expected.add("NUM");
+
+		int i = 0;
+		for (String token : c) {
+			assertEquals(expected.get(i), token);
+			i++;
+		}
+		//assertTrue(result);
+
+		assertEquals("(+ (N 7) (- (N 7) (+ (N 7) (N 7))))", c.getAst().toString());
 
 		//assertEquals(expected, production);
 		//assertTrue(result);
+
+	}
+
+	class AstNumber extends Terminal<Integer> {
+
+		private final Integer value;
+
+		public AstNumber(Integer value) {
+			this.value = value;
+		}
+
+		@Override
+		public Integer getValue() {
+			return value;
+		}
+
+		@Override
+		public String toString() {
+			return "(N " + value + ")";
+		}
+
+	}
+
+	class AstBinaryExpression extends NonTerminal {
+
+		private String sign;
+		private Ast left, right;
+
+		public AstBinaryExpression(String sign) {
+			this.sign = sign;
+		}
+
+		@Override
+		public int childSize() {
+			return 2;
+		}
+
+		@Override
+		public Ast getChild(int index) {
+			if (index == 0) return left;
+			return right;
+		}
+
+		@Override
+		public void setChild(int index, Ast child) {
+			if (index == 0) left = child;
+			else right = child;
+		}
+
+		@Override
+		public String toString() {
+			return "(" + sign + " " + left + " " + right + ")";
+		}
+
 
 	}
 

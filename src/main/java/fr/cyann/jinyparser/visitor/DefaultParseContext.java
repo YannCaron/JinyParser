@@ -7,6 +7,8 @@ package fr.cyann.jinyparser.visitor;/**
  * ou écrivez à Creative Commons, 444 Castro Street, Suite 900, Mountain View, California, 94041, USA.
  **/
 
+import fr.cyann.jinyparser.ast.Ast;
+import fr.cyann.jinyparser.ast.AstStack;
 import fr.cyann.jinyparser.utils.StringLookaheadIterator;
 
 import java.util.Iterator;
@@ -15,10 +17,11 @@ import java.util.Stack;
 /**
  * The DefaultParseContext class definition.
  */
-class DefaultParseContext extends Context implements Iterable<String> {
+class DefaultParseContext extends Context implements Iterable<String>, AstStack {
 
 	private final StringLookaheadIterator it;
 	private final Stack<String> tokens;
+	private final Stack<Ast> asts;
 
 	/**
 	 * Default constructor.
@@ -29,6 +32,7 @@ class DefaultParseContext extends Context implements Iterable<String> {
 		super(source);
 		it = new StringLookaheadIterator(source);
 		tokens = new Stack<String>();
+		asts = new Stack<Ast>();
 	}
 
 	/**
@@ -63,6 +67,18 @@ class DefaultParseContext extends Context implements Iterable<String> {
 
 	public void pushToken(String token) {
 		tokens.push(token);
+	}
+
+	public void pushAst(Ast ast) {
+		asts.push(ast);
+	}
+
+	public Ast popAst() {
+		return asts.pop();
+	}
+
+	public Ast getAst() {
+		return asts.firstElement();
 	}
 
 }
