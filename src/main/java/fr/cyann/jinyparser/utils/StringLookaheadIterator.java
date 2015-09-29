@@ -80,8 +80,14 @@ public class StringLookaheadIterator implements LookaheadIterator<Character> {
 
 	@Override
 	public String toString() {
-		return "StringLookaheadIterator{" +
-				"index=" + index +
-				'}';
+		StringBuilder sb = new StringBuilder();
+		sb.append("StringLookaheadIterator:\n\t");
+		sb.append(string);
+		sb.append("\n\t");
+		for (int i = 0; i < index; i++) sb.append('-');
+		sb.append("^\n");
+		sb.append("current: ");
+		sb.append(current());
+		return sb.toString();
 	}
 }

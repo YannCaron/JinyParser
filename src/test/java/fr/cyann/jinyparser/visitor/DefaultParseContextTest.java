@@ -28,10 +28,6 @@ public class DefaultParseContextTest extends TestCase {
 			// tools
 			private boolean isBinary(DefaultParseContext c, Character symbol) {
 				c.mark();
-				if (!isNumber(c)) {
-					c.rollback();
-					return false;
-				}
 				if (!isSymbol(c, symbol)) {
 					c.rollback();
 					return false;
@@ -62,7 +58,12 @@ public class DefaultParseContextTest extends TestCase {
 			}
 
 			public boolean isNumber(DefaultParseContext c) {
-				return isSymbol(c, '7');
+				try {
+					c.mark();
+					return isSymbol(c, '7');
+				} finally {
+					c.rollback();
+				}
 			}
 
 			public boolean isExpression(DefaultParseContext c) {
@@ -83,18 +84,16 @@ public class DefaultParseContextTest extends TestCase {
 			}
 
 			public void parsePlus(DefaultParseContext c) {
-				parseNumber(c);
 				parseSymbol(c, "PLUS");
-				parseExpression(c);
+				parseNumber(c);
 
 				AstBinaryExpression ast = new AstBinaryExpression("+");
 				ast.buildAst(c);
 			}
 
 			public void parseMinus(DefaultParseContext c) {
-				parseNumber(c);
 				parseSymbol(c, "MINUS");
-				parseExpression(c);
+				parseNumber(c);
 
 				AstBinaryExpression ast = new AstBinaryExpression("-");
 				ast.buildAst(c);
@@ -108,15 +107,20 @@ public class DefaultParseContextTest extends TestCase {
 			}
 
 			public void parseExpression(DefaultParseContext c) {
-				if (isPlus(c)) {
-					parsePlus(c);
-				} else if (isMinus(c)) {
-					parseMinus(c);
-				} else if (isNumber(c)) {
+				if (isNumber(c)) {
 					parseNumber(c);
+
+					boolean isp, ism;
+					while ((isp = isPlus(c)) | (ism = isMinus(c))) {
+						if (isp) parsePlus(c);
+						if (ism) parseMinus(c);
+					}
+					System.out.println(c.toString());
+
 				} else {
 					throw new RuntimeException("Parsing error: no candidate to expression !");
 				}
+
 			}
 
 
@@ -128,9 +132,7 @@ public class DefaultParseContextTest extends TestCase {
 		for (String token : c) {
 			System.out.print(token + " ");
 		}
-		System.out.println();
-
-		System.out.println(c.getAst());
+		System.out.println(c);
 
 		ArrayList<String> expected = new ArrayList<String>();
 		expected.add("NUM");
@@ -147,7 +149,7 @@ public class DefaultParseContextTest extends TestCase {
 			i++;
 		}
 
-		assertEquals("(+ (N 7) (- (N 7) (+ (N 7) (N 7))))", c.getAst().toString());
+		assertEquals("(+ (- (+ (N 7) (N 7)) (N 7)) (N 7))", c.getAst().toString());
 
 	}
 

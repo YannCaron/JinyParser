@@ -81,4 +81,8 @@ class DefaultParseContext extends Context implements Iterable<String>, AstStack 
 		return asts.firstElement();
 	}
 
+	@Override
+	public String toString() {
+		return "ParseContext:\n" + it.toString() + "\nAST: " + getAst().toString() + '\n';
+	}
 }
