@@ -7,12 +7,19 @@ package fr.cyann.jinyparser.ast;/**
  * ou écrivez à Creative Commons, 444 Castro Street, Suite 900, Mountain View, California, 94041, USA.
  **/
 
+import fr.cyann.jinyparser.token.Token;
+
 /**
  * The NonTerminal definition.
  */
 public abstract class NonTerminal extends Ast {
 
 	private Token tokenBegin, tokenEnd;
+
+	public NonTerminal(Token tokenBegin, Token tokenEnd) {
+		this.tokenBegin = tokenBegin;
+		this.tokenEnd = tokenEnd;
+	}
 
 	@Override
 	public Token getToken() {

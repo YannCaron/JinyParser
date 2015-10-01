@@ -1,5 +1,5 @@
-package fr.cyann.jinyparser.ast;/**
- * Copyright (C) 28/09/15 Yann Caron aka cyann
+package fr.cyann.jinyparser.semantic;/**
+ * Copyright (C) 01/10/15 Yann Caron aka cyann
  * <p/>
  * Cette œuvre est mise à disposition sous licence Attribution -
  * Pas d’Utilisation Commerciale - Partage dans les Mêmes Conditions 3.0 France.
@@ -7,15 +7,8 @@ package fr.cyann.jinyparser.ast;/**
  * ou écrivez à Creative Commons, 444 Castro Street, Suite 900, Mountain View, California, 94041, USA.
  **/
 
-import fr.cyann.jinyparser.token.Token;
-
 /**
- * The Ast definition.
+ * The VisitorContext definition.
  */
-public abstract class Ast {
-
-	public abstract Token getToken();
-
-	public abstract void buildAst(AstStack stack);
-
+public class VisitorContext {
 }

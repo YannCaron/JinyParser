@@ -1,4 +1,4 @@
-package fr.cyann.jinyparser.ast;/**
+package fr.cyann.jinyparser.token;/**
  * Copyright (C) 30/09/15 Yann Caron aka cyann
  * <p/>
  * Cette œuvre est mise à disposition sous licence Attribution -
@@ -14,17 +14,20 @@ package fr.cyann.jinyparser.ast;/**
 public class Token {
 
 	private final String symbol;
+	private final TokenType type;
 	private final int pos, line, column;
 
-	public Token(String symbol) {
+	public Token(String symbol, TokenType type) {
 		this.symbol = symbol;
+		this.type = type;
 		this.pos = -1;
 		this.line = -1;
 		this.column = -1;
 	}
 
-	public Token(String symbol, int pos, int line, int column) {
+	public Token(String symbol, TokenType type, int pos, int line, int column) {
 		this.symbol = symbol;
+		this.type = type;
 		this.pos = pos;
 		this.line = line;
 		this.column = column;
@@ -44,5 +47,20 @@ public class Token {
 
 	public int getColumn() {
 		return column;
+	}
+
+	public int getLength() {
+		return symbol.length();
+	}
+
+	@Override
+	public String toString() {
+		return "Token{" +
+				"symbol='" + symbol + '\'' +
+				", type=" + type +
+				", pos=" + pos +
+				", line=" + line +
+				", column=" + column +
+				'}';
 	}
 }

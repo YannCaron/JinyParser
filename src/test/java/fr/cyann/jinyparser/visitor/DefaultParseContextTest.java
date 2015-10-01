@@ -11,7 +11,8 @@ package fr.cyann.jinyparser.visitor;
 import fr.cyann.jinyparser.ast.Ast;
 import fr.cyann.jinyparser.ast.NonTerminal;
 import fr.cyann.jinyparser.ast.Terminal;
-import fr.cyann.jinyparser.ast.Token;
+import fr.cyann.jinyparser.token.Token;
+import fr.cyann.jinyparser.token.TokenType;
 import junit.framework.TestCase;
 
 /**
@@ -132,14 +133,13 @@ public class DefaultParseContextTest extends TestCase {
 	class AstNumber extends Terminal<Integer> {
 
 		public AstNumber(Integer value) {
-			super(new Token(String.valueOf(value)), value);
+			super(new Token(String.valueOf(value), TokenType.SYMBOL), value);
 		}
 
 		@Override
 		public String toString() {
 			return "(N " + getValue() + ")";
 		}
-
 	}
 
 	class AstBinaryExpression extends NonTerminal {
@@ -148,7 +148,7 @@ public class DefaultParseContextTest extends TestCase {
 		private Ast left, right;
 
 		public AstBinaryExpression(String sign) {
-			super(new Token(sign), new Token(sign));
+			super(new Token(sign, TokenType.SYMBOL), new Token(sign, TokenType.SYMBOL));
 			this.sign = sign;
 		}
 

@@ -1,5 +1,5 @@
 package fr.cyann.jinyparser.grammar;/**
- * Copyright (C) 07/09/15 Yann Caron aka cyann
+ * Copyright (C) 01/10/15 Yann Caron aka cyann
  * <p/>
  * Cette œuvre est mise à disposition sous licence Attribution -
  * Pas d’Utilisation Commerciale - Partage dans les Mêmes Conditions 3.0 France.
@@ -7,26 +7,14 @@ package fr.cyann.jinyparser.grammar;/**
  * ou écrivez à Creative Commons, 444 Castro Street, Suite 900, Mountain View, California, 94041, USA.
  **/
 
-import fr.cyann.jinyparser.visitor.Context;
-
 /**
- * The Term definition.
+ * The GrammarDecorator definition.
  */
-public class Term extends GrammarLeaf {
+public abstract class GrammarDecorator extends GrammarLeaf {
 
-	final String term;
+	protected final GrammarElement decored;
 
-	public Term(String term) {
-		this.term = term;
-	}
-
-	@Override
-	public boolean lookahead(Context context) {
-		return parse(context);
-	}
-
-	@Override
-	public boolean parse(Context context) {
-		return false;
+	public GrammarDecorator(GrammarElement decored) {
+		this.decored = decored;
 	}
 }

@@ -1,5 +1,6 @@
 package fr.cyann.jinyparser.grammar;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
@@ -13,7 +14,11 @@ import java.util.List;
  **/
 public abstract class GrammarNode extends GrammarElement implements Iterable<GrammarElement> {
 
-	private List<GrammarElement> children;
+	private final List<GrammarElement> children;
+
+	public GrammarNode() {
+		this.children = new ArrayList<GrammarElement>();
+	}
 
 	/**
 	 * {@inheritDoc}

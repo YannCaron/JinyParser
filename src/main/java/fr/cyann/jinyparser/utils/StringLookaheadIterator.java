@@ -7,7 +7,6 @@ package fr.cyann.jinyparser.utils;/**
  * ou écrivez à Creative Commons, 444 Castro Street, Suite 900, Mountain View, California, 94041, USA.
  **/
 
-import java.util.Locale;
 import java.util.Stack;
 
 /**
@@ -15,6 +14,7 @@ import java.util.Stack;
  */
 public class StringLookaheadIterator implements LookaheadIterator<Character> {
 
+	public static final char EOS = Character.MIN_VALUE;
 	private final String string;
 	private final Stack<Integer> indexes;
 	private int index;
@@ -38,7 +38,11 @@ public class StringLookaheadIterator implements LookaheadIterator<Character> {
 	 */
 	@Override
 	public Character current() {
-		return string.charAt(index);
+		if (index < string.length()) {
+			return string.charAt(index);
+		} else {
+			return EOS;
+		}
 	}
 
 	/**
@@ -46,12 +50,16 @@ public class StringLookaheadIterator implements LookaheadIterator<Character> {
 	 */
 	@Override
 	public void next() {
-		if (!hasNext())
+/*		if (!hasNext())
 			throw new IndexOutOfBoundsException(
 					MultilingualMessage.create("String bound reached [%d] !")
 							.translate(Locale.FRENCH, "La fin de la chaîne de caractère à été atteinte [%d] !")
-							.setArgs(string.length()).toString());
-		index++;
+							.setArgs(string.length()).toString());*/
+		if (hasNext()) {
+			index++;
+		} else {
+			index = string.length();
+		}
 	}
 
 	/**

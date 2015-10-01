@@ -1,7 +1,5 @@
 package fr.cyann.jinyparser.grammar;
 
-import fr.cyann.jinyparser.visitor.Context;
-
 /**
  * Copyright (C) 07/09/15 Yann Caron aka cyann
  * <p/>
@@ -16,7 +14,7 @@ public class Sequence extends GrammarNode {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public boolean lookahead(Context context) {
+	public boolean lookahead(GrammarContext context) {
 		return false;
 	}
 
@@ -27,9 +25,10 @@ public class Sequence extends GrammarNode {
 	 * @return true if all the children of the sequence succeed. Otherwise, if any failed, return false.
 	 */
 	@Override
-	public boolean parse(Context context) {
+	public boolean parse(GrammarContext context) {
 		for (GrammarElement child : this) {
-			if (!child.parse(context)) {
+			boolean result = child.parse(context);
+			if (!result) {
 				return false;
 			}
 		}

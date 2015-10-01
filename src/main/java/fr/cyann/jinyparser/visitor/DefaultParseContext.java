@@ -9,7 +9,7 @@ package fr.cyann.jinyparser.visitor;/**
 
 import fr.cyann.jinyparser.ast.Ast;
 import fr.cyann.jinyparser.ast.AstStack;
-import fr.cyann.jinyparser.ast.Token;
+import fr.cyann.jinyparser.token.Token;
 import fr.cyann.jinyparser.utils.LookaheadIterator;
 import fr.cyann.jinyparser.utils.StringLookaheadIterator;
 
@@ -36,6 +36,8 @@ class DefaultParseContext extends Context implements LookaheadIterator<Character
 		asts = new Stack<Ast>();
 	}
 
+	//region Iterator
+
 	public boolean hasNext() {
 		return it.hasNext();
 	}
@@ -43,8 +45,6 @@ class DefaultParseContext extends Context implements LookaheadIterator<Character
 	public Character current() {
 		return it.current();
 	}
-
-	//region Iterator
 
 	/**
 	 * {@inheritDoc}
