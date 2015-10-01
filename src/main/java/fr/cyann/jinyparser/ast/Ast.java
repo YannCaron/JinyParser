@@ -12,6 +12,8 @@ package fr.cyann.jinyparser.ast;/**
  */
 public abstract class Ast {
 
+	public abstract Token getToken();
+
 	public abstract void buildAst(AstStack stack);
 
 }

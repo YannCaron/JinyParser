@@ -9,18 +9,19 @@ package fr.cyann.jinyparser.visitor;/**
 
 import fr.cyann.jinyparser.ast.Ast;
 import fr.cyann.jinyparser.ast.AstStack;
+import fr.cyann.jinyparser.ast.Token;
+import fr.cyann.jinyparser.utils.LookaheadIterator;
 import fr.cyann.jinyparser.utils.StringLookaheadIterator;
 
-import java.util.Iterator;
 import java.util.Stack;
 
 /**
  * The DefaultParseContext class definition.
  */
-class DefaultParseContext extends Context implements Iterable<String>, AstStack {
+class DefaultParseContext extends Context implements LookaheadIterator<Character>, AstStack {
 
 	private final StringLookaheadIterator it;
-	private final Stack<String> tokens;
+	private final Stack<Token> tokens;
 	private final Stack<Ast> asts;
 
 	/**
@@ -31,18 +32,8 @@ class DefaultParseContext extends Context implements Iterable<String>, AstStack 
 	public DefaultParseContext(@SuppressWarnings("SameParameterValue") String source) {
 		super(source);
 		it = new StringLookaheadIterator(source);
-		tokens = new Stack<String>();
+		tokens = new Stack<Token>();
 		asts = new Stack<Ast>();
-	}
-
-	/**
-	 * Returns an iterator over a set of elements of type T.
-	 *
-	 * @return an Iterator.
-	 */
-	@Override
-	public Iterator<String> iterator() {
-		return tokens.listIterator();
 	}
 
 	public boolean hasNext() {
@@ -53,34 +44,89 @@ class DefaultParseContext extends Context implements Iterable<String>, AstStack 
 		return it.current();
 	}
 
+	//region Iterator
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
 	public void mark() {
 		it.mark();
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
 	public void rollback() {
 		it.rollback();
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void resume() {
+		it.resume();
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
 	public void next() {
-		it.next();
+		if (hasNext()) it.next();
+	}
+	//endregion
+
+	//region token stack
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public Token pushToken(Token item) {
+		return tokens.push(item);
 	}
 
-	public void pushToken(String token) {
-		tokens.push(token);
+	/**
+	 * {@inheritDoc}
+	 */
+	public Token popToken() {
+		return tokens.pop();
 	}
 
+	//endregion
+
+	//region Ast Stack
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
 	public void pushAst(Ast ast) {
 		asts.push(ast);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
 	public Ast popAst() {
 		return asts.pop();
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
 	public Ast getAst() {
 		return asts.firstElement();
 	}
+	//endregion
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public String toString() {
 		return "ParseContext:\n" + it.toString() + "\nAST: " + getAst().toString() + '\n';

@@ -1,4 +1,4 @@
-package fr.cyann.jinyparser.parseTree;
+package fr.cyann.jinyparser.grammar;
 
 import fr.cyann.jinyparser.visitor.Context;
 

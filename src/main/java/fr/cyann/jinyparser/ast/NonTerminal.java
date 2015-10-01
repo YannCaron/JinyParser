@@ -12,6 +12,17 @@ package fr.cyann.jinyparser.ast;/**
  */
 public abstract class NonTerminal extends Ast {
 
+	private Token tokenBegin, tokenEnd;
+
+	@Override
+	public Token getToken() {
+		return tokenBegin;
+	}
+
+	public Token getTokenEnd() {
+		return tokenEnd;
+	}
+
 	public abstract int childSize();
 
 	public abstract Ast getChild(int index);

@@ -1,4 +1,4 @@
-package fr.cyann.jinyparser.parseTree;/**
+package fr.cyann.jinyparser.grammar;/**
  * Copyright (C) 07/09/15 Yann Caron aka cyann
  * <p/>
  * Cette œuvre est mise à disposition sous licence Attribution -
@@ -7,8 +7,26 @@ package fr.cyann.jinyparser.parseTree;/**
  * ou écrivez à Creative Commons, 444 Castro Street, Suite 900, Mountain View, California, 94041, USA.
  **/
 
+import fr.cyann.jinyparser.visitor.Context;
+
 /**
- * The GrammarLeaf definition.
+ * The Term definition.
  */
-abstract class GrammarLeaf extends GrammarElement {
+public class Term extends GrammarLeaf {
+
+	final String term;
+
+	public Term(String term) {
+		this.term = term;
+	}
+
+	@Override
+	public boolean lookahead(Context context) {
+		return parse(context);
+	}
+
+	@Override
+	public boolean parse(Context context) {
+		return false;
+	}
 }

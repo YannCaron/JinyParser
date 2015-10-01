@@ -11,9 +11,8 @@ package fr.cyann.jinyparser.visitor;
 import fr.cyann.jinyparser.ast.Ast;
 import fr.cyann.jinyparser.ast.NonTerminal;
 import fr.cyann.jinyparser.ast.Terminal;
+import fr.cyann.jinyparser.ast.Token;
 import junit.framework.TestCase;
-
-import java.util.ArrayList;
 
 /**
  * The DefaultParseContextTest definition.
@@ -78,13 +77,8 @@ public class DefaultParseContextTest extends TestCase {
 			}
 
 			// product
-			public void parseSymbol(DefaultParseContext c, String token) {
-				c.pushToken(token);
-				if (c.hasNext()) c.next();
-			}
-
 			public void parsePlus(DefaultParseContext c) {
-				parseSymbol(c, "PLUS");
+				c.next();
 				parseNumber(c);
 
 				AstBinaryExpression ast = new AstBinaryExpression("+");
@@ -92,7 +86,7 @@ public class DefaultParseContextTest extends TestCase {
 			}
 
 			public void parseMinus(DefaultParseContext c) {
-				parseSymbol(c, "MINUS");
+				c.next();
 				parseNumber(c);
 
 				AstBinaryExpression ast = new AstBinaryExpression("-");
@@ -100,7 +94,7 @@ public class DefaultParseContextTest extends TestCase {
 			}
 
 			public void parseNumber(DefaultParseContext c) {
-				parseSymbol(c, "NUM");
+				c.next();
 
 				AstNumber ast = new AstNumber(7);
 				ast.buildAst(c);
@@ -129,25 +123,7 @@ public class DefaultParseContextTest extends TestCase {
 		DefaultParseContext c = new DefaultParseContext("7+7-7+7");
 		new ParsingExpressionGrammarLLk().parseExpression(c);
 
-		for (String token : c) {
-			System.out.print(token + " ");
-		}
 		System.out.println(c);
-
-		ArrayList<String> expected = new ArrayList<String>();
-		expected.add("NUM");
-		expected.add("PLUS");
-		expected.add("NUM");
-		expected.add("MINUS");
-		expected.add("NUM");
-		expected.add("PLUS");
-		expected.add("NUM");
-
-		int i = 0;
-		for (String token : c) {
-			assertEquals(expected.get(i), token);
-			i++;
-		}
 
 		assertEquals("(+ (- (+ (N 7) (N 7)) (N 7)) (N 7))", c.getAst().toString());
 
@@ -155,30 +131,24 @@ public class DefaultParseContextTest extends TestCase {
 
 	class AstNumber extends Terminal<Integer> {
 
-		private final Integer value;
-
 		public AstNumber(Integer value) {
-			this.value = value;
-		}
-
-		@Override
-		public Integer getValue() {
-			return value;
+			super(new Token(String.valueOf(value)), value);
 		}
 
 		@Override
 		public String toString() {
-			return "(N " + value + ")";
+			return "(N " + getValue() + ")";
 		}
 
 	}
 
 	class AstBinaryExpression extends NonTerminal {
 
-		private String sign;
+		private final String sign;
 		private Ast left, right;
 
 		public AstBinaryExpression(String sign) {
+			super(new Token(sign), new Token(sign));
 			this.sign = sign;
 		}
 

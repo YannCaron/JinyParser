@@ -12,7 +12,22 @@ package fr.cyann.jinyparser.ast;/**
  */
 public abstract class Terminal<V> extends Ast {
 
-	public abstract V getValue();
+	private final Token token;
+	private final V value;
+
+	public Terminal(Token token, V value) {
+		this.token = token;
+		this.value = value;
+	}
+
+	@Override
+	public Token getToken() {
+		return token;
+	}
+
+	public final V getValue() {
+		return value;
+	}
 
 	@Override
 	public void buildAst(AstStack stack) {

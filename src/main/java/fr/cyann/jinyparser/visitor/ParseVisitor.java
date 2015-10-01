@@ -9,7 +9,7 @@ package fr.cyann.jinyparser.visitor;
  * ou écrivez à Creative Commons, 444 Castro Street, Suite 900, Mountain View, California, 94041, USA.
  **/
 
-import fr.cyann.jinyparser.parseTree.GrammarElement;
+import fr.cyann.jinyparser.grammar.GrammarElement;
 
 /**
  * The ParseVisitor definition.
