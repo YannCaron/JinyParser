@@ -12,9 +12,9 @@ package fr.cyann.jinyparser.grammar;/**
  */
 public abstract class GrammarDecorator extends GrammarLeaf {
 
-	protected final GrammarElement decored;
+	protected final GrammarElement decorated;
 
-	public GrammarDecorator(GrammarElement decored) {
-		this.decored = decored;
+	public GrammarDecorator(GrammarElement decorated) {
+		this.decorated = decorated;
 	}
 }

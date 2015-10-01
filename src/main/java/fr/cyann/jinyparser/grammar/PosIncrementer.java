@@ -8,19 +8,19 @@ package fr.cyann.jinyparser.grammar;/**
  **/
 
 /**
- * The LineIncrementer definition.
+ * The PosIncrementer definition.
  */
-public class LineIncrementer extends GrammarDecorator {
+public class PosIncrementer extends GrammarDecorator {
 
-	public LineIncrementer(GrammarElement decorated) {
+	/**
+	 * {@inheritDoc}
+	 */
+	public PosIncrementer(GrammarElement decorated) {
 		super(decorated);
 	}
 
 	/**
-	 * The backtracking method. Use a lookahead to find if following term / grammar is valid.
-	 *
-	 * @param context the parsing context that contains all necessary resources to the parsing (iterators, flags and so on).
-	 * @return true if lookahead succeed, false otherwise.
+	 * {@inheritDoc}
 	 */
 	@Override
 	public boolean lookahead(GrammarContext context) {
@@ -28,10 +28,7 @@ public class LineIncrementer extends GrammarDecorator {
 	}
 
 	/**
-	 * The parsing method.
-	 *
-	 * @param context the parsing context that contains all necessary resources to the parsing (iterators, flags and so on).
-	 * @return true if parsing succeed, false otherwise.
+	 * {@inheritDoc}
 	 */
 	@Override
 	public boolean parse(GrammarContext context) {

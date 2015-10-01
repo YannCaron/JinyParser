@@ -17,8 +17,8 @@ public class TokenProducer extends GrammarDecorator {
 
 	private final TokenType tokenType;
 
-	public TokenProducer(TokenType tokenType, GrammarElement decored) {
-		super(decored);
+	public TokenProducer(TokenType tokenType, GrammarElement decorated) {
+		super(decorated);
 		this.tokenType = tokenType;
 	}
 
@@ -30,7 +30,7 @@ public class TokenProducer extends GrammarDecorator {
 	 */
 	@Override
 	public boolean lookahead(GrammarContext context) {
-		return decored.lookahead(context);
+		return decorated.lookahead(context);
 	}
 
 	/**
@@ -44,7 +44,7 @@ public class TokenProducer extends GrammarDecorator {
 
 		context.resetTerm();
 
-		boolean res = decored.parse(context);
+		boolean res = decorated.parse(context);
 
 		if (res) {
 			Token token = new Token(context.getTerm(), tokenType, context.getPos(), context.getLine(), context.getColumn());

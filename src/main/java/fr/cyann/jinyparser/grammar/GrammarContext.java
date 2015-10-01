@@ -44,7 +44,6 @@ public class GrammarContext {
 	public void nextChar() {
 		term.append(it.current());
 		it.next();
-		pos.increment();
 	}
 
 	//endregion

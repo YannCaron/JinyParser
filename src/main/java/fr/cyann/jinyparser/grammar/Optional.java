@@ -8,12 +8,12 @@ package fr.cyann.jinyparser.grammar;/**
  **/
 
 /**
- * The Repeat definition.
+ * The Optional definition.
  */
-public class Repeat extends GrammarDecorator {
+public class Optional extends GrammarDecorator {
 
-	public Repeat(GrammarElement decored) {
-		super(decored);
+	public Optional(GrammarElement decorated) {
+		super(decorated);
 	}
 
 	/**
@@ -24,7 +24,7 @@ public class Repeat extends GrammarDecorator {
 	 */
 	@Override
 	public boolean lookahead(GrammarContext context) {
-		return decorated.lookahead(context);
+		return false;
 	}
 
 	/**
@@ -35,14 +35,7 @@ public class Repeat extends GrammarDecorator {
 	 */
 	@Override
 	public boolean parse(GrammarContext context) {
-
-		if (!decorated.parse(context)) {
-			return false;
-		}
-
-		while (decorated.parse(context)) {
-		}
-
+		decorated.parse(context);
 		return true;
 	}
 }

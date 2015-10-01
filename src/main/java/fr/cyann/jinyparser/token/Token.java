@@ -33,7 +33,7 @@ public class Token {
 		this.column = column;
 	}
 
-	public String getSymbol() {
+	public String getTerm() {
 		return symbol;
 	}
 
