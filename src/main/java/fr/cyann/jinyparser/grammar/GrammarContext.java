@@ -12,7 +12,8 @@ import fr.cyann.jinyparser.token.Token;
 import fr.cyann.jinyparser.utils.StringLookaheadIterator;
 
 /**
- * The GrammarContext class. A context pass through parser tree that contains all intermediates states of lexing / parsing.
+ * The GrammarContext class. A context pass through parser tree that contains all intermediates states of lexing / parsing.<br>
+ * All the parsing resources.
  */
 public class GrammarContext {
 
