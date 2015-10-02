@@ -8,10 +8,14 @@ package fr.cyann.jinyparser.grammar;/**
  **/
 
 /**
- * The SeparatorsManager definition.
+ * The SeparatorsManager class. Grammar element that help to manage the separator characters between two real grammar.
  */
 public class SeparatorsManager extends GrammarDecorator {
 
+	/**
+	 * A default separator grammar.<br>
+	 * <i>' ' | '\t' | '\0' | '\n'(new line)</i>
+	 */
 	public static final GrammarElement DEFAULT_SEPARATOR =
 			new Choice()
 					.add(new LexerCharIn(" \t\0"))
@@ -19,29 +23,28 @@ public class SeparatorsManager extends GrammarDecorator {
 
 	private final GrammarElement separator;
 
+	/**
+	 * The default and mandatory constructor.
+	 * @param decorated the object to decorate.
+	 * @param separator the separator peace of grammar that will be checked (if exists) at the beginning of decorated grammar.
+	 */
 	public SeparatorsManager(GrammarElement decorated, GrammarElement separator) {
 		super(decorated);
 		this.separator = separator;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	/** {@inheritDoc} */
 	public SeparatorsManager(GrammarElement decorated) {
 		this(decorated, DEFAULT_SEPARATOR);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	/** {@inheritDoc} */
 	@Override
 	public boolean lookahead(GrammarContext context) {
 		return false;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	/** {@inheritDoc} */
 	@Override
 	public boolean parse(GrammarContext context) {
 		separator.parse(context);

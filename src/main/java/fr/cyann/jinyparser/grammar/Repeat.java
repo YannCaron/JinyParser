@@ -8,31 +8,22 @@ package fr.cyann.jinyparser.grammar;/**
  **/
 
 /**
- * The Repeat definition.
+ * The Repeat class. Repeat the decorated grammar until it does not parse anymore.
  */
 public class Repeat extends GrammarDecorator {
 
+	/** {@inheritDoc} */
 	public Repeat(GrammarElement decored) {
 		super(decored);
 	}
 
-	/**
-	 * The backtracking method. Use a lookahead to find if following term / grammar is valid.
-	 *
-	 * @param context the parsing context that contains all necessary resources to the parsing (iterators, flags and so on).
-	 * @return true if lookahead succeed, false otherwise.
-	 */
+	/** {@inheritDoc} */
 	@Override
 	public boolean lookahead(GrammarContext context) {
 		return decorated.lookahead(context);
 	}
 
-	/**
-	 * The parsing method.
-	 *
-	 * @param context the parsing context that contains all necessary resources to the parsing (iterators, flags and so on).
-	 * @return true if parsing succeed, false otherwise.
-	 */
+	/** {@inheritDoc} */
 	@Override
 	public boolean parse(GrammarContext context) {
 

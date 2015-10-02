@@ -8,28 +8,22 @@ package fr.cyann.jinyparser.grammar;/**
  **/
 
 /**
- * The PosIncrementer definition.
+ * The PosIncrementer class. Each time the decorated grammar is parsed successfully, the current source position in the context is incremented.
  */
 public class PosIncrementer extends GrammarDecorator {
 
-	/**
-	 * {@inheritDoc}
-	 */
+	/** {@inheritDoc} */
 	public PosIncrementer(GrammarElement decorated) {
 		super(decorated);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	/** {@inheritDoc} */
 	@Override
 	public boolean lookahead(GrammarContext context) {
 		return decorated.lookahead(context);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	/** {@inheritDoc} */
 	@Override
 	public boolean parse(GrammarContext context) {
 		boolean result = decorated.parse(context);

@@ -87,9 +87,7 @@ public class GrammarContext {
 
 	// endregion
 
-	/**
-	 * {@inheritDoc}
-	 */
+	/** {@inheritDoc} */
 	@Override
 	public String toString() {
 		return "ParseContext:\n" + it.toString() + /*"\nAST: " + getAst().toString()*/ +'\n';

@@ -8,31 +8,22 @@ package fr.cyann.jinyparser.grammar;/**
  **/
 
 /**
- * The Optional definition.
+ * The Optional class. Used to indicate an optional part of the grammar. The part if evaluated if necessary but parsing is always successful even if grammar does not exists.
  */
 public class Optional extends GrammarDecorator {
 
+	/** {@inheritDoc} */
 	public Optional(GrammarElement decorated) {
 		super(decorated);
 	}
 
-	/**
-	 * The backtracking method. Use a lookahead to find if following term / grammar is valid.
-	 *
-	 * @param context the parsing context that contains all necessary resources to the parsing (iterators, flags and so on).
-	 * @return true if lookahead succeed, false otherwise.
-	 */
+	/** {@inheritDoc} */
 	@Override
 	public boolean lookahead(GrammarContext context) {
 		return false;
 	}
 
-	/**
-	 * The parsing method.
-	 *
-	 * @param context the parsing context that contains all necessary resources to the parsing (iterators, flags and so on).
-	 * @return true if parsing succeed, false otherwise.
-	 */
+	/** {@inheritDoc} */
 	@Override
 	public boolean parse(GrammarContext context) {
 		decorated.parse(context);

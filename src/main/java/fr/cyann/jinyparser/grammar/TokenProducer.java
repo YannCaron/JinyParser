@@ -11,34 +11,30 @@ import fr.cyann.jinyparser.token.Token;
 import fr.cyann.jinyparser.token.TokenType;
 
 /**
- * The TokenProducer definition.
+ * The TokenProducer class. Each time the decorated grammar element is parsed, it produce a Token and store it into the context.<br>
+ * That represent the lexer producer function.
  */
 public class TokenProducer extends GrammarDecorator {
 
 	private final TokenType tokenType;
 
+	/**
+	 * The default and mandatory constructor.
+	 * @param tokenType the token type to produce.
+	 * @param decorated the decorated object.
+	 */
 	public TokenProducer(TokenType tokenType, GrammarElement decorated) {
 		super(decorated);
 		this.tokenType = tokenType;
 	}
 
-	/**
-	 * The backtracking method. Use a lookahead to find if following term / grammar is valid.
-	 *
-	 * @param context the parsing context that contains all necessary resources to the parsing (iterators, flags and so on).
-	 * @return true if lookahead succeed, false otherwise.
-	 */
+	/** {@inheritDoc} */
 	@Override
 	public boolean lookahead(GrammarContext context) {
 		return decorated.lookahead(context);
 	}
 
-	/**
-	 * The parsing method.
-	 *
-	 * @param context the parsing context that contains all necessary resources to the parsing (iterators, flags and so on).
-	 * @return true if parsing succeed, false otherwise.
-	 */
+	/** {@inheritDoc} */
 	@Override
 	public boolean parse(GrammarContext context) {
 

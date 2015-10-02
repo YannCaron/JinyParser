@@ -8,26 +8,19 @@ package fr.cyann.jinyparser.grammar;/**
  **/
 
 /**
- * The Choice definition.
+ * The Choice class. A compound grammar node that choosing among its children nodes to determine the appropriate grammar.<br>
+ * Run as an <b>or</b> operator (BNF:+ sign); check if this or this or this is the appropriate grammar.<br>
+ * One of the most important node in the parser tree.<br>
  */
 public class Choice extends GrammarNode {
-	/**
-	 * The backtracking method. Use a lookahead to find if following term / grammar is valid.
-	 *
-	 * @param context the parsing context that contains all necessary resources to the parsing (iterators, flags and so on).
-	 * @return true if lookahead succeed, false otherwise.
-	 */
+
+	/** {@inheritDoc} */
 	@Override
 	public boolean lookahead(GrammarContext context) {
 		return false;
 	}
 
-	/**
-	 * The parsing method.
-	 *
-	 * @param context the parsing context that contains all necessary resources to the parsing (iterators, flags and so on).
-	 * @return true if parsing succeed, false otherwise.
-	 */
+	/** {@inheritDoc} */
 	@Override
 	public boolean parse(GrammarContext context) {
 		for (GrammarElement child : this) {

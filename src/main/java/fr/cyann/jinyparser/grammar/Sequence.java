@@ -8,22 +8,21 @@ package fr.cyann.jinyparser.grammar;
  * Pour voir une copie de cette licence, visitez http://creativecommons.org/licenses/by-nc-sa/3.0/fr/
  * ou écrivez à Creative Commons, 444 Castro Street, Suite 900, Mountain View, California, 94041, USA.
  **/
+
+/**
+ * The Sequence class. A compound grammar node that parse sequentially each of its children.<br>
+ * Run as an <b>and</b> operator (BNF:[SPACE] sign); check if this followed by this and followed by this parse the source code.<br>
+ * One of the most important node in the parser tree.<br>
+ */
 public class Sequence extends GrammarNode {
 
-	/**
-	 * {@inheritDoc}
-	 */
+	/** {@inheritDoc} */
 	@Override
 	public boolean lookahead(GrammarContext context) {
 		return false;
 	}
 
-	/**
-	 * The sequence parsing method
-	 *
-	 * @param context the parsing context that contains all necessary resources to the parsing (iterators, flags and so on).
-	 * @return true if all the children of the sequence succeed. Otherwise, if any failed, return false.
-	 */
+	/** {@inheritDoc} */
 	@Override
 	public boolean parse(GrammarContext context) {
 		for (GrammarElement child : this) {
