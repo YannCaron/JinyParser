@@ -8,22 +8,31 @@ package fr.cyann.jinyparser.grammar;/**
  **/
 
 /**
- * The LineIncrementer class. When decorating a grammar element, it increment the line number in the context when the decorated grammar is parsed successfully.
+ * The LineIncrementer class. When decorating a grammar element, it increment the line number in the context w
  */
 public class LineIncrementer extends GrammarDecorator {
 
-	/** {@inheritDoc} */
 	public LineIncrementer(GrammarElement decorated) {
 		super(decorated);
 	}
 
-	/** {@inheritDoc} */
+	/**
+	 * The backtracking method. Use a lookahead to find if following term / grammar is valid.
+	 *
+	 * @param context the parsing context that contains all necessary resources to the parsing (iterators, flags and so on).
+	 * @return true if lookahead succeed, false otherwise.
+	 */
 	@Override
 	public boolean lookahead(GrammarContext context) {
 		return decorated.lookahead(context);
 	}
 
-	/** {@inheritDoc} */
+	/**
+	 * The parsing method.
+	 *
+	 * @param context the parsing context that contains all necessary resources to the parsing (iterators, flags and so on).
+	 * @return true if parsing succeed, false otherwise.
+	 */
 	@Override
 	public boolean parse(GrammarContext context) {
 		boolean result = decorated.parse(context);

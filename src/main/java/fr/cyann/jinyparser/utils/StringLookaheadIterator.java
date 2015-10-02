@@ -10,7 +10,8 @@ package fr.cyann.jinyparser.utils;/**
 import java.util.Stack;
 
 /**
- * The StringLookaheadIterator class definition.
+ * The StringLookaheadIterator class definition.<br>
+ * Useful to truncate a string into sequence of character. Give the backtracking ability to standard iterator.
  */
 public class StringLookaheadIterator implements LookaheadIterator<Character> {
 
@@ -19,23 +20,23 @@ public class StringLookaheadIterator implements LookaheadIterator<Character> {
 	private final Stack<Integer> indexes;
 	private int index;
 
+	/**
+	 * Default constructor.
+	 * @param string the source code to parse.
+	 */
 	public StringLookaheadIterator(String string) {
 		this.string = string;
 		index = 0;
 		indexes = new Stack<Integer>();
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	/** {@inheritDoc} */
 	@Override
 	public boolean hasNext() {
 		return index + 1 < string.length();
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	/** {@inheritDoc} */
 	@Override
 	public Character current() {
 		if (index < string.length()) {
@@ -45,9 +46,7 @@ public class StringLookaheadIterator implements LookaheadIterator<Character> {
 		}
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	/** {@inheritDoc} */
 	@Override
 	public void next() {
 /*		if (!hasNext())
@@ -62,30 +61,28 @@ public class StringLookaheadIterator implements LookaheadIterator<Character> {
 		}
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	/** {@inheritDoc} */
 	@Override
 	public void mark() {
 		indexes.push(index);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	/** {@inheritDoc} */
 	@Override
 	public void rollback() {
 		index = indexes.pop();
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	/** {@inheritDoc} */
 	@Override
 	public void resume() {
 		indexes.pop();
 	}
 
+	/**
+	 * Give the string representation of the object.
+	 * @return the string representation.
+	 */
 	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder();

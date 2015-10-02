@@ -96,7 +96,7 @@ public class LexerTest extends TestCase {
 			boolean result = decorated.parse(context);
 
 			if (result)
-				results.add(context.getCurrentToken().getTerm());
+				results.add(context.getCurrentToken().getLexeme());
 
 			return result;
 		}

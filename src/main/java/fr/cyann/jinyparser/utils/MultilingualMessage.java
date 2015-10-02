@@ -12,7 +12,7 @@ import java.util.Locale;
 import java.util.Map;
 
 /**
- * The MultilingualMessage definition.
+ * The MultilingualMessage class definition. An object that contains a message in multilingual way.
  */
 public class MultilingualMessage {
 

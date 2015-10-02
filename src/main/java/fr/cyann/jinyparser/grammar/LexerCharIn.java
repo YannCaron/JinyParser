@@ -15,37 +15,24 @@ public class LexerCharIn extends GrammarLeaf {
 
 	private final String characters;
 
+	/**
+	 * Default constructor.
+	 * @param characters
+	 */
 	public LexerCharIn(String characters) {
 		this.characters = characters;
 	}
 
-	/**
-	 * The backtracking method. Use a lookahead to find if following term / grammar is valid.
-	 *
-	 * @param context the parsing context that contains all necessary resources to the parsing (iterators, flags and so on).
-	 * @return true if lookahead succeed, false otherwise.
-	 */
+	/**  {@inheritDoc} */
 	@Override
-	public boolean lookahead(GrammarContext context) {
+	public boolean isTerm(GrammarContext context) {
 		char current = context.currentChar().charValue();
 		return characters.indexOf(current) != -1;
 	}
 
-	/**
-	 * The parsing method.
-	 *
-	 * @param context the parsing context that contains all necessary resources to the parsing (iterators, flags and so on).
-	 * @return true if parsing succeed, false otherwise.
-	 */
+	/**  {@inheritDoc} */
 	@Override
-	public boolean parse(GrammarContext context) {
-		boolean ret = lookahead(context);
-
-		if (ret) {
-			context.nextChar();
-		}
-
-		return ret;
+	public void action(GrammarContext context) {
+		context.nextChar();
 	}
-
 }
