@@ -13,13 +13,13 @@ package fr.cyann.jinyparser.grammar;/**
 public class PosIncrementer extends GrammarDecorator {
 
 	/** {@inheritDoc} */
-	public PosIncrementer(GrammarElement decorated) {
+	PosIncrementer(GrammarElement decorated) {
 		super(decorated);
 	}
 
 	/** {@inheritDoc} */
 	@Override
-	public boolean lookahead(GrammarContext context) {
+	protected boolean lookahead(GrammarContext context) {
 		return decorated.lookahead(context);
 	}
 

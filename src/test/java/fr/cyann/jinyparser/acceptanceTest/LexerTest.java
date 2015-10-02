@@ -15,6 +15,7 @@ import junit.framework.TestCase;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import static fr.cyann.jinyparser.grammar.GrammarFactory.*;
 
 /**
  * The DefaultParseContextTest definition.
@@ -30,14 +31,14 @@ public class LexerTest extends TestCase {
 		String source = " 12 345\n8";
 
 		// term
-		GrammarElement digit = new LexerCharIn("0123456789");
+		GrammarElement digit = lexerCharIn("0123456789");
 
 		// lexer
-		GrammarElement number = new SeparatorsManager(new TokenProducer(NUMBER, new Repeat(digit)));
+		GrammarElement number = separatorsManager(tokenProducer(NUMBER, repeat(digit)));
 		number = new TermTestAppender(number, results);
 
 		// parser
-		GrammarElement grammar = new Sequence().add(number).add(number).add(number);
+		GrammarElement grammar = sequence(number, number, number, number);
 
 		// parse
 		GrammarContext c = new GrammarContext(source);
@@ -55,18 +56,18 @@ public class LexerTest extends TestCase {
 		String source = "7 + 10 - 5 + 4";
 
 		// term
-		GrammarElement digit = new LexerCharIn("0123456789");
-		GrammarElement sign = new LexerCharIn("+-*/%");
+		GrammarElement digit = lexerCharIn("0123456789");
+		GrammarElement sign = lexerCharIn("+-*/%");
 
 		// lexer
-		GrammarElement number = new SeparatorsManager(new TokenProducer(NUMBER, new Repeat(digit)));
+		GrammarElement number = separatorsManager(tokenProducer(NUMBER, repeat(digit)));
 		number = new TermTestAppender(number, results);
 
-		GrammarElement operator = new SeparatorsManager(new TokenProducer(TokenType.SYMBOL, sign));
+		GrammarElement operator = separatorsManager(tokenProducer(TokenType.SYMBOL, sign));
 		operator = new TermTestAppender(operator, results);
 
 		// parser
-		GrammarElement grammar = new Sequence().add(number).add(new Repeat(new Sequence().add(operator).add(number)));
+		GrammarElement grammar = sequence(number, repeat(sequence(operator, number)));
 
 		// parse
 		GrammarContext c = new GrammarContext(source);

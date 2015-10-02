@@ -23,14 +23,14 @@ public class TokenProducer extends GrammarDecorator {
 	 * @param tokenType the token type to produce.
 	 * @param decorated the decorated object.
 	 */
-	public TokenProducer(TokenType tokenType, GrammarElement decorated) {
+	TokenProducer(TokenType tokenType, GrammarElement decorated) {
 		super(decorated);
 		this.tokenType = tokenType;
 	}
 
 	/** {@inheritDoc} */
 	@Override
-	public boolean lookahead(GrammarContext context) {
+	protected boolean lookahead(GrammarContext context) {
 		return decorated.lookahead(context);
 	}
 

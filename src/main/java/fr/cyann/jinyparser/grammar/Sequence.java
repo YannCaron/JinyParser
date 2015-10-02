@@ -17,8 +17,18 @@ package fr.cyann.jinyparser.grammar;
 public class Sequence extends GrammarNode {
 
 	/** {@inheritDoc} */
+	Sequence() {
+		super();
+	}
+
+	/** {@inheritDoc} */
+	Sequence(GrammarElement[] children) {
+		super(children);
+	}
+
+	/** {@inheritDoc} */
 	@Override
-	public boolean lookahead(GrammarContext context) {
+	protected boolean lookahead(GrammarContext context) {
 		return false;
 	}
 

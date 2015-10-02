@@ -28,19 +28,19 @@ public class SeparatorsManager extends GrammarDecorator {
 	 * @param decorated the object to decorate.
 	 * @param separator the separator peace of grammar that will be checked (if exists) at the beginning of decorated grammar.
 	 */
-	public SeparatorsManager(GrammarElement decorated, GrammarElement separator) {
+	SeparatorsManager(GrammarElement decorated, GrammarElement separator) {
 		super(decorated);
 		this.separator = separator;
 	}
 
 	/** {@inheritDoc} */
-	public SeparatorsManager(GrammarElement decorated) {
+	SeparatorsManager(GrammarElement decorated) {
 		this(decorated, DEFAULT_SEPARATOR);
 	}
 
 	/** {@inheritDoc} */
 	@Override
-	public boolean lookahead(GrammarContext context) {
+	protected boolean lookahead(GrammarContext context) {
 		return false;
 	}
 

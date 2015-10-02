@@ -13,13 +13,13 @@ package fr.cyann.jinyparser.grammar;/**
 public class Optional extends GrammarDecorator {
 
 	/** {@inheritDoc} */
-	public Optional(GrammarElement decorated) {
+	Optional(GrammarElement decorated) {
 		super(decorated);
 	}
 
 	/** {@inheritDoc} */
 	@Override
-	public boolean lookahead(GrammarContext context) {
+	protected boolean lookahead(GrammarContext context) {
 		return false;
 	}
 

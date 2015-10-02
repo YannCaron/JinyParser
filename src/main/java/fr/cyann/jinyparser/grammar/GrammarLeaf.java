@@ -17,17 +17,17 @@ abstract class GrammarLeaf extends GrammarElement {
      * @param context the grammar resources.
      * @return true if the term correspond to grammar.
      */
-    public abstract boolean isTerm(GrammarContext context);
+    protected abstract boolean isTerm(GrammarContext context);
 
     /**
      * What to do when term is found (usually go to next).
      * @param context the grammar resources.
      */
-    public abstract void action(GrammarContext context);
+    protected abstract void action(GrammarContext context);
 
     /**  {@inheritDoc} */
     @Override
-    public boolean lookahead(GrammarContext context) {
+    protected boolean lookahead(GrammarContext context) {
         return isTerm(context);
     }
 

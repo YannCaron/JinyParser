@@ -12,7 +12,7 @@ package fr.cyann.jinyparser.grammar;/**
  */
 public class LineIncrementer extends GrammarDecorator {
 
-	public LineIncrementer(GrammarElement decorated) {
+	LineIncrementer(GrammarElement decorated) {
 		super(decorated);
 	}
 
@@ -23,7 +23,7 @@ public class LineIncrementer extends GrammarDecorator {
 	 * @return true if lookahead succeed, false otherwise.
 	 */
 	@Override
-	public boolean lookahead(GrammarContext context) {
+	protected boolean lookahead(GrammarContext context) {
 		return decorated.lookahead(context);
 	}
 

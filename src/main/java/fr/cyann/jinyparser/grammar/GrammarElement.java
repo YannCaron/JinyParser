@@ -22,7 +22,7 @@ public abstract class GrammarElement {
 	 * @param context the parsing context that contains all necessary resources to the parsing (iterators, flags and so on).
 	 * @return true if lookahead succeed, false otherwise.
 	 */
-	public abstract boolean lookahead(GrammarContext context);
+	protected  abstract boolean lookahead(GrammarContext context);
 
 	/**
 	 * The parsing method. Used to parse the source code passed in context.

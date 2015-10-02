@@ -1,6 +1,7 @@
 package fr.cyann.jinyparser.grammar;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
@@ -23,8 +24,12 @@ public abstract class GrammarNode extends GrammarElement implements Iterable<Gra
 	/**
 	 * Default and mandatory constructor. Initialize internal ressources.
 	 */
-	public GrammarNode() {
+	GrammarNode() {
 		this.children = new ArrayList<GrammarElement>();
+	}
+
+	GrammarNode(GrammarElement[] children) {
+		this.children = Arrays.asList(children);
 	}
 
 	/** {@inheritDoc} */

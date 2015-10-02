@@ -13,13 +13,13 @@ package fr.cyann.jinyparser.grammar;/**
 public class Repeat extends GrammarDecorator {
 
 	/** {@inheritDoc} */
-	public Repeat(GrammarElement decored) {
-		super(decored);
+	Repeat(GrammarElement decorated) {
+		super(decorated);
 	}
 
 	/** {@inheritDoc} */
 	@Override
-	public boolean lookahead(GrammarContext context) {
+	protected boolean lookahead(GrammarContext context) {
 		return decorated.lookahead(context);
 	}
 

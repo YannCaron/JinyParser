@@ -14,21 +14,39 @@ package fr.cyann.jinyparser.grammar;/**
  */
 public class Choice extends GrammarNode {
 
-	/** {@inheritDoc} */
-	@Override
-	public boolean lookahead(GrammarContext context) {
-		return false;
-	}
+    /**
+     * {@inheritDoc}
+     */
+    Choice() {
+        super();
+    }
 
-	/** {@inheritDoc} */
-	@Override
-	public boolean parse(GrammarContext context) {
-		for (GrammarElement child : this) {
-			if (child.parse(context)) {
-				return true;
-			}
-		}
+    /**
+     * {@inheritDoc}
+     */
+    Choice(GrammarElement[] children) {
+        super(children);
+    }
 
-		return false;
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected boolean lookahead(GrammarContext context) {
+        return false;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean parse(GrammarContext context) {
+        for (GrammarElement child : this) {
+            if (child.parse(context)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
 }

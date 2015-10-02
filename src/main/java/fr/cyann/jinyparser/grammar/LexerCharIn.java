@@ -19,20 +19,20 @@ public class LexerCharIn extends GrammarLeaf {
 	 * Default constructor.
 	 * @param characters
 	 */
-	public LexerCharIn(String characters) {
+	LexerCharIn(String characters) {
 		this.characters = characters;
 	}
 
 	/**  {@inheritDoc} */
 	@Override
-	public boolean isTerm(GrammarContext context) {
+	protected boolean isTerm(GrammarContext context) {
 		char current = context.currentChar().charValue();
 		return characters.indexOf(current) != -1;
 	}
 
 	/**  {@inheritDoc} */
 	@Override
-	public void action(GrammarContext context) {
+	protected void action(GrammarContext context) {
 		context.nextChar();
 	}
 }
