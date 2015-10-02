@@ -1,4 +1,4 @@
-package fr.cyann.jinyparser.grammar;
+package fr.cyann.jinyparser.grammartree;
 
 import java.util.ArrayList;
 import java.util.Arrays;

@@ -1,5 +1,7 @@
-package fr.cyann.jinyparser.grammar;/**
- * Copyright (C) 01/10/15 Yann Caron aka cyann
+package fr.cyann.jinyparser.grammartree;
+
+/**
+ * Copyright (C) 04/09/15 Yann Caron aka cyann
  * <p/>
  * Cette œuvre est mise à disposition sous licence Attribution -
  * Pas d’Utilisation Commerciale - Partage dans les Mêmes Conditions 3.0 France.
@@ -8,37 +10,26 @@ package fr.cyann.jinyparser.grammar;/**
  **/
 
 /**
- * The LineIncrementer class. When decorating a grammar element, it increment the line number in the context w
+ * The GrammarElement class. Then top abstract class of all grammar elements.<br>
+ * Based on Interpreter / Composite GoF design pattern. <br>
+ * Give the ability to declare (declarative programming) the language grammar by nesting grammars elements together.
  */
-public class LineIncrementer extends GrammarDecorator {
-
-	LineIncrementer(GrammarElement decorated) {
-		super(decorated);
-	}
+public abstract class GrammarElement {
 
 	/**
-	 * The backtracking method. Use a lookahead to find if following term / grammar is valid.
+	 * The lookahead searching method. Used to find if following term / grammar is valid without consuming the lexemes.
 	 *
 	 * @param context the parsing context that contains all necessary resources to the parsing (iterators, flags and so on).
 	 * @return true if lookahead succeed, false otherwise.
 	 */
-	@Override
-	protected boolean lookahead(GrammarContext context) {
-		return decorated.lookahead(context);
-	}
+	protected  abstract boolean lookahead(GrammarContext context);
 
 	/**
-	 * The parsing method.
+	 * The parsing method. Used to parse the source code passed in context.
 	 *
 	 * @param context the parsing context that contains all necessary resources to the parsing (iterators, flags and so on).
 	 * @return true if parsing succeed, false otherwise.
 	 */
-	@Override
-	public boolean parse(GrammarContext context) {
-		boolean result = decorated.parse(context);
-		if (result) {
-			context.newLine();
-		}
-		return result;
-	}
+	public abstract boolean parse(GrammarContext context);
+
 }

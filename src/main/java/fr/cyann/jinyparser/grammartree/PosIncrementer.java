@@ -1,4 +1,4 @@
-package fr.cyann.jinyparser.grammar;/**
+package fr.cyann.jinyparser.grammartree;/**
  * Copyright (C) 01/10/15 Yann Caron aka cyann
  * <p/>
  * Cette œuvre est mise à disposition sous licence Attribution -
@@ -8,12 +8,12 @@ package fr.cyann.jinyparser.grammar;/**
  **/
 
 /**
- * The Repeat class. Repeat the decorated grammar until it does not parse anymore.
+ * The PosIncrementer class. Each time the decorated grammar is parsed successfully, the current source position in the context is incremented.
  */
-public class Repeat extends GrammarDecorator {
+public class PosIncrementer extends GrammarDecorator {
 
 	/** {@inheritDoc} */
-	Repeat(GrammarElement decorated) {
+	PosIncrementer(GrammarElement decorated) {
 		super(decorated);
 	}
 
@@ -26,14 +26,10 @@ public class Repeat extends GrammarDecorator {
 	/** {@inheritDoc} */
 	@Override
 	public boolean parse(GrammarContext context) {
-
-		if (!decorated.parse(context)) {
-			return false;
+		boolean result = decorated.parse(context);
+		if (result) {
+			context.newLine();
 		}
-
-		while (decorated.parse(context)) {
-		}
-
-		return true;
+		return result;
 	}
 }
