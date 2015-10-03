@@ -12,33 +12,9 @@ import fr.cyann.jinyparser.token.Lexem;
 /**
  * The Terminal definition.
  */
-public abstract class Terminal<V> extends Ast {
+public abstract class Terminal extends ParsemElement {
 
-	private final Lexem lexem;
-	private final V value;
-
-	public Terminal(Lexem lexem, V value) {
-		this.lexem = lexem;
-		this.value = value;
+	public Terminal(Lexem lexem) {
+		super(lexem);
 	}
-
-	@Override
-	public Lexem getLexem() {
-		return lexem;
-	}
-
-	public final V getValue() {
-		return value;
-	}
-
-	@Override
-	public void buildAst(AstStack stack) {
-		stack.pushAst(this);
-	}
-
-	@Override
-	public String toString() {
-		return this.getClass().getSimpleName() + "[" + getValue() + "]";
-	}
-
 }

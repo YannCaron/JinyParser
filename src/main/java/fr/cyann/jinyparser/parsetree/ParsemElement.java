@@ -1,7 +1,5 @@
-package fr.cyann.jinyparser.visitor;
-
-/**
- * Copyright (C) 07/09/15 Yann Caron aka cyann
+package fr.cyann.jinyparser.parsetree;/**
+ * Copyright (C) 28/09/15 Yann Caron aka cyann
  * <p/>
  * Cette œuvre est mise à disposition sous licence Attribution -
  * Pas d’Utilisation Commerciale - Partage dans les Mêmes Conditions 3.0 France.
@@ -9,13 +7,21 @@ package fr.cyann.jinyparser.visitor;
  * ou écrivez à Creative Commons, 444 Castro Street, Suite 900, Mountain View, California, 94041, USA.
  **/
 
-import fr.cyann.jinyparser.grammartree.GrammarElement;
+import fr.cyann.jinyparser.token.Lexem;
 
 /**
- * The ParseVisitor definition.
+ * The ParsemElement definition.
  */
-public abstract class ParseVisitor<C extends Context> {
+public abstract class ParsemElement {
 
-	public abstract boolean visite(Class<? extends GrammarElement> clazz, C context);
+	private final Lexem lexem;
+
+	public ParsemElement(Lexem lexem) {
+		this.lexem = lexem;
+	}
+
+	public Lexem getLexem() {
+		return lexem;
+	}
 
 }

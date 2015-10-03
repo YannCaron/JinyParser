@@ -8,7 +8,7 @@ package fr.cyann.jinyparser.visitor;
  * ou écrivez à Creative Commons, 444 Castro Street, Suite 900, Mountain View, California, 94041, USA.
  **/
 
-import fr.cyann.jinyparser.parsetree.Ast;
+import fr.cyann.jinyparser.parsetree.ParsemElement;
 import fr.cyann.jinyparser.parsetree.NonTerminal;
 import fr.cyann.jinyparser.parsetree.Terminal;
 import fr.cyann.jinyparser.token.Lexem;
@@ -19,7 +19,7 @@ import junit.framework.TestCase;
  * The DefaultParseContextTest definition.
  */
 public class DefaultParseContextTest extends TestCase {
-
+/*
 	public void testProofOfConcept() {
 
 		@SuppressWarnings("BooleanMethodIsAlwaysInverted")
@@ -145,7 +145,7 @@ public class DefaultParseContextTest extends TestCase {
 	class AstBinaryExpression extends NonTerminal {
 
 		private final String sign;
-		private Ast left, right;
+		private ParsemElement left, right;
 
 		public AstBinaryExpression(String sign) {
 			super(new Lexem(sign, LexemType.SYMBOL), new Lexem(sign, LexemType.SYMBOL));
@@ -158,13 +158,13 @@ public class DefaultParseContextTest extends TestCase {
 		}
 
 		@Override
-		public Ast getChild(int index) {
+		public ParsemElement getChild(int index) {
 			if (index == 0) return left;
 			return right;
 		}
 
 		@Override
-		public void setChild(int index, Ast child) {
+		public void setChild(int index, ParsemElement child) {
 			if (index == 0) left = child;
 			else right = child;
 		}
@@ -176,5 +176,5 @@ public class DefaultParseContextTest extends TestCase {
 
 
 	}
-
+*/
 }

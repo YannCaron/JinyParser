@@ -34,7 +34,7 @@ public class LexerTest extends TestCase {
 		return result;
 	}
 
-	public void testLexerTrivial() {
+	public void testTrivialLexer() {
 
 		String source = " 12 345\n8";
 

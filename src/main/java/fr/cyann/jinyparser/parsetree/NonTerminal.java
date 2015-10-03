@@ -12,49 +12,17 @@ import fr.cyann.jinyparser.token.Lexem;
 /**
  * The NonTerminal definition.
  */
-public abstract class NonTerminal extends Ast {
+public abstract class NonTerminal extends ParsemElement {
 
-	private Lexem lexemBegin, lexemEnd;
+	private final Lexem lexemEnd;
 
 	public NonTerminal(Lexem lexemBegin, Lexem lexemEnd) {
-		this.lexemBegin = lexemBegin;
+		super(lexemBegin);
 		this.lexemEnd = lexemEnd;
-	}
-
-	@Override
-	public Lexem getLexem() {
-		return lexemBegin;
 	}
 
 	public Lexem getLexemEnd() {
 		return lexemEnd;
 	}
 
-	public abstract int childSize();
-
-	public abstract Ast getChild(int index);
-
-	public abstract void setChild(int index, Ast child);
-
-	@Override
-	public void buildAst(AstStack stack) {
-		for (int i = childSize() - 1; i >= 0; i--) {
-			Ast child = stack.popAst();
-			setChild(i, child);
-		}
-		stack.pushAst(this);
-	}
-
-	@Override
-	public String toString() {
-		StringBuilder sb = new StringBuilder();
-		sb.append(this.getClass().getSimpleName());
-		sb.append("[");
-		for (int i = 0; i < childSize(); i++) {
-			if (i > 0) sb.append(", ");
-			sb.append(getChild(i));
-		}
-		sb.append("]");
-		return sb.toString();
-	}
 }

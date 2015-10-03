@@ -19,6 +19,6 @@ public interface ParsemBuilder {
      * Build a new instance of parse tree and put it on the top of parser stack.
      * @param context the grammar context.
      */
-    Ast buildParsem(ParsemBuildable context);
+    ParsemElement buildParsem(ParsemBuildable context);
 
 }

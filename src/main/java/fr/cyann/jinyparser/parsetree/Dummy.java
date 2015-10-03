@@ -12,19 +12,24 @@ package fr.cyann.jinyparser.parsetree;
 import fr.cyann.jinyparser.token.Lexem;
 
 /**
- * The ParsemBuildable class definition.<br>
+ * The DefaultTerminal class definition.<br>
+ * -
  */
-public interface ParsemBuildable {
+public class Dummy extends Terminal {
 
-    /**
-     * Get the current constructed token.
-     * @return the current token.
-     */
-    Lexem getCurrentLexem();
+    public static ParsemBuilder BUILDER = new ParsemBuilder() {
+        @Override
+        public ParsemElement buildParsem(ParsemBuildable context) {
+            return new Dummy(context.getCurrentLexem());
+        }
+    };
 
-    /**
-     * Pop (get and remove) ast element from the top of parser stack. Useful to aggregate elements together to build the tree.
-     * @return the ast element at the top.
-     */
-    ParsemElement popParsem();
+    public Dummy(Lexem lexem) {
+        super(lexem);
+    }
+
+    @Override
+    public String toString() {
+        return "(" + getLexem().getTerm() + ")";
+    }
 }

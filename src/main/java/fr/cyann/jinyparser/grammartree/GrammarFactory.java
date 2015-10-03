@@ -1,5 +1,9 @@
 package fr.cyann.jinyparser.grammartree;
 
+import fr.cyann.jinyparser.parsetree.DefaultNonTerminal;
+import fr.cyann.jinyparser.parsetree.DefaultTerminal;
+import fr.cyann.jinyparser.parsetree.Dummy;
+import fr.cyann.jinyparser.parsetree.ParsemBuilder;
 import fr.cyann.jinyparser.token.LexemType;
 
 /**
@@ -57,10 +61,10 @@ public final class GrammarFactory {
     /**
      * Create a new token producer grammar element.
      * @param lexemType the token type of the token to produce.
-     * @param decorated the grammar element to decorate.
+     * @param decorated the grammar that decide if lexem will be produced.
      * @return the new grammar element.
      */
-    public static LexemProducer tokenProducer(LexemType lexemType, GrammarElement decorated) {
+    public static LexemProducer lexemProducer(LexemType lexemType, GrammarElement decorated) {
         return new LexemProducer(lexemType, decorated);
     }
 
@@ -75,6 +79,33 @@ public final class GrammarFactory {
         return new SeparatorsManager(new LexemProducer(lexemType, decorated));
     }
 
+    /**
+     * Grammar element that produce parsem (build parse tree element in the stack).
+     * @param builder the token type of the token to produce.
+     * @param decorated the grammar that decide if parsem will be produced.
+     * @return the new grammar element.
+     */
+    public static GrammarElement parsem(ParsemBuilder builder, GrammarElement decorated) {
+        return new ParsemProducer(builder, decorated);
+    }
+
+    /**
+     * Grammar element that produce a default terminal parsem.
+     * @param decorated the grammar that decide if parsem will be produced.
+     * @return the new grammar element.
+     */
+    public static GrammarElement parsemDummy(GrammarElement decorated) {
+        return new ParsemProducer(Dummy.BUILDER, decorated);
+    }
+
+    /**
+     * Grammar element that produce a default non terminal parsem.
+     * @param decorated the grammar that decide if parsem will be produced.
+     * @return the new grammar element.
+     */
+    public static GrammarElement parsemNonTerminal(int length, GrammarElement decorated) {
+        return new ParsemProducer(DefaultNonTerminal.BUILDER(length), decorated);
+    }
     /**
      * Create a new separator manager grammar element.
      * @param decorated the grammar element to decorate.
@@ -104,7 +135,7 @@ public final class GrammarFactory {
 
     // endregion
 
-    // region Lexer
+    // region lexer
 
     /**
      * Create a new lexer char recognizer grammar element.

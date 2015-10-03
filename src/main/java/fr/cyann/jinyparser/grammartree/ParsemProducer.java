@@ -8,7 +8,7 @@ package fr.cyann.jinyparser.grammartree;
  * ou écrivez à Creative Commons, 444 Castro Street, Suite 900, Mountain View, California, 94041, USA.
  **/
 
-import fr.cyann.jinyparser.parsetree.Ast;
+import fr.cyann.jinyparser.parsetree.ParsemElement;
 import fr.cyann.jinyparser.parsetree.ParsemBuilder;
 
 /**
@@ -48,7 +48,7 @@ public class ParsemProducer extends GrammarDecorator {
         boolean res = decorated.parse(context);
 
         if (res) {
-            Ast parsem = builder.buildParsem(context);
+            ParsemElement parsem = builder.buildParsem(context);
 
             context.pushParsem(parsem);
             System.out.println(parsem);

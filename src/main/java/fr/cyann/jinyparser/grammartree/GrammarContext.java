@@ -7,7 +7,7 @@ package fr.cyann.jinyparser.grammartree;/**
  * ou écrivez à Creative Commons, 444 Castro Street, Suite 900, Mountain View, California, 94041, USA.
  **/
 
-import fr.cyann.jinyparser.parsetree.Ast;
+import fr.cyann.jinyparser.parsetree.ParsemElement;
 import fr.cyann.jinyparser.token.Lexem;
 import fr.cyann.jinyparser.token.SourcePosition;
 import fr.cyann.jinyparser.parsetree.ParsemBuildable;
@@ -27,7 +27,7 @@ public class GrammarContext implements ParsemBuildable {
 	private final SourcePosition pos;
 	private final StringBuilder term;
 	private final List<Lexem> lexer;
-	private final Stack<Ast> parser;
+	private final Stack<ParsemElement> parser;
 
 	/**
 	 * Default constructor.
@@ -38,7 +38,7 @@ public class GrammarContext implements ParsemBuildable {
 		pos = new SourcePosition(1, 1);
 		term = new StringBuilder();
 		lexer = new ArrayList<Lexem>();
-		parser = new Stack<Ast>();
+		parser = new Stack<ParsemElement>();
 	}
 
 	//region Char Iterator
@@ -150,16 +150,16 @@ public class GrammarContext implements ParsemBuildable {
 	// region parser
 
 	/**
-	 * Push ast element on the top of parser stack.
-	 * @param ast the abstract syntax tree element.
+	 * Push parsemElement element on the top of parser stack.
+	 * @param parsemElement the abstract syntax tree element.
 	 */
-	public void pushParsem(Ast ast) {
-		parser.push(ast);
+	public void pushParsem(ParsemElement parsemElement) {
+		parser.push(parsemElement);
 	}
 
 	/** {@inheritDoc} */
 	@Override
-	public Ast popParsem() {
+	public ParsemElement popParsem() {
 		return parser.pop();
 	}
 
@@ -167,7 +167,7 @@ public class GrammarContext implements ParsemBuildable {
 	 * Get the root element of the parse tree.
 	 * @return the first element in the stack.
 	 */
-	public Ast getParseTree() {
+	public ParsemElement getParseTree() {
 		return parser.firstElement();
 	}
 	//endregion

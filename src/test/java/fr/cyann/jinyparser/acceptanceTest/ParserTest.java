@@ -8,9 +8,7 @@ package fr.cyann.jinyparser.acceptanceTest;
  * ou écrivez à Creative Commons, 444 Castro Street, Suite 900, Mountain View, California, 94041, USA.
  **/
 
-import fr.cyann.jinyparser.parsetree.Ast;
-import fr.cyann.jinyparser.parsetree.NonTerminal;
-import fr.cyann.jinyparser.parsetree.Terminal;
+import fr.cyann.jinyparser.parsetree.*;
 import fr.cyann.jinyparser.grammartree.GrammarContext;
 import fr.cyann.jinyparser.grammartree.GrammarElement;
 import fr.cyann.jinyparser.token.Lexem;
@@ -24,77 +22,83 @@ import static fr.cyann.jinyparser.grammartree.GrammarFactory.*;
  */
 public class ParserTest extends TestCase {
 
-	private LexemType NUMBER = new LexemType("NUMBER");
-	private LexemType OPERATOR = new LexemType("OPERATOR");
+    private LexemType NUMBER = new LexemType("NUMBER");
+    private LexemType OPERATOR = new LexemType("OPERATOR");
 
-	public void testParserTrivial() {
+    public void testTrivialParser() {
 
-		String source = "7 + 10 - 5 + 4";
+        String source = "7 + 10 + 4";
 
-		// term
-		GrammarElement digit = lexerCharIn("0123456789");
-		GrammarElement sign = lexerCharIn("+-*/%");
+        // term
+        GrammarElement digit = lexerCharIn("0123456789");
+        GrammarElement sign = lexerCharIn("+-*/%");
 
-		// lexer
-		GrammarElement number = lexem(NUMBER, repeat(digit));
+        // lexer
+        GrammarElement number = parsem(AstNumber.BUILDER, lexem(NUMBER, repeat(digit)));
 
-		GrammarElement operator = lexem(OPERATOR, sign);
+        GrammarElement operator = parsemDummy(lexem(OPERATOR, sign));
 
-		// parser
-		GrammarElement grammar = sequence(number, repeat(sequence(operator, number)));
+        // parser
+        //GrammarElement grammar = sequence(number, repeat(parsem(AstBinaryExpression.BUILDER, sequence(operator, number))));
+        GrammarElement grammar = sequence(number, repeat(parsemNonTerminal(3, sequence(operator, number))));
 
-		// parse
-		GrammarContext c = new GrammarContext(source);
-		grammar.parse(c);
+        // parse
+        GrammarContext c = new GrammarContext(source);
+        grammar.parse(c);
+
+        System.out.println(c.getParseTree());
+
+    }
+
+    static class AstNumber extends DefaultTerminal<Integer> {
+
+        public static ParsemBuilder BUILDER = new ParsemBuilder() {
+            @Override
+            public ParsemElement buildParsem(ParsemBuildable context) {
+                Lexem lexem = context.getCurrentLexem();
+                return new AstNumber(lexem, Integer.valueOf(lexem.getTerm()));
+            }
+        };
+
+        public AstNumber(Lexem lexem, Integer value) {
+            super(lexem, value);
+        }
+
+        @Override
+        public String toString() {
+            return "(N " + getValue() + ")";
+        }
+    }
+
+    static class AstBinaryExpression extends NonTerminal {
+
+        private final String sign;
+        private ParsemElement left, right;
+
+        public static ParsemBuilder BUILDER = new ParsemBuilder() {
+            @Override
+            public ParsemElement buildParsem(ParsemBuildable context) {
+                ParsemElement right = context.popParsem();
+                ParsemElement operator = context.popParsem();
+                ParsemElement left = context.popParsem();
+
+                return new AstBinaryExpression(left.getLexem(), right.getLexem(), operator.getLexem().getTerm(), left, right);
+            }
+        };
+
+        public AstBinaryExpression(Lexem lexemBegin, Lexem lexemEnd, String sign, ParsemElement left, ParsemElement right) {
+            super(lexemBegin, lexemEnd);
+            this.sign = sign;
+            this.left = left;
+            this.right = right;
+        }
+
+        @Override
+        public String toString() {
+            return "(" + sign + " " + left + " " + right + ")";
+        }
 
 
-	}
-
-	class AstNumber extends Terminal<Integer> {
-
-		public AstNumber(Integer value) {
-			super(new Lexem(String.valueOf(value), LexemType.SYMBOL), value);
-		}
-
-		@Override
-		public String toString() {
-			return "(N " + getValue() + ")";
-		}
-	}
-
-	class AstBinaryExpression extends NonTerminal {
-
-		private final String sign;
-		private Ast left, right;
-
-		public AstBinaryExpression(String sign) {
-			super(new Lexem(sign, LexemType.SYMBOL), new Lexem(sign, LexemType.SYMBOL));
-			this.sign = sign;
-		}
-
-		@Override
-		public int childSize() {
-			return 2;
-		}
-
-		@Override
-		public Ast getChild(int index) {
-			if (index == 0) return left;
-			return right;
-		}
-
-		@Override
-		public void setChild(int index, Ast child) {
-			if (index == 0) left = child;
-			else right = child;
-		}
-
-		@Override
-		public String toString() {
-			return "(" + sign + " " + left + " " + right + ")";
-		}
-
-
-	}
+    }
 
 }
