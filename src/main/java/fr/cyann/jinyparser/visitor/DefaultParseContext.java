@@ -7,9 +7,9 @@ package fr.cyann.jinyparser.visitor;/**
  * ou écrivez à Creative Commons, 444 Castro Street, Suite 900, Mountain View, California, 94041, USA.
  **/
 
-import fr.cyann.jinyparser.ast.Ast;
-import fr.cyann.jinyparser.ast.AstStack;
-import fr.cyann.jinyparser.token.Token;
+import fr.cyann.jinyparser.parsetree.Ast;
+import fr.cyann.jinyparser.parsetree.AstStack;
+import fr.cyann.jinyparser.token.Lexem;
 import fr.cyann.jinyparser.utils.LookaheadIterator;
 import fr.cyann.jinyparser.utils.StringLookaheadIterator;
 
@@ -21,7 +21,7 @@ import java.util.Stack;
 class DefaultParseContext extends Context implements LookaheadIterator<Character>, AstStack {
 
 	private final StringLookaheadIterator it;
-	private final Stack<Token> tokens;
+	private final Stack<Lexem> lexems;
 	private final Stack<Ast> asts;
 
 	/**
@@ -32,7 +32,7 @@ class DefaultParseContext extends Context implements LookaheadIterator<Character
 	public DefaultParseContext(@SuppressWarnings("SameParameterValue") String source) {
 		super(source);
 		it = new StringLookaheadIterator(source);
-		tokens = new Stack<Token>();
+		lexems = new Stack<Lexem>();
 		asts = new Stack<Ast>();
 	}
 
@@ -84,15 +84,15 @@ class DefaultParseContext extends Context implements LookaheadIterator<Character
 	/**
 	 * {@inheritDoc}
 	 */
-	public Token pushToken(Token item) {
-		return tokens.push(item);
+	public Lexem pushToken(Lexem item) {
+		return lexems.push(item);
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
-	public Token popToken() {
-		return tokens.pop();
+	public Lexem popToken() {
+		return lexems.pop();
 	}
 
 	//endregion

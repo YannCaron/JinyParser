@@ -8,21 +8,21 @@ package fr.cyann.jinyparser.token;/**
  **/
 
 /**
- * The TokenType class  definition.<br>
+ * The LexemType class  definition.<br>
  * An extensible Enum of token types.<br>
  * SEPARATOR and SYMBOL are default ones.
  */
-public class TokenType {
+public class LexemType {
 
 	/**
 	 * Separator token type.
 	 */
-	public static TokenType SEPARATOR = new TokenType("SEPARATOR");
+	public static LexemType SEPARATOR = new LexemType("SEPARATOR");
 
 	/**
 	 * Symbol token type.
 	 */
-	public static TokenType SYMBOL = new TokenType("SYMBOL");
+	public static LexemType SYMBOL = new LexemType("SYMBOL");
 
 	private static int typeCounter;
 	private final int code;
@@ -32,7 +32,7 @@ public class TokenType {
 	 * Default constructor.
 	 * @param name the type name.
 	 */
-	public TokenType(String name) {
+	public LexemType(String name) {
 		this.name = name;
 		code = typeCounter++;
 	}
@@ -47,9 +47,9 @@ public class TokenType {
 		if (this == o) return true;
 		if (o == null || getClass() != o.getClass()) return false;
 
-		TokenType tokenType = (TokenType) o;
+		LexemType lexemType = (LexemType) o;
 
-		return code == tokenType.code;
+		return code == lexemType.code;
 
 	}
 

@@ -1,6 +1,6 @@
 package fr.cyann.jinyparser.grammartree;
 
-import fr.cyann.jinyparser.token.TokenType;
+import fr.cyann.jinyparser.token.LexemType;
 
 /**
  * The ${CLASS_NAME} class.
@@ -56,12 +56,23 @@ public final class GrammarFactory {
 
     /**
      * Create a new token producer grammar element.
-     * @param tokenType the token type of the token to produce.
+     * @param lexemType the token type of the token to produce.
      * @param decorated the grammar element to decorate.
      * @return the new grammar element.
      */
-    public static TokenProducer tokenProducer(TokenType tokenType, GrammarElement decorated) {
-        return new TokenProducer(tokenType, decorated);
+    public static LexemProducer tokenProducer(LexemType lexemType, GrammarElement decorated) {
+        return new LexemProducer(lexemType, decorated);
+    }
+
+    /**
+     * Grammar element that produce lexem (build token on lexer).<br>
+     * Create a new token producer grammar element that manage separators.
+     * @param lexemType the token type of the token to produce.
+     * @param decorated the grammar element to decorate.
+     * @return the new grammar element.
+     */
+    public static GrammarElement lexem(LexemType lexemType, GrammarElement decorated) {
+        return new SeparatorsManager(new LexemProducer(lexemType, decorated));
     }
 
     /**

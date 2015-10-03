@@ -9,7 +9,8 @@ package fr.cyann.jinyparser.acceptanceTest;
  **/
 
 import fr.cyann.jinyparser.grammartree.*;
-import fr.cyann.jinyparser.token.TokenType;
+import fr.cyann.jinyparser.token.LexemType;
+import fr.cyann.jinyparser.token.Lexem;
 import junit.framework.TestCase;
 
 import java.util.ArrayList;
@@ -22,11 +23,18 @@ import static fr.cyann.jinyparser.grammartree.GrammarFactory.*;
  */
 public class LexerTest extends TestCase {
 
-	private TokenType NUMBER = new TokenType("NUMBER");
+	private LexemType NUMBER = new LexemType("NUMBER");
+
+	private List<String> lexerToTerms(Iterable<Lexem> lexer) {
+		List<String> result = new ArrayList<String>();
+		for (Lexem lexem : lexer) {
+			result.add(lexem.getTerm());
+		}
+
+		return result;
+	}
 
 	public void testLexerTrivial() {
-
-		List<String> results = new ArrayList<String>();
 
 		String source = " 12 345\n8";
 
@@ -34,8 +42,7 @@ public class LexerTest extends TestCase {
 		GrammarElement digit = lexerCharIn("0123456789");
 
 		// lexer
-		GrammarElement number = separatorsManager(tokenProducer(NUMBER, repeat(digit)));
-		number = new TermTestAppender(number, results);
+		GrammarElement number = lexem(NUMBER, repeat(digit));
 
 		// parser
 		GrammarElement grammar = sequence(number, number, number, number);
@@ -45,13 +52,11 @@ public class LexerTest extends TestCase {
 		grammar.parse(c);
 
 		// test
-		assertEquals(Arrays.asList("12", "345", "8"), results);
+		assertEquals(Arrays.asList("12", "345", "8"), lexerToTerms(c.getLexer()));
 
 	}
 
 	public void testLexerExpression() {
-
-		List<String> results = new ArrayList<String>();
 
 		String source = "7 + 10 - 5 + 4";
 
@@ -60,11 +65,9 @@ public class LexerTest extends TestCase {
 		GrammarElement sign = lexerCharIn("+-*/%");
 
 		// lexer
-		GrammarElement number = separatorsManager(tokenProducer(NUMBER, repeat(digit)));
-		number = new TermTestAppender(number, results);
+		GrammarElement number = lexem(NUMBER, repeat(digit));
 
-		GrammarElement operator = separatorsManager(tokenProducer(TokenType.SYMBOL, sign));
-		operator = new TermTestAppender(operator, results);
+		GrammarElement operator = lexem(LexemType.SYMBOL, sign);
 
 		// parser
 		GrammarElement grammar = sequence(number, repeat(sequence(operator, number)));
@@ -74,33 +77,8 @@ public class LexerTest extends TestCase {
 		grammar.parse(c);
 
 		// test
-		assertEquals(Arrays.asList("7", "+", "10", "-", "5", "+", "4"), results);
+		assertEquals(Arrays.asList("7", "+", "10", "-", "5", "+", "4"), lexerToTerms(c.getLexer()));
 
 	}
 
-	public static class TermTestAppender extends GrammarDecorator {
-
-		private final List<String> results;
-
-		public TermTestAppender(GrammarElement decorated, List<String> results) {
-			super(decorated);
-			this.results = results;
-		}
-
-		@Override
-		public boolean lookahead(GrammarContext context) {
-			return false;
-		}
-
-		@Override
-		public boolean parse(GrammarContext context) {
-			boolean result = decorated.parse(context);
-
-			if (result)
-				results.add(context.getCurrentToken().getLexeme());
-
-			return result;
-		}
-
-	}
 }

@@ -7,20 +7,27 @@ package fr.cyann.jinyparser.grammartree;/**
  * ou écrivez à Creative Commons, 444 Castro Street, Suite 900, Mountain View, California, 94041, USA.
  **/
 
+import fr.cyann.jinyparser.parsetree.Ast;
+import fr.cyann.jinyparser.token.Lexem;
 import fr.cyann.jinyparser.token.SourcePosition;
-import fr.cyann.jinyparser.token.Token;
+import fr.cyann.jinyparser.parsetree.ParsemBuildable;
 import fr.cyann.jinyparser.utils.StringLookaheadIterator;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Stack;
 
 /**
  * The GrammarContext class. A context pass through parser tree that contains all intermediates states of lexing / parsing.<br>
  * All the parsing resources.
  */
-public class GrammarContext {
+public class GrammarContext implements ParsemBuildable {
 
 	private final StringLookaheadIterator it;
 	private final SourcePosition pos;
 	private final StringBuilder term;
-	private Token token;
+	private final List<Lexem> lexer;
+	private final Stack<Ast> parser;
 
 	/**
 	 * Default constructor.
@@ -30,6 +37,8 @@ public class GrammarContext {
 		it = new StringLookaheadIterator(source);
 		pos = new SourcePosition(1, 1);
 		term = new StringBuilder();
+		lexer = new ArrayList<Lexem>();
+		parser = new Stack<Ast>();
 	}
 
 	//region Char Iterator
@@ -66,7 +75,7 @@ public class GrammarContext {
 
 	//endregion
 
-	// region Token
+	// region Lexer
 
 	/**
 	 * Empty the term buffer.
@@ -113,25 +122,55 @@ public class GrammarContext {
 	public int getColumn() {
 		return pos.getColumn();
 	}
+
+	/** {@inheritDoc} */
+	@Override
+	public Lexem getCurrentLexem() {
+		return lexer.get(lexer.size() - 1);
+	}
+
+	/**
+	 * Set the current lexem.
+	 * @param lexem the current lexem to store.
+	 */
+	public void appendLexem(Lexem lexem) {
+		this.lexer.add(lexem);
+	}
+
+	/**
+	 * Give the list of token (lexer) that resulting from lexing.
+	 * @return
+	 */
+	public Iterable<Lexem> getLexer() {
+		return lexer;
+	}
+
 	// endregion
 
-	// region Lexer
+	// region parser
 
 	/**
-	 * Get the current constructed token.
-	 * @return the current token.
+	 * Push ast element on the top of parser stack.
+	 * @param ast the abstract syntax tree element.
 	 */
-	public Token getCurrentToken() {
-		return token;
+	public void pushParsem(Ast ast) {
+		parser.push(ast);
+	}
+
+	/** {@inheritDoc} */
+	@Override
+	public Ast popParsem() {
+		return parser.pop();
 	}
 
 	/**
-	 * Set the current token.
-	 * @param token the current token to store.
+	 * Get the root element of the parse tree.
+	 * @return the first element in the stack.
 	 */
-	public void setCurrentToken(Token token) {
-		this.token = token;
+	public Ast getParseTree() {
+		return parser.firstElement();
 	}
+	//endregion
 
 	// endregion
 
@@ -141,6 +180,6 @@ public class GrammarContext {
 	 */
 	@Override
 	public String toString() {
-		return "ParseContext:\n" + it.toString() + /*"\nAST: " + getAst().toString()*/ +'\n';
+		return "ParseContext:\n" + it.toString() + /*"\nAST: " + getParseTree().toString()*/ +'\n';
 	}
 }

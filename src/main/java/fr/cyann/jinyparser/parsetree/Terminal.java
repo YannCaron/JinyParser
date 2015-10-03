@@ -1,4 +1,4 @@
-package fr.cyann.jinyparser.ast;/**
+package fr.cyann.jinyparser.parsetree;/**
  * Copyright (C) 28/09/15 Yann Caron aka cyann
  * <p/>
  * Cette œuvre est mise à disposition sous licence Attribution -
@@ -7,24 +7,24 @@ package fr.cyann.jinyparser.ast;/**
  * ou écrivez à Creative Commons, 444 Castro Street, Suite 900, Mountain View, California, 94041, USA.
  **/
 
-import fr.cyann.jinyparser.token.Token;
+import fr.cyann.jinyparser.token.Lexem;
 
 /**
  * The Terminal definition.
  */
 public abstract class Terminal<V> extends Ast {
 
-	private final Token token;
+	private final Lexem lexem;
 	private final V value;
 
-	public Terminal(Token token, V value) {
-		this.token = token;
+	public Terminal(Lexem lexem, V value) {
+		this.lexem = lexem;
 		this.value = value;
 	}
 
 	@Override
-	public Token getToken() {
-		return token;
+	public Lexem getLexem() {
+		return lexem;
 	}
 
 	public final V getValue() {

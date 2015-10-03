@@ -8,11 +8,11 @@ package fr.cyann.jinyparser.visitor;
  * ou écrivez à Creative Commons, 444 Castro Street, Suite 900, Mountain View, California, 94041, USA.
  **/
 
-import fr.cyann.jinyparser.ast.Ast;
-import fr.cyann.jinyparser.ast.NonTerminal;
-import fr.cyann.jinyparser.ast.Terminal;
-import fr.cyann.jinyparser.token.Token;
-import fr.cyann.jinyparser.token.TokenType;
+import fr.cyann.jinyparser.parsetree.Ast;
+import fr.cyann.jinyparser.parsetree.NonTerminal;
+import fr.cyann.jinyparser.parsetree.Terminal;
+import fr.cyann.jinyparser.token.Lexem;
+import fr.cyann.jinyparser.token.LexemType;
 import junit.framework.TestCase;
 
 /**
@@ -133,7 +133,7 @@ public class DefaultParseContextTest extends TestCase {
 	class AstNumber extends Terminal<Integer> {
 
 		public AstNumber(Integer value) {
-			super(new Token(String.valueOf(value), TokenType.SYMBOL), value);
+			super(new Lexem(String.valueOf(value), LexemType.SYMBOL), value);
 		}
 
 		@Override
@@ -148,7 +148,7 @@ public class DefaultParseContextTest extends TestCase {
 		private Ast left, right;
 
 		public AstBinaryExpression(String sign) {
-			super(new Token(sign, TokenType.SYMBOL), new Token(sign, TokenType.SYMBOL));
+			super(new Lexem(sign, LexemType.SYMBOL), new Lexem(sign, LexemType.SYMBOL));
 			this.sign = sign;
 		}
 

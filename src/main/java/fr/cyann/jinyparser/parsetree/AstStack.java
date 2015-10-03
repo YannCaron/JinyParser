@@ -1,4 +1,4 @@
-package fr.cyann.jinyparser.ast;/**
+package fr.cyann.jinyparser.parsetree;/**
  * Copyright (C) 28/09/15 Yann Caron aka cyann
  * <p/>
  * Cette œuvre est mise à disposition sous licence Attribution -
@@ -7,15 +7,15 @@ package fr.cyann.jinyparser.ast;/**
  * ou écrivez à Creative Commons, 444 Castro Street, Suite 900, Mountain View, California, 94041, USA.
  **/
 
-import fr.cyann.jinyparser.token.Token;
-
 /**
- * The Ast definition.
+ * The AstStack definition.
  */
-public abstract class Ast {
+public interface AstStack {
 
-	public abstract Token getToken();
+	void pushAst(Ast ast);
 
-	public abstract void buildAst(AstStack stack);
+	Ast popAst();
+
+	Ast getAst();
 
 }

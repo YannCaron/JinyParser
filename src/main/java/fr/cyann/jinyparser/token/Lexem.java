@@ -8,22 +8,22 @@ package fr.cyann.jinyparser.token;/**
  **/
 
 /**
- * The Token object definition.<br>
- * An object that represent the program lexeme with type and position in the source.
+ * The Lexem object definition.<br>
+ * An object that represent the program term with type and position in the source.
  */
-public class Token {
+public class Lexem {
 
-	private final String lexeme;
-	private final TokenType type;
+	private final String term;
+	private final LexemType type;
 	private final int pos, line, column;
 
 	/**
 	 * Constructor with default parameters.
-	 * @param lexeme The string lexeme.
+	 * @param term The string term.
 	 * @param type the token type (useful for syntax coloring).
 	 */
-	public Token(String lexeme, TokenType type) {
-		this.lexeme = lexeme;
+	public Lexem(String term, LexemType type) {
+		this.term = term;
 		this.type = type;
 		this.pos = -1;
 		this.line = -1;
@@ -32,14 +32,14 @@ public class Token {
 
 	/**
 	 * Cefault constructor.
-	 * @param lexeme The string lexeme.
+	 * @param term The string term.
 	 * @param type the token type (useful for syntax coloring).
 	 * @param pos the token position.
 	 * @param line the token line number.
 	 * @param column the token column number.
 	 */
-	public Token(String lexeme, TokenType type, int pos, int line, int column) {
-		this.lexeme = lexeme;
+	public Lexem(String term, LexemType type, int pos, int line, int column) {
+		this.term = term;
 		this.type = type;
 		this.pos = pos;
 		this.line = line;
@@ -47,11 +47,11 @@ public class Token {
 	}
 
 	/**
-	 * Get the token lexeme.
-	 * @return token lexeme.
+	 * Get the token term.
+	 * @return token term.
 	 */
-	public String getLexeme() {
-		return lexeme;
+	public String getTerm() {
+		return term;
 	}
 
 	/**
@@ -79,11 +79,11 @@ public class Token {
 	}
 
 	/**
-	 * Get the lexeme length.
-	 * @return lexeme length.
+	 * Get the term length.
+	 * @return term length.
 	 */
 	public int getLength() {
-		return lexeme.length();
+		return term.length();
 	}
 
 	/**
@@ -92,8 +92,8 @@ public class Token {
 	 */
 	@Override
 	public String toString() {
-		return "Token{" +
-				"lexeme='" + lexeme + '\'' +
+		return "Lexem{" +
+				"term='" + term + '\'' +
 				", type=" + type +
 				", pos=" + pos +
 				", line=" + line +

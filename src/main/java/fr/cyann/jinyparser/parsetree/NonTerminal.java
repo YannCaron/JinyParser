@@ -1,4 +1,4 @@
-package fr.cyann.jinyparser.ast;/**
+package fr.cyann.jinyparser.parsetree;/**
  * Copyright (C) 28/09/15 Yann Caron aka cyann
  * <p/>
  * Cette œuvre est mise à disposition sous licence Attribution -
@@ -7,27 +7,27 @@ package fr.cyann.jinyparser.ast;/**
  * ou écrivez à Creative Commons, 444 Castro Street, Suite 900, Mountain View, California, 94041, USA.
  **/
 
-import fr.cyann.jinyparser.token.Token;
+import fr.cyann.jinyparser.token.Lexem;
 
 /**
  * The NonTerminal definition.
  */
 public abstract class NonTerminal extends Ast {
 
-	private Token tokenBegin, tokenEnd;
+	private Lexem lexemBegin, lexemEnd;
 
-	public NonTerminal(Token tokenBegin, Token tokenEnd) {
-		this.tokenBegin = tokenBegin;
-		this.tokenEnd = tokenEnd;
+	public NonTerminal(Lexem lexemBegin, Lexem lexemEnd) {
+		this.lexemBegin = lexemBegin;
+		this.lexemEnd = lexemEnd;
 	}
 
 	@Override
-	public Token getToken() {
-		return tokenBegin;
+	public Lexem getLexem() {
+		return lexemBegin;
 	}
 
-	public Token getTokenEnd() {
-		return tokenEnd;
+	public Lexem getLexemEnd() {
+		return lexemEnd;
 	}
 
 	public abstract int childSize();

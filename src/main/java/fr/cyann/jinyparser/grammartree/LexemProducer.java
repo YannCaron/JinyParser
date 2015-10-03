@@ -1,4 +1,5 @@
-package fr.cyann.jinyparser.grammartree;/**
+package fr.cyann.jinyparser.grammartree;
+/**
  * Copyright (C) 01/10/15 Yann Caron aka cyann
  * <p/>
  * Cette œuvre est mise à disposition sous licence Attribution -
@@ -7,25 +8,25 @@ package fr.cyann.jinyparser.grammartree;/**
  * ou écrivez à Creative Commons, 444 Castro Street, Suite 900, Mountain View, California, 94041, USA.
  **/
 
-import fr.cyann.jinyparser.token.Token;
-import fr.cyann.jinyparser.token.TokenType;
+import fr.cyann.jinyparser.token.Lexem;
+import fr.cyann.jinyparser.token.LexemType;
 
 /**
- * The TokenProducer class. Each time the decorated grammar element is parsed, it produce a Token and store it into the context.<br>
- * That represent the lexer producer function.
+ * The LexemProducer class. Each time the decorated grammar element is parsed, it produce a Lexem and store it into the context.<br>
+ * That represent the lexer production function.
  */
-public class TokenProducer extends GrammarDecorator {
+public class LexemProducer extends GrammarDecorator {
 
-	private final TokenType tokenType;
+	private final LexemType lexemType;
 
 	/**
 	 * The default and mandatory constructor.
-	 * @param tokenType the token type to produce.
+	 * @param lexemType the token type to produce.
 	 * @param decorated the decorated object.
 	 */
-	TokenProducer(TokenType tokenType, GrammarElement decorated) {
+	LexemProducer(LexemType lexemType, GrammarElement decorated) {
 		super(decorated);
-		this.tokenType = tokenType;
+		this.lexemType = lexemType;
 	}
 
 	/** {@inheritDoc} */
@@ -43,9 +44,8 @@ public class TokenProducer extends GrammarDecorator {
 		boolean res = decorated.parse(context);
 
 		if (res) {
-			Token token = new Token(context.getTerm(), tokenType, context.getPos(), context.getLine(), context.getColumn());
-			context.setCurrentToken(token);
-			System.out.println(token);
+			Lexem lexem = new Lexem(context.getTerm(), lexemType, context.getPos(), context.getLine(), context.getColumn());
+			context.appendLexem(lexem);
 		}
 
 		return res;
