@@ -32,6 +32,7 @@ public class Repeat extends GrammarDecorator {
 		}
 
 		while (decorated.parse(context)) {
+			System.out.println("parse again!");
 		}
 
 		return true;

@@ -55,7 +55,7 @@ public class LexemType {
 
 	/**
 	 * Calculate the hash code of the object.
-	 * @return
+	 * @return the hash code.
 	 */
 	@Override
 	public int hashCode() {

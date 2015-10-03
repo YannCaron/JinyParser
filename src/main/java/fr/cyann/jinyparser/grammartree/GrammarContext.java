@@ -138,8 +138,8 @@ public class GrammarContext implements ParsemBuildable {
 	}
 
 	/**
-	 * Give the list of token (lexer) that resulting from lexing.
-	 * @return
+	 * Give the list of lexem (lexer) that resulting from lexing.
+	 * @return the list of lexem
 	 */
 	public Iterable<Lexem> getLexer() {
 		return lexer;
@@ -175,8 +175,8 @@ public class GrammarContext implements ParsemBuildable {
 	// endregion
 
 	/**
-	 * Get the string representation of the object. Useful for debugging.
-	 * @return
+	 * Give the string representation of the object. Useful for debugging.
+	 * @return the string representation of the object.
 	 */
 	@Override
 	public String toString() {

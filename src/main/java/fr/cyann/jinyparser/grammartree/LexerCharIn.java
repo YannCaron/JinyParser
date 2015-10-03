@@ -17,7 +17,7 @@ public class LexerCharIn extends GrammarLeaf {
 
 	/**
 	 * Default constructor.
-	 * @param characters
+	 * @param characters the list of character to test.
 	 */
 	LexerCharIn(String characters) {
 		this.characters = characters;
@@ -26,7 +26,7 @@ public class LexerCharIn extends GrammarLeaf {
 	/**  {@inheritDoc} */
 	@Override
 	protected boolean isTerm(GrammarContext context) {
-		char current = context.currentChar().charValue();
+		char current = context.currentChar();
 		return characters.indexOf(current) != -1;
 	}
 

@@ -10,7 +10,6 @@ package fr.cyann.jinyparser.grammartree;
 
 import fr.cyann.jinyparser.parsetree.Ast;
 import fr.cyann.jinyparser.parsetree.ParsemBuilder;
-import fr.cyann.jinyparser.token.Lexem;
 
 /**
  * The ParsemProducer class. Each time the decorated grammar element is parsed, it produce a Parse tree element and store it into the context.<br>

@@ -14,7 +14,6 @@ package fr.cyann.jinyparser.token;
  */
 public class SourcePosition {
 
-	private final int firstLine;
 	private final int firstColumn;
 
 	private int pos;
@@ -28,9 +27,8 @@ public class SourcePosition {
 	 */
 	public SourcePosition(int firstLine, int firstColumn) {
 		this.pos = 0;
-		this.firstLine = firstLine;
 		this.firstColumn = firstColumn;
-		this.line = this.firstLine;
+		this.line = firstLine;
 		this.column = this.firstColumn;
 	}
 
