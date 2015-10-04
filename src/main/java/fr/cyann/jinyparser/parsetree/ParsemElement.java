@@ -12,11 +12,12 @@ import fr.cyann.jinyparser.token.Lexem;
 /**
  * The ParsemElement definition.
  */
+@SuppressWarnings("WeakerAccess")
 public abstract class ParsemElement {
 
 	private final Lexem lexem;
 
-	public ParsemElement(Lexem lexem) {
+	protected ParsemElement(Lexem lexem) {
 		this.lexem = lexem;
 	}
 

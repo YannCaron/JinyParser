@@ -22,7 +22,7 @@ public class LexemType {
 	/**
 	 * Symbol token type.
 	 */
-	public static LexemType SYMBOL = new LexemType("SYMBOL");
+	public static final LexemType SYMBOL = new LexemType("SYMBOL");
 
 	private static int typeCounter;
 	private final int code;

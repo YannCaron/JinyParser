@@ -1,7 +1,6 @@
 package fr.cyann.jinyparser.grammartree;
 
 import fr.cyann.jinyparser.parsetree.DefaultNonTerminal;
-import fr.cyann.jinyparser.parsetree.DefaultTerminal;
 import fr.cyann.jinyparser.parsetree.Dummy;
 import fr.cyann.jinyparser.parsetree.ParsemBuilder;
 import fr.cyann.jinyparser.token.LexemType;

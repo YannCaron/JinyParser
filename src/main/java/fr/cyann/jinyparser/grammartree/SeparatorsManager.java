@@ -16,7 +16,7 @@ public class SeparatorsManager extends GrammarDecorator {
 	 * A default separator grammar.<br>
 	 * <i>' ' | '\t' | '\0' | '\n'(new line)</i>
 	 */
-	public static final GrammarElement DEFAULT_SEPARATOR =
+	private static final GrammarElement DEFAULT_SEPARATOR =
 			new Choice()
 					.add(new LexerCharIn(" \t\0"))
 					.add(new LineIncrementer(new LexerCharIn("\n")));
@@ -28,7 +28,7 @@ public class SeparatorsManager extends GrammarDecorator {
 	 * @param decorated the object to decorate.
 	 * @param separator the separator peace of grammar that will be checked (if exists) at the beginning of decorated grammar.
 	 */
-	SeparatorsManager(GrammarElement decorated, GrammarElement separator) {
+	private SeparatorsManager(GrammarElement decorated, GrammarElement separator) {
 		super(decorated);
 		this.separator = separator;
 	}

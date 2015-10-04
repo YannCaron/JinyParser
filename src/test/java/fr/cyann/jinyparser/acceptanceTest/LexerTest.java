@@ -23,7 +23,7 @@ import static fr.cyann.jinyparser.grammartree.GrammarFactory.*;
  */
 public class LexerTest extends TestCase {
 
-	private LexemType NUMBER = new LexemType("NUMBER");
+	private static final LexemType NUMBER = new LexemType("NUMBER");
 
 	private List<String> lexerToTerms(Iterable<Lexem> lexer) {
 		List<String> result = new ArrayList<String>();

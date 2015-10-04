@@ -17,19 +17,19 @@ import fr.cyann.jinyparser.token.Lexem;
  */
 public class Dummy extends Terminal {
 
-    public static ParsemBuilder BUILDER = new ParsemBuilder() {
+    public static final ParsemBuilder BUILDER = new ParsemBuilder() {
         @Override
         public ParsemElement buildParsem(ParsemBuildable context) {
             return new Dummy(context.getCurrentLexem());
         }
     };
 
-    public Dummy(Lexem lexem) {
+    private Dummy(Lexem lexem) {
         super(lexem);
     }
 
     @Override
     public String toString() {
-        return "(" + getLexem().getTerm() + ")";
+        return "'" + getLexem().getTerm() + "'";
     }
 }

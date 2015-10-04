@@ -8,11 +8,6 @@ package fr.cyann.jinyparser.visitor;
  * ou écrivez à Creative Commons, 444 Castro Street, Suite 900, Mountain View, California, 94041, USA.
  **/
 
-import fr.cyann.jinyparser.parsetree.ParsemElement;
-import fr.cyann.jinyparser.parsetree.NonTerminal;
-import fr.cyann.jinyparser.parsetree.Terminal;
-import fr.cyann.jinyparser.token.Lexem;
-import fr.cyann.jinyparser.token.LexemType;
 import junit.framework.TestCase;
 
 /**

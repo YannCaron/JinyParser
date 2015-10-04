@@ -11,7 +11,8 @@ package fr.cyann.jinyparser.parsetree;
 
 import fr.cyann.jinyparser.token.Lexem;
 
-import java.util.Arrays;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * The DefaultNonTerminal class definition.<br>
@@ -19,38 +20,57 @@ import java.util.Arrays;
  */
 public class DefaultNonTerminal extends NonTerminal {
 
-    private final ParsemElement[] children;
+    private final List<ParsemElement> children;
 
     public static ParsemBuilder BUILDER(final int length) {
         return new ParsemBuilder() {
             @Override
             public ParsemElement buildParsem(ParsemBuildable context) {
-                ParsemElement[] children = new ParsemElement[length];
+                List<ParsemElement> children = new ArrayList<ParsemElement>();
 
                 for (int i = length - 1; i>=0; i--) {
-                    children[i] = context.popParsem();
+                    children.add(0, context.popParsem());
                 }
 
-                return new DefaultNonTerminal(children[0].getLexem(), children[length - 1].getLexem(), children);
+                return new DefaultNonTerminal(children.get(0).getLexem(), children.get(length - 1).getLexem(), children);
             }
         };
     }
 
-    public DefaultNonTerminal(Lexem lexemBegin, Lexem lexemEnd, ParsemElement[] children) {
+    public void append(int length, ParsemBuildable context) {
+
+        int last = children.size();
+
+        for (int i = length - 1; i>=0; i--) {
+            children.add(last - 1, context.popParsem());
+        }
+    }
+
+    private DefaultNonTerminal(Lexem lexemBegin, Lexem lexemEnd, List<ParsemElement> children) {
         super(lexemBegin, lexemEnd);
         this.children = children;
     }
 
     int size() {
-        return children.length;
+        return children.size();
     }
 
     ParsemElement getItem(int index) {
-        return children[index];
+        return children.get(index);
     }
 
     @Override
     public String toString() {
-        return Arrays.toString(children);
+        StringBuilder sb = new StringBuilder();
+
+        for (ParsemElement child : children) {
+            if (sb.length() > 0) sb.append(' ');
+            sb.append(child);
+        }
+
+        sb.insert(0, '(');
+        sb.append(')');
+
+        return sb.toString();
     }
 }

@@ -33,7 +33,7 @@ public class DefaultTerminal<V> extends Terminal {
             @Override
             public ParsemElement buildParsem(ParsemBuildable context) {
                 Lexem lexem = context.getCurrentLexem();
-                return new DefaultTerminal(lexem, (V) lexem.getTerm());
+                return new DefaultTerminal(lexem, lexem.getTerm());
             }
         };
     }
@@ -41,7 +41,7 @@ public class DefaultTerminal<V> extends Terminal {
 
     @Override
     public String toString() {
-        return this.getClass().getSimpleName() + "[" + getValue() + "]";
+        return this.getClass().getSimpleName() + "'" + getValue() + "'";
     }
 
 }

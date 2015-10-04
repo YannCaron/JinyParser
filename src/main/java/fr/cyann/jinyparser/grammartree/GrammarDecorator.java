@@ -10,6 +10,7 @@ package fr.cyann.jinyparser.grammartree;/**
 /**
  * The GrammarDecorator class. An abstract class for all grammar decorators (add a local parsing functionality).
  */
+@SuppressWarnings("WeakerAccess")
 public abstract class GrammarDecorator extends GrammarElement {
 
 	/**

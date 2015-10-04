@@ -22,8 +22,8 @@ import static fr.cyann.jinyparser.grammartree.GrammarFactory.*;
  */
 public class ParserTest extends TestCase {
 
-    private LexemType NUMBER = new LexemType("NUMBER");
-    private LexemType OPERATOR = new LexemType("OPERATOR");
+    private static final LexemType NUMBER = new LexemType("NUMBER");
+    private static final LexemType OPERATOR = new LexemType("OPERATOR");
 
     public void testTrivialParser() {
 
@@ -39,7 +39,32 @@ public class ParserTest extends TestCase {
         GrammarElement operator = parsemDummy(lexem(OPERATOR, sign));
 
         // parser
-        //GrammarElement grammar = sequence(number, repeat(parsem(AstBinaryExpression.BUILDER, sequence(operator, number))));
+        GrammarElement grammar = sequence(number, repeat(parsem(AstBinaryExpression.BUILDER, sequence(operator, number))));
+
+        // parse
+        GrammarContext c = new GrammarContext(source);
+        grammar.parse(c);
+
+        System.out.println(c.getParseTree());
+
+        assertEquals("('+' ('+' 'n7' 'n10') 'n4')", c.getParseTree().toString());
+
+    }
+
+    public void testTrivialDefaultParsemParser() {
+
+        String source = "7 + 10 + 4";
+
+        // term
+        GrammarElement digit = lexerCharIn("0123456789");
+        GrammarElement sign = lexerCharIn("+-*/%");
+
+        // lexer
+        GrammarElement number = parsem(AstNumber.BUILDER, lexem(NUMBER, repeat(digit)));
+
+        GrammarElement operator = parsemDummy(lexem(OPERATOR, sign));
+
+        // parser
         GrammarElement grammar = sequence(number, repeat(parsemNonTerminal(3, sequence(operator, number))));
 
         // parse
@@ -48,11 +73,13 @@ public class ParserTest extends TestCase {
 
         System.out.println(c.getParseTree());
 
+        assertEquals("(('n7' '+' 'n10') '+' 'n4')", c.getParseTree().toString());
+
     }
 
     static class AstNumber extends DefaultTerminal<Integer> {
 
-        public static ParsemBuilder BUILDER = new ParsemBuilder() {
+        public static final ParsemBuilder BUILDER = new ParsemBuilder() {
             @Override
             public ParsemElement buildParsem(ParsemBuildable context) {
                 Lexem lexem = context.getCurrentLexem();
@@ -66,27 +93,26 @@ public class ParserTest extends TestCase {
 
         @Override
         public String toString() {
-            return "(N " + getValue() + ")";
+            return "'n" + getValue() + "'";
         }
     }
 
     static class AstBinaryExpression extends NonTerminal {
 
-        private final String sign;
-        private ParsemElement left, right;
+        private final ParsemElement sign, left, right;
 
-        public static ParsemBuilder BUILDER = new ParsemBuilder() {
+        public static final ParsemBuilder BUILDER = new ParsemBuilder() {
             @Override
             public ParsemElement buildParsem(ParsemBuildable context) {
                 ParsemElement right = context.popParsem();
                 ParsemElement operator = context.popParsem();
                 ParsemElement left = context.popParsem();
 
-                return new AstBinaryExpression(left.getLexem(), right.getLexem(), operator.getLexem().getTerm(), left, right);
+                return new AstBinaryExpression(left.getLexem(), right.getLexem(), operator, left, right);
             }
         };
 
-        public AstBinaryExpression(Lexem lexemBegin, Lexem lexemEnd, String sign, ParsemElement left, ParsemElement right) {
+        public AstBinaryExpression(Lexem lexemBegin, Lexem lexemEnd, ParsemElement sign, ParsemElement left, ParsemElement right) {
             super(lexemBegin, lexemEnd);
             this.sign = sign;
             this.left = left;

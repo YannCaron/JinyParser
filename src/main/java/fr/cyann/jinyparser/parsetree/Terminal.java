@@ -12,9 +12,11 @@ import fr.cyann.jinyparser.token.Lexem;
 /**
  * The Terminal definition.
  */
+@SuppressWarnings("WeakerAccess")
 public abstract class Terminal extends ParsemElement {
 
-	public Terminal(Lexem lexem) {
+	protected Terminal(Lexem lexem) {
 		super(lexem);
 	}
+
 }
