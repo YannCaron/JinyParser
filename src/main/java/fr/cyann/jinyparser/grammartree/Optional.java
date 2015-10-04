@@ -20,7 +20,7 @@ public class Optional extends GrammarDecorator {
 	/** {@inheritDoc} */
 	@Override
 	protected boolean lookahead(GrammarContext context) {
-		return false;
+		return true;
 	}
 
 	/** {@inheritDoc} */
