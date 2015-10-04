@@ -33,7 +33,26 @@ public class Choice extends GrammarNode {
      */
     @Override
     protected boolean lookahead(GrammarContext context) {
+
+        for (GrammarElement child : this) {
+
+            if (lookahead(child, context)) {
+                return true;
+            }
+
+        }
+
         return false;
+
+    }
+
+    private boolean lookahead(GrammarElement child, GrammarContext context) {
+
+        context.markChar();
+        boolean result = child.lookahead(context);
+        context.rollbackChar();
+
+        return result;
     }
 
     /**
@@ -42,9 +61,12 @@ public class Choice extends GrammarNode {
     @Override
     public boolean parse(GrammarContext context) {
         for (GrammarElement child : this) {
-            if (child.parse(context)) {
+
+            if (lookahead(child, context)) {
+                child.parse(context);
                 return true;
             }
+
         }
 
         return false;

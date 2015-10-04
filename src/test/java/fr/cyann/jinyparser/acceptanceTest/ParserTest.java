@@ -77,6 +77,32 @@ public class ParserTest extends TestCase {
 
     }
 
+    public void testLLkParser() {
+
+        String source = "7 - 10 + 4";
+
+        // lexer
+        GrammarElement number = parsem(AstNumber.BUILDER, lexem(NUMBER, repeat(lexerCharIn("0123456789"))));
+
+        GrammarElement addSign = parsemDummy(lexem(OPERATOR, lexerCharIn("+")));
+        GrammarElement minusSign = parsemDummy(lexem(OPERATOR, lexerCharIn("-")));
+
+        GrammarElement addition = parsem(AstBinaryExpression.BUILDER, sequence(addSign, number));
+        GrammarElement subtraction = parsem(AstBinaryExpression.BUILDER, sequence(minusSign, number));
+
+        // parser
+        GrammarElement grammar = sequence(number, choice(addition, subtraction));
+
+        // parse
+        GrammarContext c = new GrammarContext(source);
+        grammar.parse(c);
+
+        System.out.println(c.getParseTree());
+
+        assertEquals("('-' ('+' 'n7' 'n10') 'n4')", c.getParseTree().toString());
+
+    }
+
     static class AstNumber extends DefaultTerminal<Integer> {
 
         public static final ParsemBuilder BUILDER = new ParsemBuilder() {
