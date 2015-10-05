@@ -8,8 +8,10 @@ package fr.cyann.jinyparser.acceptanceTest;
  * ou écrivez à Creative Commons, 444 Castro Street, Suite 900, Mountain View, California, 94041, USA.
  **/
 
+import fr.cyann.jinyparser.grammartree.Choice;
 import fr.cyann.jinyparser.grammartree.GrammarContext;
 import fr.cyann.jinyparser.grammartree.GrammarElement;
+import fr.cyann.jinyparser.grammartree.GrammarNode;
 import fr.cyann.jinyparser.parsetree.*;
 import fr.cyann.jinyparser.token.Lexem;
 import fr.cyann.jinyparser.token.LexemType;
@@ -79,7 +81,7 @@ public class ParserTest extends TestCase {
 
     public void testLLkParser() {
 
-        String source = "7- 10+4";
+        String source = "7 - 10 + 4";
 
         // lexer
         GrammarElement number = parsem(AstNumber.BUILDER, lexem(NUMBER, repeat(lexerCharIn("0123456789"))));
@@ -99,7 +101,75 @@ public class ParserTest extends TestCase {
 
         System.out.println("Parse tree: " + c.getParseTree());
 
-        //assertEquals("('-' ('+' 'n7' 'n10') 'n4')", c.getParseTree().toString());
+        assertEquals("('+' ('-' 'n7' 'n10') 'n4')", c.getParseTree().toString());
+
+    }
+
+
+    public void testOperatorLevelParser() {
+
+        String source = "7 + 10 * 4 + 7";
+
+        // lexer
+        GrammarElement number = parsem(AstNumber.BUILDER, lexem(NUMBER, repeat(lexerCharIn("0123456789"))));
+
+        GrammarElement addSign = parsemDummy(lexem(OPERATOR, lexerCharIn("+")));
+        GrammarElement multiplySign = parsemDummy(lexem(OPERATOR, lexerCharIn("*")));
+
+        // <multiplication> := <number> [ { '*' <number> } ]
+        GrammarElement multiplication = sequence(number, optional(repeat(parsem(AstBinaryExpression.BUILDER, sequence(multiplySign, number)))));
+
+        // <addition> := <multiplication> [ { '+' <multiplication> } ]
+        GrammarElement addition = sequence(multiplication, optional(repeat(parsem(AstBinaryExpression.BUILDER, sequence(addSign, multiplication)))));
+
+        // parser
+        GrammarElement grammar = addition;
+
+        // parse
+        GrammarContext c = new GrammarContext(source);
+        grammar.parse(c);
+
+        System.out.println("Parse tree: " + c.getParseTree());
+
+        assertEquals("('+' ('+' 'n7' ('*' 'n10' 'n4')) 'n7')", c.getParseTree().toString());
+
+    }
+
+    public void testOperatorLevelWithParenthesisParser() {
+
+        String source = "7 + 10 * (4 + 7)";
+
+        // lexer
+        GrammarElement leftParenthesis = lexem(LexemType.SYMBOL, lexerCharIn("("));
+        GrammarElement rightParenthesis = lexem(LexemType.SYMBOL, lexerCharIn(")"));
+        GrammarElement number = parsem(AstNumber.BUILDER, lexem(NUMBER, repeat(lexerCharIn("0123456789"))));
+
+        GrammarElement addSign = parsemDummy(lexem(OPERATOR, lexerCharIn("+")));
+        GrammarElement multiplySign = parsemDummy(lexem(OPERATOR, lexerCharIn("*")));
+
+        GrammarElement addition;
+        GrammarElement multiplication;
+        GrammarNode num = new Choice();
+
+        // <multiplication> := <number> [ { '*' <number> } ]
+        multiplication = sequence(num, optional(repeat(parsem(AstBinaryExpression.BUILDER, sequence(multiplySign, num)))));
+
+        // <addition> := <multiplication> [ { '+' <multiplication> } ]
+        addition = sequence(multiplication, optional(repeat(parsem(AstBinaryExpression.BUILDER, sequence(addSign, multiplication)))));
+
+        // <num> := '(' <addition> ')' | <number>
+        num.add(number).add(sequence(leftParenthesis, addition, rightParenthesis));
+
+        // parser
+        GrammarElement grammar = addition;
+
+        // parse
+        GrammarContext c = new GrammarContext(source);
+        grammar.parse(c);
+
+        System.out.println("Parse tree: " + c.getParseTree());
+
+        assertEquals("('+' ('+' 'n7' ('*' 'n10' 'n4')) 'n7')", c.getParseTree().toString());
 
     }
 
