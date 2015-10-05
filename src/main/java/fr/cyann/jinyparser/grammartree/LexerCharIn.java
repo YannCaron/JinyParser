@@ -23,16 +23,54 @@ public class LexerCharIn extends GrammarLeaf {
 		this.characters = characters;
 	}
 
-	/**  {@inheritDoc} */
-	@Override
-	protected boolean isTerm(GrammarContext context) {
+	private boolean isTerm(GrammarContext context) {
 		char current = context.currentChar();
 		return characters.indexOf(current) != -1;
 	}
 
 	/**  {@inheritDoc} */
 	@Override
-	protected void action(GrammarContext context) {
-		context.nextChar();
+	protected boolean lookahead(GrammarContext context) {
+		boolean result = isTerm(context);
+		if (result) context.nextChar();
+		return result;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public boolean parse(GrammarContext context) {
+		boolean result = isTerm(context);
+		if (result) context.nextCharAndBuild();
+		return result;
+	}
+
+	/**
+	 * Give the BNF representation of the grammar expression.
+	 *
+	 * @return the BNF representation.
+	 */
+	@Override
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		for (char c : characters.toCharArray()) {
+			if (sb.length() > 0) sb.append(" | ");
+			sb.append('\'');
+
+			if (c == '\n') sb.append("\\n");
+			else if (c == '\t') sb.append("\\t");
+			else if (c == '\0') sb.append("\\0");
+			else sb.append(c);
+
+			sb.append('\'');
+		}
+
+		if (characters.length() > 1) {
+			sb.insert(0, '(');
+			sb.append(')');
+		}
+
+		return sb.toString();
 	}
 }

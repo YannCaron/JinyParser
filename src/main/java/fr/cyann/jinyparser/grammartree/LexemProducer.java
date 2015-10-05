@@ -50,4 +50,14 @@ public class LexemProducer extends GrammarDecorator {
 
 		return res;
 	}
+
+	/**
+	 * Give the BNF representation of the grammar expression.
+	 *
+	 * @return the BNF representation.
+	 */
+	@Override
+	public String toString() {
+		return lexemType + "(" + decorated.toString() + ")";
+	}
 }

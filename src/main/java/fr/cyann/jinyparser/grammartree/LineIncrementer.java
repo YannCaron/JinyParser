@@ -36,9 +36,17 @@ public class LineIncrementer extends GrammarDecorator {
 	@Override
 	public boolean parse(GrammarContext context) {
 		boolean result = decorated.parse(context);
-		if (result) {
-			context.newLine();
-		}
+		if (result) context.newLine();
 		return result;
+	}
+
+	/**
+	 * Give the BNF representation of the grammar expression.
+	 *
+	 * @return the BNF representation.
+	 */
+	@Override
+	public String toString() {
+		return "newLine(" + decorated.toString() + ")";
 	}
 }

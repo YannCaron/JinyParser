@@ -11,31 +11,4 @@ package fr.cyann.jinyparser.grammartree;/**
  * The GrammarLeaf definition.
  */
 abstract class GrammarLeaf extends GrammarElement {
-
-    /**
-     * Test if source code is the term corresponding to grammar.
-     * @param context the grammar resources.
-     * @return true if the term correspond to grammar.
-     */
-    protected abstract boolean isTerm(GrammarContext context);
-
-    /**
-     * What to do when term is found (usually go to next).
-     * @param context the grammar resources.
-     */
-    protected abstract void action(GrammarContext context);
-
-    /**  {@inheritDoc} */
-    @Override
-    protected boolean lookahead(GrammarContext context) {
-        return isTerm(context);
-    }
-
-    /**  {@inheritDoc} */
-    @Override
-    public boolean parse(GrammarContext context) {
-        boolean ret = isTerm(context);
-        if (ret) action(context);
-        return ret;
-    }
 }

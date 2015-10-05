@@ -8,8 +8,8 @@ package fr.cyann.jinyparser.grammartree;
  * ou écrivez à Creative Commons, 444 Castro Street, Suite 900, Mountain View, California, 94041, USA.
  **/
 
-import fr.cyann.jinyparser.parsetree.ParsemElement;
 import fr.cyann.jinyparser.parsetree.ParsemBuilder;
+import fr.cyann.jinyparser.parsetree.ParsemElement;
 
 /**
  * The ParsemProducer class. Each time the decorated grammar element is parsed, it produce a Parse tree element and store it into the context.<br>
@@ -51,9 +51,19 @@ public class ParsemProducer extends GrammarDecorator {
             ParsemElement parsem = builder.buildParsem(context);
 
             context.pushParsem(parsem);
-            System.out.println(parsem);
         }
 
         return res;
+    }
+
+    /**
+     * Give the BNF representation of the grammar expression.
+     *
+     * @return the BNF representation.
+     */
+    @Override
+    public String toString() {
+        //return "parsem(" + decorated + ")";
+        return decorated.toString();
     }
 }

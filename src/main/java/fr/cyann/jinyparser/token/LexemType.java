@@ -15,15 +15,13 @@ package fr.cyann.jinyparser.token;/**
 public class LexemType {
 
 	/**
-	 * Separator token type.
-	 */
-	public static LexemType SEPARATOR = new LexemType("SEPARATOR");
-
-	/**
 	 * Symbol token type.
 	 */
 	public static final LexemType SYMBOL = new LexemType("SYMBOL");
-
+	/**
+	 * Separator token type.
+	 */
+	public static LexemType SEPARATOR = new LexemType("SEPARATOR");
 	private static int typeCounter;
 	private final int code;
 	private final String name;
@@ -68,6 +66,7 @@ public class LexemType {
 	 */
 	@Override
 	public String toString() {
-		return name + "(" + code + ")";
+		//return name + "(" + code + ")";
+		return name;
 	}
 }

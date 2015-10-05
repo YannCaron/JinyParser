@@ -61,7 +61,6 @@ public class Choice extends GrammarNode {
     @Override
     public boolean parse(GrammarContext context) {
         for (GrammarElement child : this) {
-
             if (lookahead(child, context)) {
                 child.parse(context);
                 return true;
@@ -70,5 +69,20 @@ public class Choice extends GrammarNode {
         }
 
         return false;
+    }
+
+    /**
+     * Give the BNF representation of the grammar expression.
+     *
+     * @return the BNF representation.
+     */
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        for (GrammarElement child : this) {
+            if (sb.length() > 0) sb.append(" | ");
+            sb.append(child.toString());
+        }
+        return sb.toString();
     }
 }

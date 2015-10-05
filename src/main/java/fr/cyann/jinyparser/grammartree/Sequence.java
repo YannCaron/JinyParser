@@ -36,7 +36,7 @@ public class Sequence extends GrammarNode {
     @Override
     protected boolean lookahead(GrammarContext context) {
         for (GrammarElement child : this) {
-            boolean result = child.parse(context);
+            boolean result = child.lookahead(context);
             if (!result) {
                 return false;
             }
@@ -58,5 +58,20 @@ public class Sequence extends GrammarNode {
         }
 
         return true;
+    }
+
+    /**
+     * Give the BNF representation of the grammar expression.
+     *
+     * @return the BNF representation.
+     */
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        for (GrammarElement child : this) {
+            if (sb.length() > 0) sb.append(' ');
+            sb.append(child.toString());
+        }
+        return sb.toString();
     }
 }

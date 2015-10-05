@@ -123,15 +123,6 @@ public final class GrammarFactory {
         return new LineIncrementer(decorated);
     }
 
-    /**
-     * Create a new position incrementer grammar element.
-     * @param decorated the grammar element to decorate.
-     * @return the new grammar element.
-     */
-    public static PosIncrementer posIncrementer(GrammarElement decorated) {
-        return new PosIncrementer(decorated);
-    }
-
     // endregion
 
     // region lexer

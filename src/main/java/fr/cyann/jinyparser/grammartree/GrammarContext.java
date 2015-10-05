@@ -7,10 +7,10 @@ package fr.cyann.jinyparser.grammartree;/**
  * ou écrivez à Creative Commons, 444 Castro Street, Suite 900, Mountain View, California, 94041, USA.
  **/
 
+import fr.cyann.jinyparser.parsetree.ParsemBuildable;
 import fr.cyann.jinyparser.parsetree.ParsemElement;
 import fr.cyann.jinyparser.token.Lexem;
 import fr.cyann.jinyparser.token.SourcePosition;
-import fr.cyann.jinyparser.parsetree.ParsemBuildable;
 import fr.cyann.jinyparser.utils.StringLookaheadIterator;
 
 import java.util.ArrayList;
@@ -69,6 +69,13 @@ public class GrammarContext implements ParsemBuildable {
 	 * Jump to next character in the source code.
 	 */
 	public void nextChar() {
+		it.next();
+	}
+
+	/**
+	 * Jump to next character in the source code and build current word.
+	 */
+	public void nextCharAndBuild() {
 		term.append(it.current());
 		it.next();
 	}
@@ -168,6 +175,7 @@ public class GrammarContext implements ParsemBuildable {
 	 * @return the first element in the stack.
 	 */
 	public ParsemElement getParseTree() {
+		if (parser.empty()) return null;
 		return parser.firstElement();
 	}
 	//endregion
@@ -180,6 +188,7 @@ public class GrammarContext implements ParsemBuildable {
 	 */
 	@Override
 	public String toString() {
-		return "ParseContext:\n" + it.toString() + /*"\nAST: " + getParseTree().toString()*/ +'\n';
+		String str = "ParseContext:\n" + it.toString() + "\nAST: " + getParseTree().toString();
+		return str;
 	}
 }

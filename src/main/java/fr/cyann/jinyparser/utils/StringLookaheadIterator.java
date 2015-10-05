@@ -91,8 +91,9 @@ public class StringLookaheadIterator implements LookaheadIterator<Character> {
 		sb.append("\n\t");
 		for (int i = 0; i < index; i++) sb.append('-');
 		sb.append("^\n");
-		sb.append("current: ");
+		sb.append("current: [");
 		sb.append(current());
+		sb.append(']');
 		return sb.toString();
 	}
 }

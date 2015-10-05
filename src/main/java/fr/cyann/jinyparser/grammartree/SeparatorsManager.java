@@ -7,6 +7,8 @@ package fr.cyann.jinyparser.grammartree;/**
  * ou écrivez à Creative Commons, 444 Castro Street, Suite 900, Mountain View, California, 94041, USA.
  **/
 
+import static fr.cyann.jinyparser.grammartree.GrammarFactory.*;
+
 /**
  * The SeparatorsManager class. Grammar element that help to manage the separator characters between two real grammar.
  */
@@ -17,9 +19,7 @@ public class SeparatorsManager extends GrammarDecorator {
 	 * <i>' ' | '\t' | '\0' | '\n'(new line)</i>
 	 */
 	private static final GrammarElement DEFAULT_SEPARATOR =
-			new Choice()
-					.add(new LexerCharIn(" \t\0"))
-					.add(new LineIncrementer(new LexerCharIn("\n")));
+			choice(lexerCharIn(" \t\0"), lineIncrementer(lexerCharIn("\n")));
 
 	private final GrammarElement separator;
 
@@ -41,7 +41,8 @@ public class SeparatorsManager extends GrammarDecorator {
 	/** {@inheritDoc} */
 	@Override
 	protected boolean lookahead(GrammarContext context) {
-		return false;
+		separator.lookahead(context);
+		return decorated.lookahead(context);
 	}
 
 	/** {@inheritDoc} */
@@ -49,5 +50,16 @@ public class SeparatorsManager extends GrammarDecorator {
 	public boolean parse(GrammarContext context) {
 		separator.parse(context);
 		return decorated.parse(context);
+	}
+
+	/**
+	 * Give the BNF representation of the grammar expression.
+	 *
+	 * @return the BNF representation.
+	 */
+	@Override
+	public String toString() {
+		//return "([" + separator.toString() + "] " + decorated.toString() + ")";
+		return "[<sep>] " + decorated.toString();
 	}
 }

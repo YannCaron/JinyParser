@@ -32,9 +32,22 @@ public class Repeat extends GrammarDecorator {
 		}
 
 		while (decorated.parse(context)) {
-			System.out.println("parse again!");
 		}
 
 		return true;
+	}
+
+	/**
+	 * Give the BNF representation of the grammar expression.
+	 *
+	 * @return the BNF representation.
+	 */
+	@Override
+	public String toString() {
+		String deco = decorated.toString();
+		if ((deco.charAt(0) == '(' && deco.charAt(deco.length() - 1) == ')')) {
+			deco = deco.substring(1, deco.length() - 2);
+		}
+		return "{" + deco + "}";
 	}
 }
