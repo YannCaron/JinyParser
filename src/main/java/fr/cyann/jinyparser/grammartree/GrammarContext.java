@@ -51,10 +51,17 @@ public class GrammarContext implements ParsemBuildable {
 	}
 
 	/**
-	 * Backtrack to the last marked position.
+	 * Restore (pop) the stored position to the actual one.
 	 */
 	public void rollbackChar() {
 		it.rollback();
+	}
+
+	/**
+	 * Garbage (pop) the stored position.
+	 */
+	public void resumeChar() {
+		it.resume();
 	}
 
 	/**
@@ -188,7 +195,7 @@ public class GrammarContext implements ParsemBuildable {
 	 */
 	@Override
 	public String toString() {
-		String str = "ParseContext:\n" + it.toString() + "\nAST: " + getParseTree().toString();
+		String str = "ParseContext:\n" + it + "\nAST: " + getParseTree();
 		return str;
 	}
 }

@@ -36,7 +36,7 @@ public class Choice extends GrammarNode {
 
         for (GrammarElement child : this) {
 
-            if (lookahead(child, context)) {
+            if (child.lookahead(context)) {
                 return true;
             }
 
@@ -46,22 +46,18 @@ public class Choice extends GrammarNode {
 
     }
 
-    private boolean lookahead(GrammarElement child, GrammarContext context) {
-
-        context.markChar();
-        boolean result = child.lookahead(context);
-        context.rollbackChar();
-
-        return result;
-    }
-
     /**
      * {@inheritDoc}
      */
     @Override
     public boolean parse(GrammarContext context) {
         for (GrammarElement child : this) {
-            if (lookahead(child, context)) {
+
+            context.markChar();
+            boolean lookaheadResult = child.lookahead(context);
+            context.rollbackChar();
+
+            if (lookaheadResult) {
                 child.parse(context);
                 return true;
             }
