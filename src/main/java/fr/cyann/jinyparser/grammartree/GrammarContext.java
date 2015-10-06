@@ -195,7 +195,6 @@ public class GrammarContext implements ParsemBuildable {
 	 */
 	@Override
 	public String toString() {
-		String str = "ParseContext:\n" + it + "\nAST: " + getParseTree();
-		return str;
+		return "ParseContext:\n" + it + "\nAST: " + getParseTree();
 	}
 }

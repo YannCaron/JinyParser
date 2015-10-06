@@ -11,6 +11,8 @@ package fr.cyann.jinyparser.grammartree;
 import fr.cyann.jinyparser.parsetree.ParsemBuilder;
 import fr.cyann.jinyparser.parsetree.ParsemElement;
 
+import java.util.Set;
+
 /**
  * The ParsemProducer class. Each time the decorated grammar element is parsed, it produce a Parse tree element and store it into the context.<br>
  * That represent the parser production function.
@@ -57,13 +59,13 @@ public class ParsemProducer extends GrammarDecorator {
     }
 
     /**
-     * Give the BNF representation of the grammar expression.
-     *
-     * @return the BNF representation.
+     * {@inheritDoc}
      */
     @Override
-    public String toString() {
-        //return "parsem(" + decorated + ")";
-        return decorated.toString();
+    public void abstractBuildString(Set<GrammarElement> alreadyBuilt, StringBuilder sb) {
+        //sb.append("parsem(");
+        decorated.buildString(alreadyBuilt, sb);
+        //sb.append(')');
     }
+
 }

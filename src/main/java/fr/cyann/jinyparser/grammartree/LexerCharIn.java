@@ -7,6 +7,8 @@ package fr.cyann.jinyparser.grammartree;/**
  * ou écrivez à Creative Commons, 444 Castro Street, Suite 900, Mountain View, California, 94041, USA.
  **/
 
+import java.util.Set;
+
 /**
  * The LexerCharIn definition.
  */
@@ -47,30 +49,18 @@ public class LexerCharIn extends GrammarLeaf {
 	}
 
 	/**
-	 * Give the BNF representation of the grammar expression.
-	 *
-	 * @return the BNF representation.
+	 * {@inheritDoc}
 	 */
 	@Override
-	public String toString() {
-		StringBuilder sb = new StringBuilder();
-		for (char c : characters.toCharArray()) {
-			if (sb.length() > 0) sb.append(" | ");
-			sb.append('\'');
+	public void abstractBuildString(Set<GrammarElement> alreadyBuilt, StringBuilder sb) {
+		String formatted = characters;
+		formatted = formatted.replace("\0", "\\0");
+		formatted = formatted.replace("\t", "\\t");
+		formatted = formatted.replace("\n", "\\n");
 
-			if (c == '\n') sb.append("\\n");
-			else if (c == '\t') sb.append("\\t");
-			else if (c == '\0') sb.append("\\0");
-			else sb.append(c);
-
-			sb.append('\'');
-		}
-
-		if (characters.length() > 1) {
-			sb.insert(0, '(');
-			sb.append(')');
-		}
-
-		return sb.toString();
+		sb.append('\"');
+		sb.append(formatted);
+		sb.append('\"');
 	}
+
 }

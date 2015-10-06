@@ -9,6 +9,9 @@ package fr.cyann.jinyparser.grammartree;
  * ou écrivez à Creative Commons, 444 Castro Street, Suite 900, Mountain View, California, 94041, USA.
  **/
 
+import java.util.HashSet;
+import java.util.Set;
+
 /**
  * The GrammarElement class. Then top abstract class of all grammar elements.<br>
  * Based on Interpreter / Composite GoF design pattern. <br>
@@ -31,5 +34,45 @@ public abstract class GrammarElement {
 	 * @return true if parsing succeed, false otherwise.
 	 */
 	public abstract boolean parse(GrammarContext context);
+
+	/**
+	 * Build the string representation of the object hierarchy abstract method.<br>
+	 * Written on the top of Template method GoF design pattern.
+	 *
+	 * @param alreadyBuilt the set of object already already built (avoid stack overflow).
+	 * @param sb           the string builder to append on it.
+	 */
+	public abstract void abstractBuildString(Set<GrammarElement> alreadyBuilt, StringBuilder sb);
+
+	/**
+	 * Build the string representation of the object hierarchy main method.<br>
+	 * Manage the grammar cyclic references.
+	 *
+	 * @param alreadyBuilt the set of object already already built (avoid stack overflow).
+	 * @param sb           the string builder to append on it.
+	 */
+	public StringBuilder buildString(Set<GrammarElement> alreadyBuilt, StringBuilder sb) {
+		if (alreadyBuilt.contains(this)) {
+			sb.append('<');
+			sb.append(this.getClass().getSimpleName());
+			sb.append('>');
+			return sb;
+		}
+		alreadyBuilt.add(this);
+
+		abstractBuildString(alreadyBuilt, sb);
+		return sb;
+	}
+
+	/**
+	 * Give the BNF representation of the grammar expression.<br>
+	 * Use abstractBuildString method to construct the tree toString representation.
+	 *
+	 * @return the BNF representation.
+	 */
+	@Override
+	public String toString() {
+		return buildString(new HashSet<GrammarElement>(), new StringBuilder()).toString();
+	}
 
 }

@@ -11,6 +11,8 @@ package fr.cyann.jinyparser.grammartree;
 import fr.cyann.jinyparser.token.Lexem;
 import fr.cyann.jinyparser.token.LexemType;
 
+import java.util.Set;
+
 /**
  * The LexemProducer class. Each time the decorated grammar element is parsed, it produce a Lexem and store it into the context.<br>
  * That represent the lexer production function.
@@ -52,12 +54,14 @@ public class LexemProducer extends GrammarDecorator {
 	}
 
 	/**
-	 * Give the BNF representation of the grammar expression.
-	 *
-	 * @return the BNF representation.
+	 * {@inheritDoc}
 	 */
 	@Override
-	public String toString() {
-		return lexemType + "(" + decorated.toString() + ")";
+	public void abstractBuildString(Set<GrammarElement> alreadyBuilt, StringBuilder sb) {
+		sb.append(lexemType);
+		sb.append('(');
+		decorated.buildString(alreadyBuilt, sb);
+		sb.append(')');
 	}
+
 }

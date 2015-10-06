@@ -7,6 +7,8 @@ package fr.cyann.jinyparser.grammartree;/**
  * ou écrivez à Creative Commons, 444 Castro Street, Suite 900, Mountain View, California, 94041, USA.
  **/
 
+import java.util.Set;
+
 /**
  * The Choice class. A compound grammar node that choosing among its children nodes to determine the appropriate grammar.<br>
  * Run as an <b>or</b> operator (BNF:+ sign); check if this or this or this is the appropriate grammar.<br>
@@ -22,24 +24,23 @@ public class Choice extends GrammarNode {
         super();
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     Choice(GrammarElement[] children) {
         super(children);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     protected boolean lookahead(GrammarContext context) {
 
         for (GrammarElement child : this) {
 
+            context.markChar();
             if (child.lookahead(context)) {
+                context.resumeChar();
                 return true;
             }
+            context.rollbackChar();
 
         }
 
@@ -47,9 +48,7 @@ public class Choice extends GrammarNode {
 
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public boolean parse(GrammarContext context) {
         for (GrammarElement child : this) {
@@ -68,18 +67,15 @@ public class Choice extends GrammarNode {
         return false;
     }
 
-    /**
-     * Give the BNF representation of the grammar expression.
-     *
-     * @return the BNF representation.
-     */
+    /** {@inheritDoc} */
     @Override
-    public String toString() {
-        StringBuilder sb = new StringBuilder();
+    public void abstractBuildString(Set<GrammarElement> alreadyBuilt, StringBuilder sb) {
+        boolean first = true;
         for (GrammarElement child : this) {
-            if (sb.length() > 0) sb.append(" | ");
-            sb.append(child.toString());
+            if (!first) sb.append(" | ");
+            first = false;
+            child.buildString(alreadyBuilt, sb);
         }
-        return sb.toString();
     }
+
 }

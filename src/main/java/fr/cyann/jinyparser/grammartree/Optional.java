@@ -7,6 +7,8 @@ package fr.cyann.jinyparser.grammartree;/**
  * ou écrivez à Creative Commons, 444 Castro Street, Suite 900, Mountain View, California, 94041, USA.
  **/
 
+import java.util.Set;
+
 /**
  * The Optional class. Used to indicate an optional part of the grammar. The part if evaluated if necessary but parsing is always successful even if grammar does not exists.
  */
@@ -20,6 +22,7 @@ public class Optional extends GrammarDecorator {
 	/** {@inheritDoc} */
 	@Override
 	protected boolean lookahead(GrammarContext context) {
+		decorated.lookahead(context);
 		return true;
 	}
 
@@ -31,16 +34,13 @@ public class Optional extends GrammarDecorator {
 	}
 
 	/**
-	 * Give the BNF representation of the grammar expression.
-	 *
-	 * @return the BNF representation.
+	 * {@inheritDoc}
 	 */
 	@Override
-	public String toString() {
-		String deco = decorated.toString();
-		if ((deco.charAt(0) == '(' && deco.charAt(deco.length() - 1) == ')')) {
-			deco = deco.substring(1, deco.length() - 2);
-		}
-		return "[" + deco + "]";
+	public void abstractBuildString(Set<GrammarElement> alreadyBuilt, StringBuilder sb) {
+		sb.append('[');
+		decorated.buildString(alreadyBuilt, sb);
+		sb.append(']');
 	}
+
 }

@@ -7,6 +7,8 @@ package fr.cyann.jinyparser.grammartree;/**
  * ou écrivez à Creative Commons, 444 Castro Street, Suite 900, Mountain View, California, 94041, USA.
  **/
 
+import java.util.Set;
+
 import static fr.cyann.jinyparser.grammartree.GrammarFactory.*;
 
 /**
@@ -53,13 +55,14 @@ public class SeparatorsManager extends GrammarDecorator {
 	}
 
 	/**
-	 * Give the BNF representation of the grammar expression.
-	 *
-	 * @return the BNF representation.
+	 * {@inheritDoc}
 	 */
 	@Override
-	public String toString() {
-		//return "([" + separator.toString() + "] " + decorated.toString() + ")";
-		return "[<sep>] " + decorated.toString();
+	public void abstractBuildString(Set<GrammarElement> alreadyBuilt, StringBuilder sb) {
+		/* sb.append('[');
+		separator.buildString(alreadyBuilt, sb);
+		sb.append(']');*/
+		sb.append("[<sep>] ");
+		decorated.buildString(alreadyBuilt, sb);
 	}
 }

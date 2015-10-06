@@ -122,12 +122,9 @@ public class ParserTest extends TestCase {
         // <addition> := <multiplication> [ { '+' <multiplication> } ]
         GrammarElement addition = sequence(multiplication, optional(repeat(parsem(AstBinaryExpression.BUILDER, sequence(addSign, multiplication)))));
 
-        // parser
-        GrammarElement grammar = addition;
-
         // parse
         GrammarContext c = new GrammarContext(source);
-        grammar.parse(c);
+        addition.parse(c);
 
         System.out.println("Parse tree: " + c.getParseTree());
 
@@ -157,7 +154,7 @@ public class ParserTest extends TestCase {
         // <addition> := <multiplication> [ { '+' <multiplication> } ]
         addition = sequence(multiplication, optional(repeat(parsem(AstBinaryExpression.BUILDER, sequence(addSign, multiplication)))));
 
-        // <num> := '(' <addition> ')' | <number>
+        // <num> := <number> | '(' <addition> ')'
         num.add(number).add(sequence(leftParenthesis, addition, rightParenthesis));
 
         // parser
@@ -169,7 +166,37 @@ public class ParserTest extends TestCase {
 
         System.out.println("Parse tree: " + c.getParseTree());
 
-        assertEquals("('+' ('+' 'n7' ('*' 'n10' 'n4')) 'n7')", c.getParseTree().toString());
+        assertEquals("('+' 'n7' ('*' 'n10' ('+' 'n4' 'n7')))", c.getParseTree().toString());
+
+    }
+
+    public void testGrammarToStringLoop() {
+
+        // lexer
+        GrammarElement leftParenthesis = lexem(LexemType.SYMBOL, lexerCharIn("("));
+        GrammarElement rightParenthesis = lexem(LexemType.SYMBOL, lexerCharIn(")"));
+        GrammarElement number = parsem(AstNumber.BUILDER, lexem(NUMBER, repeat(lexerCharIn("0123456789"))));
+
+        GrammarElement addSign = parsemDummy(lexem(OPERATOR, lexerCharIn("+")));
+        GrammarElement multiplySign = parsemDummy(lexem(OPERATOR, lexerCharIn("*")));
+
+        GrammarElement addition;
+        GrammarElement multiplication;
+        GrammarNode num = new Choice();
+
+        // <multiplication> := <number> [ { '*' <number> } ]
+        multiplication = sequence(num, optional(repeat(parsem(AstBinaryExpression.BUILDER, sequence(multiplySign, num)))));
+
+        // <addition> := <multiplication> [ { '+' <multiplication> } ]
+        addition = sequence(multiplication, optional(repeat(parsem(AstBinaryExpression.BUILDER, sequence(addSign, multiplication)))));
+
+        // <num> := <number> | '(' <addition> ')'
+        num.add(number).add(sequence(leftParenthesis, addition, rightParenthesis));
+
+        // parser
+        GrammarElement grammar = addition;
+
+        System.out.println("Grammar: " + grammar);
 
     }
 

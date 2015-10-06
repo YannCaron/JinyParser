@@ -9,6 +9,8 @@ package fr.cyann.jinyparser.grammartree;
  * ou écrivez à Creative Commons, 444 Castro Street, Suite 900, Mountain View, California, 94041, USA.
  **/
 
+import java.util.Set;
+
 /**
  * The Sequence class. A compound grammar node that parse sequentially each of its children.<br>
  * Run as an <b>and</b> operator (BNF:[SPACE] sign); check if this followed by this and followed by this parse the source code.<br>
@@ -16,62 +18,61 @@ package fr.cyann.jinyparser.grammartree;
  */
 public class Sequence extends GrammarNode {
 
-    /**
-     * {@inheritDoc}
-     */
-    Sequence() {
-        super();
-    }
+	/**
+	 * {@inheritDoc}
+	 */
+	Sequence() {
+		super();
+	}
 
-    /**
-     * {@inheritDoc}
-     */
-    Sequence(GrammarElement[] children) {
-        super(children);
-    }
+	/**
+	 * {@inheritDoc}
+	 */
+	Sequence(GrammarElement[] children) {
+		super(children);
+	}
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    protected boolean lookahead(GrammarContext context) {
-        for (GrammarElement child : this) {
-            boolean result = child.lookahead(context);
-            if (!result) {
-                return false;
-            }
-        }
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	protected boolean lookahead(GrammarContext context) {
+		for (GrammarElement child : this) {
+			boolean result = child.lookahead(context);
+			if (!result) {
+				return false;
+			}
+		}
 
-        return true;
-    }
+		return true;
+	}
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public boolean parse(GrammarContext context) {
-        for (GrammarElement child : this) {
-            boolean result = child.parse(context);
-            if (!result) {
-                return false;
-            }
-        }
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public boolean parse(GrammarContext context) {
+		for (GrammarElement child : this) {
+			boolean result = child.parse(context);
+			if (!result) {
+				return false;
+			}
+		}
 
-        return true;
-    }
+		return true;
+	}
 
-    /**
-     * Give the BNF representation of the grammar expression.
-     *
-     * @return the BNF representation.
-     */
-    @Override
-    public String toString() {
-        StringBuilder sb = new StringBuilder();
-        for (GrammarElement child : this) {
-            if (sb.length() > 0) sb.append(' ');
-            sb.append(child.toString());
-        }
-        return sb.toString();
-    }
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void abstractBuildString(Set<GrammarElement> alreadyBuilt, StringBuilder sb) {
+		boolean first = true;
+		for (GrammarElement child : this) {
+			if (!first) sb.append(' ');
+			first = false;
+			child.buildString(alreadyBuilt, sb);
+		}
+	}
+
 }
