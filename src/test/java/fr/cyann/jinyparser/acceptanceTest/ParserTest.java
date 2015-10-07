@@ -8,7 +8,6 @@ package fr.cyann.jinyparser.acceptanceTest;
  * ou écrivez à Creative Commons, 444 Castro Street, Suite 900, Mountain View, California, 94041, USA.
  **/
 
-import fr.cyann.jinyparser.grammartree.Choice;
 import fr.cyann.jinyparser.grammartree.GrammarContext;
 import fr.cyann.jinyparser.grammartree.GrammarElement;
 import fr.cyann.jinyparser.grammartree.GrammarNode;
@@ -105,7 +104,6 @@ public class ParserTest extends TestCase {
 
     }
 
-
     public void testOperatorLevelParser() {
 
         String source = "7 + 10 * 4 + 7";
@@ -146,16 +144,16 @@ public class ParserTest extends TestCase {
 
         GrammarElement addition;
         GrammarElement multiplication;
-        GrammarNode num = new Choice();
+        GrammarNode ident = choice("ident");
 
         // <multiplication> := <number> [ { '*' <number> } ]
-        multiplication = sequence(num, optional(repeat(parsem(AstBinaryExpression.BUILDER, sequence(multiplySign, num)))));
+        multiplication = sequence(ident, optional(repeat(parsem(AstBinaryExpression.BUILDER, sequence(multiplySign, ident)))));
 
         // <addition> := <multiplication> [ { '+' <multiplication> } ]
         addition = sequence(multiplication, optional(repeat(parsem(AstBinaryExpression.BUILDER, sequence(addSign, multiplication)))));
 
         // <num> := <number> | '(' <addition> ')'
-        num.add(number).add(sequence(leftParenthesis, addition, rightParenthesis));
+        ident.addAll(number, sequence(leftParenthesis, addition, rightParenthesis));
 
         // parser
         GrammarElement grammar = addition;
@@ -180,23 +178,23 @@ public class ParserTest extends TestCase {
         GrammarElement addSign = parsemDummy(lexem(OPERATOR, lexerCharIn("+")));
         GrammarElement multiplySign = parsemDummy(lexem(OPERATOR, lexerCharIn("*")));
 
-        GrammarElement addition;
-        GrammarElement multiplication;
-        GrammarNode num = new Choice();
+        GrammarNode addition = sequence("addition");
+        GrammarNode multiplication = sequence("multiplication");
+        GrammarNode ident = choice("ident");
 
         // <multiplication> := <number> [ { '*' <number> } ]
-        multiplication = sequence(num, optional(repeat(parsem(AstBinaryExpression.BUILDER, sequence(multiplySign, num)))));
+        multiplication.addAll(ident, optional(repeat(parsem(AstBinaryExpression.BUILDER, sequence(multiplySign, ident)))));
 
         // <addition> := <multiplication> [ { '+' <multiplication> } ]
-        addition = sequence(multiplication, optional(repeat(parsem(AstBinaryExpression.BUILDER, sequence(addSign, multiplication)))));
+        addition.addAll(multiplication, optional(repeat(parsem(AstBinaryExpression.BUILDER, sequence(addSign, multiplication)))));
 
         // <num> := <number> | '(' <addition> ')'
-        num.add(number).add(sequence(leftParenthesis, addition, rightParenthesis));
+        ident.addAll(number, sequence(leftParenthesis, addition, rightParenthesis));
 
         // parser
         GrammarElement grammar = addition;
 
-        System.out.println("Grammar: " + grammar);
+        System.out.println(grammar);
 
     }
 

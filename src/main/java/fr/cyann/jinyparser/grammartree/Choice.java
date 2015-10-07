@@ -7,8 +7,6 @@ package fr.cyann.jinyparser.grammartree;/**
  * ou écrivez à Creative Commons, 444 Castro Street, Suite 900, Mountain View, California, 94041, USA.
  **/
 
-import java.util.Set;
-
 /**
  * The Choice class. A compound grammar node that choosing among its children nodes to determine the appropriate grammar.<br>
  * Run as an <b>or</b> operator (BNF:+ sign); check if this or this or this is the appropriate grammar.<br>
@@ -16,66 +14,72 @@ import java.util.Set;
  */
 public class Choice extends GrammarNode {
 
-    /**
-     * {@inheritDoc}
-     */
-    // TODO : Why public is needed ?
-    public Choice() {
-        super();
-    }
+	/**
+	 * {@inheritDoc}
+	 */
+	Choice() {
+		super();
+	}
 
-    /** {@inheritDoc} */
-    Choice(GrammarElement[] children) {
-        super(children);
-    }
+	/**
+	 * {@inheritDoc}
+	 */
+	Choice(String name) {
+		super(name);
+	}
 
-    /** {@inheritDoc} */
-    @Override
-    protected boolean lookahead(GrammarContext context) {
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	protected boolean lookahead(GrammarContext context) {
 
-        for (GrammarElement child : this) {
+		for (GrammarElement child : this) {
 
-            context.markChar();
-            if (child.lookahead(context)) {
-                context.resumeChar();
-                return true;
-            }
-            context.rollbackChar();
+			context.markChar();
+			if (child.lookahead(context)) {
+				context.resumeChar();
+				return true;
+			}
+			context.rollbackChar();
 
-        }
+		}
 
-        return false;
+		return false;
 
-    }
+	}
 
-    /** {@inheritDoc} */
-    @Override
-    public boolean parse(GrammarContext context) {
-        for (GrammarElement child : this) {
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public boolean parse(GrammarContext context) {
+		for (GrammarElement child : this) {
 
-            context.markChar();
-            boolean lookaheadResult = child.lookahead(context);
-            context.rollbackChar();
+			context.markChar();
+			boolean lookaheadResult = child.lookahead(context);
+			context.rollbackChar();
 
-            if (lookaheadResult) {
-                child.parse(context);
-                return true;
-            }
+			if (lookaheadResult) {
+				child.parse(context);
+				return true;
+			}
 
-        }
+		}
 
-        return false;
-    }
+		return false;
+	}
 
-    /** {@inheritDoc} */
-    @Override
-    public void abstractBuildString(Set<GrammarElement> alreadyBuilt, StringBuilder sb) {
-        boolean first = true;
-        for (GrammarElement child : this) {
-            if (!first) sb.append(" | ");
-            first = false;
-            child.buildString(alreadyBuilt, sb);
-        }
-    }
-
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	protected void toEBNFAbstract(BuildEBNFContext context, StringBuilder buffer) {
+		boolean first = true;
+		for (GrammarElement child : this) {
+			if (!first) buffer.append(" | ");
+			first = false;
+			child.buildBNF(context, buffer);
+		}
+	}
 }

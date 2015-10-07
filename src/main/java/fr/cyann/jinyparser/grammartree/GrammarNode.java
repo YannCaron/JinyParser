@@ -22,9 +22,20 @@ public abstract class GrammarNode extends GrammarElement implements Iterable<Gra
 	private final List<GrammarElement> children;
 
 	/**
-	 * Default and mandatory constructor. Initialize internal ressources.
+	 * Default and mandatory constructor. Initialize internal resources.
 	 */
 	GrammarNode() {
+		super();
+		this.children = new ArrayList<GrammarElement>();
+	}
+
+	/**
+	 * Constructor with name. Useful for BNF expression of the grammar.
+	 *
+	 * @param name the grammar name.
+	 */
+	GrammarNode(String name) {
+		super(name);
 		this.children = new ArrayList<GrammarElement>();
 	}
 
@@ -38,9 +49,19 @@ public abstract class GrammarNode extends GrammarElement implements Iterable<Gra
 		return children.iterator();
 	}
 
-	/** {@inheritDoc} */
-	public GrammarNode add(GrammarElement grammarElement) {
-		children.add(grammarElement);
+	/**
+	 * Set all sub grammar elements to the node.
+	 *
+	 * @param element1 the first element of the list (mandatory).
+	 * @param elements the elements.
+	 */
+	public GrammarNode addAll(GrammarElement element1, GrammarElement... elements) {
+		this.children.add(element1);
+		for (GrammarElement element : elements) {
+			this.children.add(element);
+		}
+
 		return this;
 	}
+
 }

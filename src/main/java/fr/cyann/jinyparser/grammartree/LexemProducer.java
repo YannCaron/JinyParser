@@ -11,8 +11,6 @@ package fr.cyann.jinyparser.grammartree;
 import fr.cyann.jinyparser.token.Lexem;
 import fr.cyann.jinyparser.token.LexemType;
 
-import java.util.Set;
-
 /**
  * The LexemProducer class. Each time the decorated grammar element is parsed, it produce a Lexem and store it into the context.<br>
  * That represent the lexer production function.
@@ -23,6 +21,7 @@ public class LexemProducer extends GrammarDecorator {
 
 	/**
 	 * The default and mandatory constructor.
+	 *
 	 * @param lexemType the token type to produce.
 	 * @param decorated the decorated object.
 	 */
@@ -31,13 +30,17 @@ public class LexemProducer extends GrammarDecorator {
 		this.lexemType = lexemType;
 	}
 
-	/** {@inheritDoc} */
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	protected boolean lookahead(GrammarContext context) {
 		return decorated.lookahead(context);
 	}
 
-	/** {@inheritDoc} */
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public boolean parse(GrammarContext context) {
 
@@ -57,11 +60,11 @@ public class LexemProducer extends GrammarDecorator {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public void abstractBuildString(Set<GrammarElement> alreadyBuilt, StringBuilder sb) {
-		sb.append(lexemType);
-		sb.append('(');
-		decorated.buildString(alreadyBuilt, sb);
-		sb.append(')');
+	protected void toEBNFAbstract(BuildEBNFContext context, StringBuilder buffer) {
+		buffer.append(lexemType.toString());
+		buffer.append('(');
+		decorated.buildBNF(context, buffer);
+		buffer.append(')');
 	}
 
 }

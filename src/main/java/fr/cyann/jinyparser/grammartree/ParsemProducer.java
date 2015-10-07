@@ -11,61 +11,59 @@ package fr.cyann.jinyparser.grammartree;
 import fr.cyann.jinyparser.parsetree.ParsemBuilder;
 import fr.cyann.jinyparser.parsetree.ParsemElement;
 
-import java.util.Set;
-
 /**
  * The ParsemProducer class. Each time the decorated grammar element is parsed, it produce a Parse tree element and store it into the context.<br>
  * That represent the parser production function.
  */
 public class ParsemProducer extends GrammarDecorator {
 
-    private final ParsemBuilder builder;
+	private final ParsemBuilder builder;
 
-    /**
-     * Default constructor.
-     *
-     * @param builder   the builder to build parse tree element.
-     * @param decorated the decorated grammar element.
-     */
-    public ParsemProducer(ParsemBuilder builder, GrammarElement decorated) {
-        super(decorated);
-        this.builder = builder;
-    }
+	/**
+	 * Default constructor.
+	 *
+	 * @param builder   the builder to build parse tree element.
+	 * @param decorated the decorated grammar element.
+	 */
+	public ParsemProducer(ParsemBuilder builder, GrammarElement decorated) {
+		super(decorated);
+		this.builder = builder;
+	}
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    protected boolean lookahead(GrammarContext context) {
-        return decorated.lookahead(context);
-    }
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	protected boolean lookahead(GrammarContext context) {
+		return decorated.lookahead(context);
+	}
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public boolean parse(GrammarContext context) {
-        context.resetTerm();
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public boolean parse(GrammarContext context) {
+		context.resetTerm();
 
-        boolean res = decorated.parse(context);
+		boolean res = decorated.parse(context);
 
-        if (res) {
-            ParsemElement parsem = builder.buildParsem(context);
+		if (res) {
+			ParsemElement parsem = builder.buildParsem(context);
 
-            context.pushParsem(parsem);
-        }
+			context.pushParsem(parsem);
+		}
 
-        return res;
-    }
+		return res;
+	}
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void abstractBuildString(Set<GrammarElement> alreadyBuilt, StringBuilder sb) {
-        //sb.append("parsem(");
-        decorated.buildString(alreadyBuilt, sb);
-        //sb.append(')');
-    }
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	protected void toEBNFAbstract(BuildEBNFContext context, StringBuilder buffer) {
+		//context.append("parsem(");
+		decorated.buildBNF(context, buffer);
+		//context.append(')');
+	}
 
 }

@@ -7,8 +7,6 @@ package fr.cyann.jinyparser.grammartree;/**
  * ou écrivez à Creative Commons, 444 Castro Street, Suite 900, Mountain View, California, 94041, USA.
  **/
 
-import java.util.Set;
-
 /**
  * The LexerCharIn definition.
  */
@@ -19,6 +17,7 @@ public class LexerCharIn extends GrammarLeaf {
 
 	/**
 	 * Default constructor.
+	 *
 	 * @param characters the list of character to test.
 	 */
 	LexerCharIn(String characters) {
@@ -30,7 +29,9 @@ public class LexerCharIn extends GrammarLeaf {
 		return characters.indexOf(current) != -1;
 	}
 
-	/**  {@inheritDoc} */
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	protected boolean lookahead(GrammarContext context) {
 		boolean result = isTerm(context);
@@ -52,15 +53,16 @@ public class LexerCharIn extends GrammarLeaf {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public void abstractBuildString(Set<GrammarElement> alreadyBuilt, StringBuilder sb) {
+	protected void toEBNFAbstract(BuildEBNFContext context, StringBuilder buffer) {
 		String formatted = characters;
 		formatted = formatted.replace("\0", "\\0");
 		formatted = formatted.replace("\t", "\\t");
 		formatted = formatted.replace("\n", "\\n");
 
-		sb.append('\"');
-		sb.append(formatted);
-		sb.append('\"');
+		buffer.append('\"');
+		buffer.append(formatted);
+		buffer.append('\"');
 	}
+
 
 }

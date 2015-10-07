@@ -7,8 +7,6 @@ package fr.cyann.jinyparser.grammartree;/**
  * ou écrivez à Creative Commons, 444 Castro Street, Suite 900, Mountain View, California, 94041, USA.
  **/
 
-import java.util.Set;
-
 /**
  * The LineIncrementer class. When decorating a grammar element, it increment the line number in the context w
  */
@@ -46,10 +44,10 @@ public class LineIncrementer extends GrammarDecorator {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public void abstractBuildString(Set<GrammarElement> alreadyBuilt, StringBuilder sb) {
-		sb.append("newLine(");
-		decorated.buildString(alreadyBuilt, sb);
-		sb.append(')');
+	protected void toEBNFAbstract(BuildEBNFContext context, StringBuilder buffer) {
+		buffer.append("newLine(");
+		decorated.buildBNF(context, buffer);
+		buffer.append(')');
 	}
 
 }

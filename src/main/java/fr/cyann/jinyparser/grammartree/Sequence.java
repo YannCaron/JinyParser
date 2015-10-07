@@ -9,8 +9,6 @@ package fr.cyann.jinyparser.grammartree;
  * ou écrivez à Creative Commons, 444 Castro Street, Suite 900, Mountain View, California, 94041, USA.
  **/
 
-import java.util.Set;
-
 /**
  * The Sequence class. A compound grammar node that parse sequentially each of its children.<br>
  * Run as an <b>and</b> operator (BNF:[SPACE] sign); check if this followed by this and followed by this parse the source code.<br>
@@ -28,8 +26,8 @@ public class Sequence extends GrammarNode {
 	/**
 	 * {@inheritDoc}
 	 */
-	Sequence(GrammarElement[] children) {
-		super(children);
+	Sequence(String name) {
+		super(name);
 	}
 
 	/**
@@ -66,12 +64,12 @@ public class Sequence extends GrammarNode {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public void abstractBuildString(Set<GrammarElement> alreadyBuilt, StringBuilder sb) {
+	protected void toEBNFAbstract(BuildEBNFContext context, StringBuilder buffer) {
 		boolean first = true;
 		for (GrammarElement child : this) {
-			if (!first) sb.append(' ');
+			if (!first) buffer.append(' ');
 			first = false;
-			child.buildString(alreadyBuilt, sb);
+			child.buildBNF(context, buffer);
 		}
 	}
 

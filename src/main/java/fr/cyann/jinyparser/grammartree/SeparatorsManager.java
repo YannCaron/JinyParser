@@ -7,8 +7,6 @@ package fr.cyann.jinyparser.grammartree;/**
  * ou écrivez à Creative Commons, 444 Castro Street, Suite 900, Mountain View, California, 94041, USA.
  **/
 
-import java.util.Set;
-
 import static fr.cyann.jinyparser.grammartree.GrammarFactory.*;
 
 /**
@@ -21,7 +19,7 @@ public class SeparatorsManager extends GrammarDecorator {
 	 * <i>' ' | '\t' | '\0' | '\n'(new line)</i>
 	 */
 	private static final GrammarElement DEFAULT_SEPARATOR =
-			choice(lexerCharIn(" \t\0"), lineIncrementer(lexerCharIn("\n")));
+			optional(choice("sep").addAll(lexerCharIn(" \t\0"), lineIncrementer(lexerCharIn("\n"))));
 
 	private final GrammarElement separator;
 
@@ -43,14 +41,14 @@ public class SeparatorsManager extends GrammarDecorator {
 	/** {@inheritDoc} */
 	@Override
 	protected boolean lookahead(GrammarContext context) {
-		separator.lookahead(context);
+		if (!separator.lookahead(context)) return false;
 		return decorated.lookahead(context);
 	}
 
 	/** {@inheritDoc} */
 	@Override
 	public boolean parse(GrammarContext context) {
-		separator.parse(context);
+		if (!separator.parse(context)) return false;
 		return decorated.parse(context);
 	}
 
@@ -58,11 +56,12 @@ public class SeparatorsManager extends GrammarDecorator {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public void abstractBuildString(Set<GrammarElement> alreadyBuilt, StringBuilder sb) {
-		/* sb.append('[');
-		separator.buildString(alreadyBuilt, sb);
-		sb.append(']');*/
-		sb.append("[<sep>] ");
-		decorated.buildString(alreadyBuilt, sb);
+	protected void toEBNFAbstract(BuildEBNFContext context, StringBuilder buffer) {
+		if (!separator.equals(DEFAULT_SEPARATOR)) {
+			separator.buildBNF(context, buffer);
+			buffer.append(' ');
+		}
+		decorated.buildBNF(context, buffer);
 	}
+
 }

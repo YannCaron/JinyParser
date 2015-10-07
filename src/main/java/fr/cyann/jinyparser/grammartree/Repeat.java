@@ -7,8 +7,6 @@ package fr.cyann.jinyparser.grammartree;/**
  * ou écrivez à Creative Commons, 444 Castro Street, Suite 900, Mountain View, California, 94041, USA.
  **/
 
-import java.util.Set;
-
 /**
  * The Repeat class. Repeat the decorated grammar until it does not parse anymore.
  */
@@ -44,10 +42,10 @@ public class Repeat extends GrammarDecorator {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public void abstractBuildString(Set<GrammarElement> alreadyBuilt, StringBuilder sb) {
-		sb.append('{');
-		decorated.buildString(alreadyBuilt, sb);
-		sb.append('}');
+	protected void toEBNFAbstract(BuildEBNFContext context, StringBuilder buffer) {
+		buffer.append('{');
+		decorated.buildBNF(context, buffer);
+		buffer.append('}');
 	}
 
 }
