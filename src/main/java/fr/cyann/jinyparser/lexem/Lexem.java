@@ -31,7 +31,7 @@ public class Lexem {
 	}
 
 	/**
-	 * Cefault constructor.
+	 * Default constructor.
 	 * @param term The string term.
 	 * @param type the token type (useful for syntax coloring).
 	 * @param pos the token position.

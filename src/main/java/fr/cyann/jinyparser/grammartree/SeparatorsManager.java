@@ -41,15 +41,13 @@ public class SeparatorsManager extends GrammarDecorator {
 	/** {@inheritDoc} */
 	@Override
 	protected boolean lookahead(GrammarContext context) {
-		if (!separator.lookahead(context)) return false;
-		return decorated.lookahead(context);
+		return separator.lookahead(context) && decorated.lookahead(context);
 	}
 
 	/** {@inheritDoc} */
 	@Override
 	protected boolean parse(GrammarContext context) {
-		if (!separator.parse(context)) return false;
-		return decorated.parse(context);
+		return separator.parse(context) && decorated.parse(context);
 	}
 
 }

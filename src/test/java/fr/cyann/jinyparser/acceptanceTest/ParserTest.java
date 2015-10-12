@@ -211,10 +211,7 @@ public class ParserTest extends TestCase {
         // <ident> := <number> | '(' <addition> ')'
         ident.addAll(number, sequence(leftParenthesis, addition, rightParenthesis));
 
-        // parser
-        GrammarElement grammar = addition;
-
-        System.out.println(grammar);
+        System.out.println(addition);
 
     }
 

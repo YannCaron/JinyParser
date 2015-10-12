@@ -53,7 +53,7 @@ public abstract class GrammarElement {
 			System.out.println("ERROR");
 			throw new JinyException(
 					MultilingualMessage.create("Error at position [%s], unknown symbol \"%s\"!")
-							.translate(Locale.FRENCH, "Erreur à la position [%s], symbol \"%s\" inconu!")
+							.translate(Locale.FRENCH, "Erreur à la position [%s], symbol \"%s\" inconnu!")
 							.setArgs(context.getPositionToString(), context.currentChar()));
 		}
 

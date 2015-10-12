@@ -1,9 +1,6 @@
 package fr.cyann.jinyparser.grammartree;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
 /**
  * Copyright (C) 07/09/15 Yann Caron aka cyann
@@ -54,9 +51,7 @@ public abstract class GrammarNode extends GrammarElement implements Iterable<Gra
 	 * @param elements the elements.
 	 */
 	public GrammarNode addAll(GrammarElement... elements) {
-		for (GrammarElement element : elements) {
-			this.children.add(element);
-		}
+		Collections.addAll(this.children, elements);
 
 		return this;
 	}

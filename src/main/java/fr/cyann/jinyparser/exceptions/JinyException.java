@@ -25,7 +25,7 @@ public class JinyException extends RuntimeException {
 
 	/**
 	 * Constructor.
-	 * @param message the multilingual formated message.
+	 * @param message the multilingual formatted message.
 	 */
 	public JinyException(MultilingualMessage.FormattedMessage message) {
 		super(message.toString());

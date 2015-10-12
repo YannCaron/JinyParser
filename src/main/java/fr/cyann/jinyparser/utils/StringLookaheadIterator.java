@@ -58,11 +58,6 @@ public class StringLookaheadIterator implements LookaheadIterator<Character> {
 	/** {@inheritDoc} */
 	@Override
 	public void next() {
-/*		if (!hasNext())
-			throw new IndexOutOfBoundsException(
-					MultilingualMessage.create("String bound reached [%d] !")
-							.translate(Locale.FRENCH, "La fin de la chaîne de caractère à été atteinte [%d] !")
-							.setArgs(string.length()).toString());*/
 		if (hasNext()) {
 			position++;
 		} else {
