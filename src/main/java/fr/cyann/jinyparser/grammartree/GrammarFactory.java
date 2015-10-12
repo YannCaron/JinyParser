@@ -3,7 +3,7 @@ package fr.cyann.jinyparser.grammartree;
 import fr.cyann.jinyparser.parsetree.DefaultNonTerminal;
 import fr.cyann.jinyparser.parsetree.Dummy;
 import fr.cyann.jinyparser.parsetree.ParsemBuilder;
-import fr.cyann.jinyparser.token.LexemType;
+import fr.cyann.jinyparser.lexem.LexemType;
 
 /**
  * The ${CLASS_NAME} class.
@@ -19,42 +19,24 @@ public final class GrammarFactory {
 
     /**
      * Create a new sequence grammar element.
-     * @return the new grammar element.
-     */
-    public static Sequence sequence(String name) {
-        return new Sequence(name);
-    }
-
-    /**
-     * Create a new sequence grammar element.
-     * @param element1 the first element of he list (mandatory).
      * @param elements list of children.
      * @return the new grammar element.
      */
-    public static Sequence sequence(GrammarElement element1, GrammarElement... elements) {
+    public static Sequence sequence(GrammarElement... elements) {
         Sequence sequence = new Sequence();
-        sequence.addAll(element1, elements);
+        sequence.addAll(elements);
         return sequence;
     }
 
     /**
      * Create a new choice grammar element.
-     * @return the new grammar element.
-     */
-    public static Choice choice(String name) {
-        return new Choice(name);
-    }
-
-    /**
-     * Create a new choice grammar element.
      *
-     * @param element1 the first element of the list (mandatory).
      * @param elements list of children.
      * @return the new grammar element.
      */
-    public static Choice choice(GrammarElement element1, GrammarElement... elements) {
+    public static Choice choice(GrammarElement... elements) {
         Choice choice = new Choice();
-        choice.addAll(element1, elements);
+        choice.addAll(elements);
         return choice;
     }
 

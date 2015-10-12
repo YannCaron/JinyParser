@@ -34,20 +34,10 @@ public class LineIncrementer extends GrammarDecorator {
 	 * @return true if parsing succeed, false otherwise.
 	 */
 	@Override
-	public boolean parse(GrammarContext context) {
+	protected boolean parse(GrammarContext context) {
 		boolean result = decorated.parse(context);
 		if (result) context.newLine();
 		return result;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	protected void toEBNFAbstract(BuildEBNFContext context, StringBuilder buffer) {
-		buffer.append("newLine(");
-		decorated.buildBNF(context, buffer);
-		buffer.append(')');
 	}
 
 }

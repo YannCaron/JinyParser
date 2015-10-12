@@ -9,7 +9,7 @@ package fr.cyann.jinyparser.parsetree;
  **/
 
 
-import fr.cyann.jinyparser.token.Lexem;
+import fr.cyann.jinyparser.lexem.Lexem;
 
 /**
  * The DefaultTerminal class definition.<br>

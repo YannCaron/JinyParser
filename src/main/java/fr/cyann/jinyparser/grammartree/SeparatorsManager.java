@@ -19,7 +19,7 @@ public class SeparatorsManager extends GrammarDecorator {
 	 * <i>' ' | '\t' | '\0' | '\n'(new line)</i>
 	 */
 	private static final GrammarElement DEFAULT_SEPARATOR =
-			optional(choice("sep").addAll(lexerCharIn(" \t\0"), lineIncrementer(lexerCharIn("\n"))));
+			optional(choice().addAll(lexerCharIn(" \t\0"), lineIncrementer(lexerCharIn("\n"))));
 
 	private final GrammarElement separator;
 
@@ -47,21 +47,9 @@ public class SeparatorsManager extends GrammarDecorator {
 
 	/** {@inheritDoc} */
 	@Override
-	public boolean parse(GrammarContext context) {
+	protected boolean parse(GrammarContext context) {
 		if (!separator.parse(context)) return false;
 		return decorated.parse(context);
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	protected void toEBNFAbstract(BuildEBNFContext context, StringBuilder buffer) {
-		if (!separator.equals(DEFAULT_SEPARATOR)) {
-			separator.buildBNF(context, buffer);
-			buffer.append(' ');
-		}
-		decorated.buildBNF(context, buffer);
 	}
 
 }

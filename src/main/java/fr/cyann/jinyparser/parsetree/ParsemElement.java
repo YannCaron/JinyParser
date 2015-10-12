@@ -7,7 +7,7 @@ package fr.cyann.jinyparser.parsetree;/**
  * ou écrivez à Creative Commons, 444 Castro Street, Suite 900, Mountain View, California, 94041, USA.
  **/
 
-import fr.cyann.jinyparser.token.Lexem;
+import fr.cyann.jinyparser.lexem.Lexem;
 
 /**
  * The ParsemElement definition.

@@ -9,7 +9,10 @@ package fr.cyann.jinyparser.grammartree;
  * ou écrivez à Creative Commons, 444 Castro Street, Suite 900, Mountain View, California, 94041, USA.
  **/
 
-import java.util.*;
+import fr.cyann.jinyparser.exceptions.JinyException;
+import fr.cyann.jinyparser.utils.MultilingualMessage;
+
+import java.util.Locale;
 
 /**
  * The GrammarElement class. Then top abstract class of all grammar elements.<br>
@@ -17,37 +20,6 @@ import java.util.*;
  * Give the ability to declare (declarative programming) the language grammar by nesting grammars elements together.
  */
 public abstract class GrammarElement {
-
-	private final boolean named;
-	private final String name;
-
-	public GrammarElement() {
-		this.named = false;
-		this.name = this.getClass().getSimpleName();
-	}
-
-	public GrammarElement(String name) {
-		this.named = true;
-		this.name = name;
-	}
-
-	/**
-	 * Give the grammar name.
-	 *
-	 * @return the grammar name
-	 */
-	public String getName() {
-		return name;
-	}
-
-	/**
-	 * Return if the name was given (and not by default).
-	 *
-	 * @return if the name was given.
-	 */
-	public boolean isNamed() {
-		return named;
-	}
 
 	/**
 	 * The lookahead searching method. Used to find if following term / grammar is valid without consuming the lexemes.
@@ -63,157 +35,29 @@ public abstract class GrammarElement {
 	 * @param context the parsing context that contains all necessary resources to the parsing (iterators, flags and so on).
 	 * @return true if parsing succeed, false otherwise.
 	 */
-	public abstract boolean parse(GrammarContext context);
-
-	private void buildNewBNF(BuildEBNFContext context, String name) {
-		StringBuilder sbGrammar = new StringBuilder();
-
-		context.createGrammar(name);
-
-		sbGrammar.append(name);
-		sbGrammar.append(" := ");
-
-		toEBNFAbstract(context, sbGrammar);
-		context.bufferToGrammar(name, sbGrammar);
-	}
+	protected abstract boolean parse(GrammarContext context);
 
 	/**
-	 * Build the EBNF representation of the grammar tree.<br>
-	 * Method is abstract and must be provided by the grammar element.<br>
-	 * Written on the top of Template method GoF design pattern.
+	 * The parsing entry method.
 	 *
-	 * @param context the context needed to store grammar in the order of using.
-	 * @param buffer  the string builder to append on it.
+	 * @param source the source code to parse.
+	 * @return the grammar context.
 	 */
-	protected abstract void toEBNFAbstract(BuildEBNFContext context, StringBuilder buffer);
+	public GrammarContext parse(String source) {
+		GrammarContext context = new GrammarContext(source);
+		parse(context);
 
-	/**
-	 * Build the EBNF representation of the grammar tree main method.<br>
-	 * Written on the top of Template method GoF design pattern.
-	 *
-	 * @param context the context needed to store grammar in the order of using.
-	 * @param buffer the string builder to append on it.
-	 */
-	public void buildBNF(BuildEBNFContext context, StringBuilder buffer) {
-		if (isNamed() && !context.containsGrammar(name)) {
-			buildNewBNF(context, name);
+		// check error
+		if (!context.isTerminated()) {
+			System.out.println(context.toString());
+			System.out.println("ERROR");
+			throw new JinyException(
+					MultilingualMessage.create("Error at position [%s], unknown symbol \"%s\"!")
+							.translate(Locale.FRENCH, "Erreur à la position [%s], symbol \"%s\" inconu!")
+							.setArgs(context.getPositionToString(), context.currentChar()));
 		}
 
-		if (context.containsGrammar(name)) {
-			buffer.append('<');
-			buffer.append(this.name);
-			buffer.append('>');
-			context.useOf(this.name);
-		} else {
-			toEBNFAbstract(context, buffer);
-		}
-
-	}
-
-	/**
-	 * Give the BNF representation of the grammar expression.<br>
-	 * Use abstractBuildString method to construct the tree toString representation.
-	 *
-	 * @return the BNF representation.
-	 */
-	@Override
-	public String toString() {
-		BuildEBNFContext context = new BuildEBNFContext();
-		StringBuilder sb = new StringBuilder();
-
-		if (!named) {
-			buildNewBNF(context, "grammar");
-		} else {
-			buildBNF(context, sb);
-		}
-
-		StringBuilder result = new StringBuilder();
-		for (String grammar : context.getSortedGrammars()) {
-			if (result.length() > 0) result.append('\n');
-			result.append(grammar);
-		}
-		return result.toString();
-
-		//return buildString(new HashSet<GrammarElement>(), new StringBuilder()).toString();
-	}
-
-	/**
-	 * The BuildEBNFContext definition.<br>
-	 * Used to build EBNF representation of the grammar tree.
-	 */
-	public class BuildEBNFContext {
-
-		private final Map<String, String> grammars;
-		private final Map<String, Integer> using;
-
-		/**
-		 * Default constructor.
-		 */
-		public BuildEBNFContext() {
-			grammars = new HashMap<String, String>();
-			using = new HashMap<String, Integer>();
-		}
-
-		/**
-		 * Create a new grammar.
-		 *
-		 * @param name the grammar name.
-		 */
-		public void createGrammar(String name) {
-			grammars.put(name, "");
-			using.put(name, 0);
-		}
-
-		/**
-		 * Return if the grammar already exists.
-		 *
-		 * @param name the grammar name.
-		 * @return true if grammar already exists.
-		 */
-		public boolean containsGrammar(String name) {
-			return grammars.containsKey(name);
-		}
-
-		/**
-		 * Put the entire buffer on the grammar.
-		 *
-		 * @param name   the grammar name.
-		 * @param buffer the buffer.
-		 */
-		public void bufferToGrammar(String name, StringBuilder buffer) {
-			grammars.put(name, buffer.toString());
-		}
-
-		/**
-		 * Increment the utility of grammar.
-		 *
-		 * @param name the grammar name.
-		 */
-		public void useOf(String name) {
-			using.put(name, using.get(name) + 1);
-		}
-
-		/**
-		 * Return a sorted (by utility descending) of the grammar.
-		 *
-		 * @return the grammar EBNF representations.
-		 */
-		public List<String> getSortedGrammars() {
-			List<String> sortedKeys = new ArrayList<String>(grammars.keySet());
-			Collections.sort(sortedKeys, new Comparator<String>() {
-				@Override
-				public int compare(String o1, String o2) {
-					return -using.get(o1).compareTo(using.get(o2));
-				}
-			});
-
-			List<String> sortedGrammars = new ArrayList<String>();
-			for (String key : sortedKeys) {
-				sortedGrammars.add(grammars.get(key));
-			}
-
-			return sortedGrammars;
-		}
+		return context;
 	}
 
 }

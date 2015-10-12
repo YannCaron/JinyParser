@@ -17,8 +17,8 @@ public class StringLookaheadIterator implements LookaheadIterator<Character> {
 
 	private static final char EOS = Character.MIN_VALUE;
 	private final String string;
-	private final Stack<Integer> indexes;
-	private int index;
+	private final Stack<Integer> positions;
+	private int position;
 
 	/**
 	 * Default constructor.
@@ -26,21 +26,30 @@ public class StringLookaheadIterator implements LookaheadIterator<Character> {
 	 */
 	public StringLookaheadIterator(String string) {
 		this.string = string;
-		index = 0;
-		indexes = new Stack<Integer>();
+		position = 0;
+		positions = new Stack<Integer>();
 	}
 
 	/** {@inheritDoc} */
 	@Override
 	public boolean hasNext() {
-		return index + 1 < string.length();
+		return position + 1 < string.length();
+	}
+
+	/**
+	 * Tell if iteration is terminated.
+	 *
+	 * @return true if iteration is terminated.
+	 */
+	public boolean isTerminated() {
+		return position == string.length();
 	}
 
 	/** {@inheritDoc} */
 	@Override
 	public Character current() {
-		if (index < string.length()) {
-			return string.charAt(index);
+		if (position < string.length()) {
+			return string.charAt(position);
 		} else {
 			return EOS;
 		}
@@ -55,28 +64,28 @@ public class StringLookaheadIterator implements LookaheadIterator<Character> {
 							.translate(Locale.FRENCH, "La fin de la chaîne de caractère à été atteinte [%d] !")
 							.setArgs(string.length()).toString());*/
 		if (hasNext()) {
-			index++;
+			position++;
 		} else {
-			index = string.length();
+			position = string.length();
 		}
 	}
 
 	/** {@inheritDoc} */
 	@Override
 	public void mark() {
-		indexes.push(index);
+		positions.push(position);
 	}
 
 	/** {@inheritDoc} */
 	@Override
 	public void rollback() {
-		index = indexes.pop();
+		position = positions.pop();
 	}
 
 	/** {@inheritDoc} */
 	@Override
 	public void resume() {
-		indexes.pop();
+		positions.pop();
 	}
 
 	/**
@@ -89,7 +98,7 @@ public class StringLookaheadIterator implements LookaheadIterator<Character> {
 		sb.append("StringLookaheadIterator:\n\t");
 		sb.append(string);
 		sb.append("\n\t");
-		for (int i = 0; i < index; i++) sb.append('-');
+		for (int i = 0; i < position; i++) sb.append('-');
 		sb.append("^\n");
 		sb.append("current: [");
 		sb.append(current());

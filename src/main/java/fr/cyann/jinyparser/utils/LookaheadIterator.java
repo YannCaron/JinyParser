@@ -27,9 +27,9 @@ public interface LookaheadIterator<T> {
 	void next();
 
 	/**
-	 * Verify a next element exists.
+	 * Tell if the next element exists.
 	 *
-	 * @return if next is possible.
+	 * @return true if next element exists.
 	 */
 	boolean hasNext();
 

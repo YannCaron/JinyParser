@@ -12,8 +12,8 @@ import fr.cyann.jinyparser.grammartree.GrammarContext;
 import fr.cyann.jinyparser.grammartree.GrammarElement;
 import fr.cyann.jinyparser.grammartree.GrammarNode;
 import fr.cyann.jinyparser.parsetree.*;
-import fr.cyann.jinyparser.token.Lexem;
-import fr.cyann.jinyparser.token.LexemType;
+import fr.cyann.jinyparser.lexem.Lexem;
+import fr.cyann.jinyparser.lexem.LexemType;
 import junit.framework.TestCase;
 
 import static fr.cyann.jinyparser.grammartree.GrammarFactory.*;
@@ -43,12 +43,36 @@ public class ParserTest extends TestCase {
         GrammarElement grammar = sequence(number, repeat(parsem(AstBinaryExpression.BUILDER, sequence(operator, number))));
 
         // parse
-        GrammarContext c = new GrammarContext(source);
-        grammar.parse(c);
+        GrammarContext c = grammar.parse(source);
 
         System.out.println("Parse tree: " + c.getParseTree());
 
         assertEquals("('+' ('+' 'n7' 'n10') 'n4')", c.getParseTree().toString());
+
+    }
+
+    public void testTrivialNotParsing() {
+
+        String source = "7 + 10 - 4";
+
+        // term
+        GrammarElement digit = lexerCharIn("0123456789");
+        GrammarElement sign = lexerCharIn("+");
+
+        // lexer
+        GrammarElement number = parsem(AstNumber.BUILDER, lexem(NUMBER, repeat(digit)));
+
+        GrammarElement operator = parsemDummy(lexem(OPERATOR, sign));
+
+        // parser
+        GrammarElement grammar = sequence(number, repeat(sequence(operator, parsem(AstBinaryExpression.BUILDER, number))));
+
+        // parse
+        GrammarContext c = grammar.parse(source);
+
+        System.out.println("Parse tree: " + c.getParseTree());
+
+        //assertEquals("('+' ('+' 'n7' 'n10') 'n4')", c.getParseTree().toString());
 
     }
 
@@ -69,8 +93,7 @@ public class ParserTest extends TestCase {
         GrammarElement grammar = sequence(number, repeat(parsemNonTerminal(3, sequence(operator, number))));
 
         // parse
-        GrammarContext c = new GrammarContext(source);
-        grammar.parse(c);
+        GrammarContext c = grammar.parse(source);
 
         System.out.println("Parse tree: " + c.getParseTree());
 
@@ -95,8 +118,7 @@ public class ParserTest extends TestCase {
         GrammarElement grammar = sequence(number, repeat(choice(addition, subtraction)));
 
         // parse
-        GrammarContext c = new GrammarContext(source);
-        grammar.parse(c);
+        GrammarContext c = grammar.parse(source);
 
         System.out.println("Parse tree: " + c.getParseTree());
 
@@ -121,8 +143,7 @@ public class ParserTest extends TestCase {
         GrammarElement addition = sequence(multiplication, optional(repeat(parsem(AstBinaryExpression.BUILDER, sequence(addSign, multiplication)))));
 
         // parse
-        GrammarContext c = new GrammarContext(source);
-        addition.parse(c);
+        GrammarContext c = addition.parse(source);
 
         System.out.println("Parse tree: " + c.getParseTree());
 
@@ -144,13 +165,13 @@ public class ParserTest extends TestCase {
 
         GrammarElement addition;
         GrammarElement multiplication;
-        GrammarNode ident = choice("ident");
+        GrammarNode ident = choice();
 
         // <multiplication> := <number> [ { '*' <number> } ]
-        multiplication = sequence(ident, optional(repeat(parsem(AstBinaryExpression.BUILDER, sequence(multiplySign, ident)))));
+        multiplication = sequence(ident, optional(repeat(sequence(multiplySign, parsem(AstBinaryExpression.BUILDER, ident)))));
 
         // <addition> := <multiplication> [ { '+' <multiplication> } ]
-        addition = sequence(multiplication, optional(repeat(parsem(AstBinaryExpression.BUILDER, sequence(addSign, multiplication)))));
+        addition = sequence(multiplication, optional(repeat(sequence(addSign, parsem(AstBinaryExpression.BUILDER, multiplication)))));
 
         // <num> := <number> | '(' <addition> ')'
         ident.addAll(number, sequence(leftParenthesis, addition, rightParenthesis));
@@ -159,8 +180,7 @@ public class ParserTest extends TestCase {
         GrammarElement grammar = addition;
 
         // parse
-        GrammarContext c = new GrammarContext(source);
-        grammar.parse(c);
+        GrammarContext c = grammar.parse(source);
 
         System.out.println("Parse tree: " + c.getParseTree());
 
@@ -178,17 +198,17 @@ public class ParserTest extends TestCase {
         GrammarElement addSign = parsemDummy(lexem(OPERATOR, lexerCharIn("+")));
         GrammarElement multiplySign = parsemDummy(lexem(OPERATOR, lexerCharIn("*")));
 
-        GrammarNode addition = sequence("addition");
-        GrammarNode multiplication = sequence("multiplication");
-        GrammarNode ident = choice("ident");
+        GrammarNode addition = sequence();
+        GrammarNode multiplication = sequence();
+        GrammarNode ident = choice();
 
-        // <multiplication> := <number> [ { '*' <number> } ]
+        // <multiplication> := <ident> [ { '*' <ident> } ]
         multiplication.addAll(ident, optional(repeat(parsem(AstBinaryExpression.BUILDER, sequence(multiplySign, ident)))));
 
         // <addition> := <multiplication> [ { '+' <multiplication> } ]
         addition.addAll(multiplication, optional(repeat(parsem(AstBinaryExpression.BUILDER, sequence(addSign, multiplication)))));
 
-        // <num> := <number> | '(' <addition> ')'
+        // <ident> := <number> | '(' <addition> ')'
         ident.addAll(number, sequence(leftParenthesis, addition, rightParenthesis));
 
         // parser

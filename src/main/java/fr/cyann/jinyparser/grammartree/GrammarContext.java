@@ -9,8 +9,8 @@ package fr.cyann.jinyparser.grammartree;/**
 
 import fr.cyann.jinyparser.parsetree.ParsemBuildable;
 import fr.cyann.jinyparser.parsetree.ParsemElement;
-import fr.cyann.jinyparser.token.Lexem;
-import fr.cyann.jinyparser.token.SourcePosition;
+import fr.cyann.jinyparser.lexem.Lexem;
+import fr.cyann.jinyparser.lexem.SourcePosition;
 import fr.cyann.jinyparser.utils.StringLookaheadIterator;
 
 import java.util.ArrayList;
@@ -85,6 +85,16 @@ public class GrammarContext implements ParsemBuildable {
 	public void nextCharAndBuild() {
 		term.append(it.current());
 		it.next();
+		pos.increment();
+	}
+
+	/**
+	 * Tell if iteration is terminated.
+	 *
+	 * @return true if iteration is terminated.
+	 */
+	public boolean isTerminated() {
+		return it.isTerminated();
 	}
 
 	//endregion
@@ -188,6 +198,10 @@ public class GrammarContext implements ParsemBuildable {
 	//endregion
 
 	// endregion
+
+	public String getPositionToString() {
+		return pos.toString();
+	}
 
 	/**
 	 * Give the string representation of the object. Useful for debugging.

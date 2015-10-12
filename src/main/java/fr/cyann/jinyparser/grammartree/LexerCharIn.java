@@ -43,26 +43,10 @@ public class LexerCharIn extends GrammarLeaf {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public boolean parse(GrammarContext context) {
+	protected boolean parse(GrammarContext context) {
 		boolean result = isTerm(context);
 		if (result) context.nextCharAndBuild();
 		return result;
 	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	protected void toEBNFAbstract(BuildEBNFContext context, StringBuilder buffer) {
-		String formatted = characters;
-		formatted = formatted.replace("\0", "\\0");
-		formatted = formatted.replace("\t", "\\t");
-		formatted = formatted.replace("\n", "\\n");
-
-		buffer.append('\"');
-		buffer.append(formatted);
-		buffer.append('\"');
-	}
-
 
 }

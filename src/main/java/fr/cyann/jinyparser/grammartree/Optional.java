@@ -26,19 +26,9 @@ public class Optional extends GrammarDecorator {
 
 	/** {@inheritDoc} */
 	@Override
-	public boolean parse(GrammarContext context) {
+	protected boolean parse(GrammarContext context) {
 		decorated.parse(context);
 		return true;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	protected void toEBNFAbstract(BuildEBNFContext context, StringBuilder buffer) {
-		buffer.append('[');
-		decorated.buildBNF(context, buffer);
-		buffer.append(']');
 	}
 
 }

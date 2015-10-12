@@ -8,8 +8,8 @@ package fr.cyann.jinyparser.grammartree;
  * ou écrivez à Creative Commons, 444 Castro Street, Suite 900, Mountain View, California, 94041, USA.
  **/
 
-import fr.cyann.jinyparser.token.Lexem;
-import fr.cyann.jinyparser.token.LexemType;
+import fr.cyann.jinyparser.lexem.Lexem;
+import fr.cyann.jinyparser.lexem.LexemType;
 
 /**
  * The LexemProducer class. Each time the decorated grammar element is parsed, it produce a Lexem and store it into the context.<br>
@@ -42,7 +42,7 @@ public class LexemProducer extends GrammarDecorator {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public boolean parse(GrammarContext context) {
+	protected boolean parse(GrammarContext context) {
 
 		context.resetTerm();
 
@@ -54,17 +54,6 @@ public class LexemProducer extends GrammarDecorator {
 		}
 
 		return res;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	protected void toEBNFAbstract(BuildEBNFContext context, StringBuilder buffer) {
-		buffer.append(lexemType.toString());
-		buffer.append('(');
-		decorated.buildBNF(context, buffer);
-		buffer.append(')');
 	}
 
 }

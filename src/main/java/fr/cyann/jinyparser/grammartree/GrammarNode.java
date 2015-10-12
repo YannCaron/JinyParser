@@ -35,7 +35,6 @@ public abstract class GrammarNode extends GrammarElement implements Iterable<Gra
 	 * @param name the grammar name.
 	 */
 	GrammarNode(String name) {
-		super(name);
 		this.children = new ArrayList<GrammarElement>();
 	}
 
@@ -52,11 +51,9 @@ public abstract class GrammarNode extends GrammarElement implements Iterable<Gra
 	/**
 	 * Set all sub grammar elements to the node.
 	 *
-	 * @param element1 the first element of the list (mandatory).
 	 * @param elements the elements.
 	 */
-	public GrammarNode addAll(GrammarElement element1, GrammarElement... elements) {
-		this.children.add(element1);
+	public GrammarNode addAll(GrammarElement... elements) {
 		for (GrammarElement element : elements) {
 			this.children.add(element);
 		}

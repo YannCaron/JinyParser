@@ -25,7 +25,7 @@ public class Repeat extends GrammarDecorator {
 
 	/** {@inheritDoc} */
 	@Override
-	public boolean parse(GrammarContext context) {
+	protected boolean parse(GrammarContext context) {
 
 		boolean result = decorated.parse(context);
 
@@ -36,16 +36,6 @@ public class Repeat extends GrammarDecorator {
 		}
 
 		return true;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	protected void toEBNFAbstract(BuildEBNFContext context, StringBuilder buffer) {
-		buffer.append('{');
-		decorated.buildBNF(context, buffer);
-		buffer.append('}');
 	}
 
 }

@@ -53,7 +53,7 @@ public class Choice extends GrammarNode {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public boolean parse(GrammarContext context) {
+	protected boolean parse(GrammarContext context) {
 		for (GrammarElement child : this) {
 
 			context.markChar();
@@ -70,16 +70,4 @@ public class Choice extends GrammarNode {
 		return false;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	protected void toEBNFAbstract(BuildEBNFContext context, StringBuilder buffer) {
-		boolean first = true;
-		for (GrammarElement child : this) {
-			if (!first) buffer.append(" | ");
-			first = false;
-			child.buildBNF(context, buffer);
-		}
-	}
 }

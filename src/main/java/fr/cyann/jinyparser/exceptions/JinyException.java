@@ -13,7 +13,7 @@ import fr.cyann.jinyparser.utils.MultilingualMessage;
  * The JinyException class definition.<br>
  * The super class of all Jiny parsing exceptions.
  */
-class JinyException extends RuntimeException {
+public class JinyException extends RuntimeException {
 
 	/**
 	 * Constructor.

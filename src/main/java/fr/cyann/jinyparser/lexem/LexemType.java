@@ -1,4 +1,4 @@
-package fr.cyann.jinyparser.token;/**
+package fr.cyann.jinyparser.lexem;/**
  * Copyright (C) 01/10/15 Yann Caron aka cyann
  * <p/>
  * Cette œuvre est mise à disposition sous licence Attribution -

@@ -9,8 +9,8 @@ package fr.cyann.jinyparser.acceptanceTest;
  **/
 
 import fr.cyann.jinyparser.grammartree.*;
-import fr.cyann.jinyparser.token.LexemType;
-import fr.cyann.jinyparser.token.Lexem;
+import fr.cyann.jinyparser.lexem.LexemType;
+import fr.cyann.jinyparser.lexem.Lexem;
 import junit.framework.TestCase;
 
 import java.util.ArrayList;
@@ -48,8 +48,7 @@ public class LexerTest extends TestCase {
 		GrammarElement grammar = sequence(number, number, number, number);
 
 		// parse
-		GrammarContext c = new GrammarContext(source);
-		grammar.parse(c);
+		GrammarContext c = grammar.parse(source);
 
 		// test
 		assertEquals(Arrays.asList("12", "345", "8"), lexerToTerms(c.getLexer()));
@@ -73,8 +72,7 @@ public class LexerTest extends TestCase {
 		GrammarElement grammar = sequence(number, repeat(sequence(operator, number)));
 
 		// parse
-		GrammarContext c = new GrammarContext(source);
-		grammar.parse(c);
+		GrammarContext c = grammar.parse(source);
 
 		// test
 		assertEquals(Arrays.asList("7", "+", "10", "-", "5", "+", "4"), lexerToTerms(c.getLexer()));

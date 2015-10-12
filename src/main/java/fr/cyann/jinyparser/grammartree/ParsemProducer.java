@@ -42,7 +42,7 @@ public class ParsemProducer extends GrammarDecorator {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public boolean parse(GrammarContext context) {
+	protected boolean parse(GrammarContext context) {
 		context.resetTerm();
 
 		boolean res = decorated.parse(context);
@@ -54,16 +54,6 @@ public class ParsemProducer extends GrammarDecorator {
 		}
 
 		return res;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	protected void toEBNFAbstract(BuildEBNFContext context, StringBuilder buffer) {
-		//context.append("parsem(");
-		decorated.buildBNF(context, buffer);
-		//context.append(')');
 	}
 
 }
