@@ -13,31 +13,46 @@ package fr.cyann.jinyparser.grammartree;/**
 public class Word extends GrammarLeaf {
 
 
-	private final String word;
+    private final String word;
 
-	/**
-	 * Default constructor.
-	 *
-	 * @param word the entire word to test.
-	 */
-	Word(String word) {
-		this.word = word;
-	}
+    /**
+     * Default constructor.
+     *
+     * @param word the entire word to test.
+     */
+    Word(String word) {
+        this.word = word;
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	protected boolean lookahead(GrammarContext context) {
-		return false;
-	}
+    private boolean isTerm(GrammarContext context, boolean build) {
+        for (int i = 0; i < word.length(); i++) {
+            if (context.isTerminated()) return false;
+            char chr = word.charAt(i);
+            if (chr != context.currentChar()) return false;
+            if (build) {
+                context.nextCharAndBuild();
+            } else {
+                context.nextChar();
+            }
+        }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	protected boolean parse(GrammarContext context) {
-		return false;
-	}
+        return true;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected boolean lookahead(GrammarContext context) {
+        return isTerm(context, false);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected boolean parse(GrammarContext context) {
+        return isTerm(context, true);
+    }
 
 }
