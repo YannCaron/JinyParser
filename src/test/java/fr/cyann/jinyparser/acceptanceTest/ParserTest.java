@@ -25,6 +25,7 @@ public class ParserTest extends TestCase {
 
     private static final LexemType NUMBER = new LexemType("NUMBER");
     private static final LexemType OPERATOR = new LexemType("OPERATOR");
+    private static final LexemType KEYWORD = new LexemType("KEYWORD");
 
     public void testTrivialParser() {
 
@@ -137,13 +138,38 @@ public class ParserTest extends TestCase {
         GrammarElement multiplySign = parsemDummy(lexem(OPERATOR, lexerCharIn("*")));
 
         // <multiplication> := <number> [ { '*' <number> } ]
-        GrammarElement multiplication = sequence(number, optional(repeat(parsem(AstBinaryExpression.BUILDER, sequence(multiplySign, number)))));
+        GrammarElement multiplication = sequence(number, optional(repeat(sequence(multiplySign, parsem(AstBinaryExpression.BUILDER, number)))));
 
         // <addition> := <multiplication> [ { '+' <multiplication> } ]
-        GrammarElement addition = sequence(multiplication, optional(repeat(parsem(AstBinaryExpression.BUILDER, sequence(addSign, multiplication)))));
+        GrammarElement addition = sequence(multiplication, optional(repeat(sequence(addSign, parsem(AstBinaryExpression.BUILDER, multiplication)))));
 
         // parse
         GrammarContext c = addition.parse(source);
+
+        System.out.println("Parse tree: " + c.getParseTree());
+
+        assertEquals("('+' ('+' 'n7' ('*' 'n10' 'n4')) 'n7')", c.getParseTree().toString());
+
+    }
+
+    public void testIfParser() {
+
+        String source = "if() {} elseif() {} elseif() {} else {}";
+
+        // lexer
+        GrammarElement pl = lexem(LexemType.SYMBOL, word("("));
+        GrammarElement pr = lexem(LexemType.SYMBOL, word(")"));
+        GrammarElement bl = lexem(LexemType.SYMBOL, word("{"));
+        GrammarElement br = lexem(LexemType.SYMBOL, word("}"));
+
+        GrammarElement if_ = sequence(lexem(KEYWORD, word("if")), pl, pr, bl, br);
+        GrammarElement elseif_ = sequence(lexem(KEYWORD, word("elseif")), pr, pl, bl, br);
+        GrammarElement else_ = sequence(lexem(KEYWORD, word("else")), bl, br);
+
+        GrammarElement ifelseifelse = sequence(if_, optional(repeat(elseif_)), optional(else_));
+
+        // parse
+        GrammarContext c = ifelseifelse.parse(source);
 
         System.out.println("Parse tree: " + c.getParseTree());
 
@@ -203,10 +229,10 @@ public class ParserTest extends TestCase {
         GrammarNode ident = choice();
 
         // <multiplication> := <ident> [ { '*' <ident> } ]
-        multiplication.addAll(ident, optional(repeat(parsem(AstBinaryExpression.BUILDER, sequence(multiplySign, ident)))));
+        multiplication.addAll(ident, optional(repeat(sequence(multiplySign, parsem(AstBinaryExpression.BUILDER, ident)))));
 
         // <addition> := <multiplication> [ { '+' <multiplication> } ]
-        addition.addAll(multiplication, optional(repeat(parsem(AstBinaryExpression.BUILDER, sequence(addSign, multiplication)))));
+        addition.addAll(multiplication, optional(repeat(sequence(addSign, parsem(AstBinaryExpression.BUILDER, multiplication)))));
 
         // <ident> := <number> | '(' <addition> ')'
         ident.addAll(number, sequence(leftParenthesis, addition, rightParenthesis));

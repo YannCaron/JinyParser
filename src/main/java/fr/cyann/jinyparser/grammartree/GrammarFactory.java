@@ -141,6 +141,16 @@ public final class GrammarFactory {
         return new LexerCharIn(terms);
     }
 
+
+    /**
+     * Create a new lexer word recognizer grammar element.
+     * @param terms the word to recognize.
+     * @return the new grammar element.
+     */
+    public static Word word(String terms) {
+        return new Word(terms);
+    }
+
     // endregion
 
 }
