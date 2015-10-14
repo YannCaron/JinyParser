@@ -12,7 +12,7 @@ package fr.cyann.jinyparser.grammartree;/**
  */
 public class LineIncrementer extends GrammarDecorator {
 
-	LineIncrementer(GrammarElement decorated) {
+	public LineIncrementer(GrammarElement decorated) {
 		super(decorated);
 	}
 

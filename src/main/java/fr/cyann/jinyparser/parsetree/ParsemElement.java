@@ -17,7 +17,7 @@ public abstract class ParsemElement {
 
 	private final Lexem lexem;
 
-	protected ParsemElement(Lexem lexem) {
+	public ParsemElement(Lexem lexem) {
 		this.lexem = lexem;
 	}
 

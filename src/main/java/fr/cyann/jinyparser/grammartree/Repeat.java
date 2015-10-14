@@ -13,7 +13,7 @@ package fr.cyann.jinyparser.grammartree;/**
 public class Repeat extends GrammarDecorator {
 
 	/** {@inheritDoc} */
-	Repeat(GrammarElement decorated) {
+	public Repeat(GrammarElement decorated) {
 		super(decorated);
 	}
 
@@ -27,12 +27,13 @@ public class Repeat extends GrammarDecorator {
 	@Override
 	protected boolean parse(GrammarContext context) {
 
-		boolean result = decorated.parse(context);
+		boolean lookaheadResult = launchLookahead(context, decorated);
 
-		if (!result) return false;
+		if (!lookaheadResult) return false;
 
-		while (result) {
-			result = decorated.parse(context);
+		while (lookaheadResult) {
+			decorated.parse(context);
+			lookaheadResult = launchLookahead(context, decorated);
 		}
 
 		return true;

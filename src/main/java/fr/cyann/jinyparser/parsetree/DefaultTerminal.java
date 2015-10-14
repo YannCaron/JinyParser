@@ -15,33 +15,14 @@ import fr.cyann.jinyparser.lexem.Lexem;
  * The DefaultTerminal class definition.<br>
  * -
  */
-public class DefaultTerminal<V> extends Terminal {
+public class DefaultTerminal extends Terminal {
 
-    private final V value;
-
-    public DefaultTerminal(Lexem lexem, V value) {
+    public DefaultTerminal(Lexem lexem) {
         super(lexem);
-        this.value = value;
     }
-
-    public final V getValue() {
-        return value;
-    }
-
-    public static <V> ParsemBuilder BUILDER(V defaultValue) {
-        return new ParsemBuilder() {
-            @Override
-            public ParsemElement buildParsem(ParsemBuildable context) {
-                Lexem lexem = context.getCurrentLexem();
-                return new DefaultTerminal(lexem, lexem.getTerm());
-            }
-        };
-    }
-
 
     @Override
     public String toString() {
-        return this.getClass().getSimpleName() + "'" + getValue() + "'";
+        return "'" + getLexem().getTerm() + "'";
     }
-
 }

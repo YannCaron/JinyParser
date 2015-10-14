@@ -12,6 +12,7 @@ import static fr.cyann.jinyparser.grammartree.GrammarFactory.*;
 /**
  * The SeparatorsManager class. Grammar element that help to manage the separator characters between two real grammar.
  */
+@SuppressWarnings("WeakerAccess")
 public class SeparatorsManager extends GrammarDecorator {
 
 	/**
@@ -28,26 +29,26 @@ public class SeparatorsManager extends GrammarDecorator {
 	 * @param decorated the object to decorate.
 	 * @param separator the separator peace of grammar that will be checked (if exists) at the beginning of decorated grammar.
 	 */
-	private SeparatorsManager(GrammarElement decorated, GrammarElement separator) {
+	public SeparatorsManager(GrammarElement decorated, GrammarElement separator) {
 		super(decorated);
 		this.separator = separator;
 	}
 
 	/** {@inheritDoc} */
-	SeparatorsManager(GrammarElement decorated) {
+	public SeparatorsManager(GrammarElement decorated) {
 		this(decorated, DEFAULT_SEPARATOR);
 	}
 
 	/** {@inheritDoc} */
 	@Override
 	protected boolean lookahead(GrammarContext context) {
-		return separator.lookahead(context) && decorated.lookahead(context);
+		return separator.lookahead(context) && decorated.lookahead(context) && separator.lookahead(context);
 	}
 
 	/** {@inheritDoc} */
 	@Override
 	protected boolean parse(GrammarContext context) {
-		return separator.parse(context) && decorated.parse(context);
+		return separator.parse(context) && decorated.parse(context) && separator.parse(context);
 	}
 
 }

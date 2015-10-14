@@ -15,7 +15,7 @@ import fr.cyann.jinyparser.lexem.Lexem;
 @SuppressWarnings("WeakerAccess")
 public abstract class Terminal extends ParsemElement {
 
-	protected Terminal(Lexem lexem) {
+	public Terminal(Lexem lexem) {
 		super(lexem);
 	}
 

@@ -13,7 +13,7 @@ package fr.cyann.jinyparser.grammartree;/**
 public class Optional extends GrammarDecorator {
 
 	/** {@inheritDoc} */
-	Optional(GrammarElement decorated) {
+	public Optional(GrammarElement decorated) {
 		super(decorated);
 	}
 
@@ -27,7 +27,11 @@ public class Optional extends GrammarDecorator {
 	/** {@inheritDoc} */
 	@Override
 	protected boolean parse(GrammarContext context) {
-		decorated.parse(context);
+		boolean lookaheadResult = launchLookahead(context, decorated);
+
+		if (lookaheadResult) {
+			decorated.parse(context);
+		}
 		return true;
 	}
 

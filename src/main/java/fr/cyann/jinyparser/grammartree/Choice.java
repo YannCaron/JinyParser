@@ -17,14 +17,14 @@ public class Choice extends GrammarNode {
 	/**
 	 * {@inheritDoc}
 	 */
-	Choice() {
+	public Choice() {
 		super();
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
-	Choice(String name) {
+	public Choice(String name) {
 		super(name);
 	}
 
@@ -56,9 +56,7 @@ public class Choice extends GrammarNode {
 	protected boolean parse(GrammarContext context) {
 		for (GrammarElement child : this) {
 
-			context.markChar();
-			boolean lookaheadResult = child.lookahead(context);
-			context.rollbackChar();
+			boolean lookaheadResult = launchLookahead(context, child);
 
 			if (lookaheadResult) {
 				child.parse(context);

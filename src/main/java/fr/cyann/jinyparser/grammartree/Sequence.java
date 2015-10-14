@@ -19,14 +19,14 @@ public class Sequence extends GrammarNode {
 	/**
 	 * {@inheritDoc}
 	 */
-	Sequence() {
+	public Sequence() {
 		super();
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
-	Sequence(String name) {
+	public Sequence(String name) {
 		super(name);
 	}
 

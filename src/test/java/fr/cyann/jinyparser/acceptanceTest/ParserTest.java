@@ -16,6 +16,8 @@ import fr.cyann.jinyparser.lexem.Lexem;
 import fr.cyann.jinyparser.lexem.LexemType;
 import junit.framework.TestCase;
 
+import java.util.List;
+
 import static fr.cyann.jinyparser.grammartree.GrammarFactory.*;
 
 /**
@@ -23,9 +25,11 @@ import static fr.cyann.jinyparser.grammartree.GrammarFactory.*;
  */
 public class ParserTest extends TestCase {
 
-    private static final LexemType NUMBER = new LexemType("NUMBER");
-    private static final LexemType OPERATOR = new LexemType("OPERATOR");
-    private static final LexemType KEYWORD = new LexemType("KEYWORD");
+    private static final LexemType NUMBER = new LexemType("number");
+    private static final LexemType OPERATOR = new LexemType("operator");
+    private static final LexemType KEYWORD = new LexemType("keyword");
+
+    private static final FieldCode ELSEIF_STMT = new FieldCode("elseif statement");
 
     public void testTrivialParser() {
 
@@ -36,12 +40,12 @@ public class ParserTest extends TestCase {
         GrammarElement sign = lexerCharIn("+-*/%");
 
         // lexer
-        GrammarElement number = parsem(AstNumber.BUILDER, lexem(NUMBER, repeat(digit)));
+        GrammarElement number = parsem(AstNumber.class, lexem(NUMBER, repeat(digit)));
 
-        GrammarElement operator = parsemDummy(lexem(OPERATOR, sign));
+        GrammarElement operator = parsem(lexem(OPERATOR, sign));
 
         // parser
-        GrammarElement grammar = sequence(number, repeat(parsem(AstBinaryExpression.BUILDER, sequence(operator, number))));
+        GrammarElement grammar = sequence(number, repeat(parsem(AstBinaryExpression.class, sequence(operator, number))));
 
         // parse
         GrammarContext c = grammar.parse(source);
@@ -61,12 +65,12 @@ public class ParserTest extends TestCase {
         GrammarElement sign = lexerCharIn("+");
 
         // lexer
-        GrammarElement number = parsem(AstNumber.BUILDER, lexem(NUMBER, repeat(digit)));
+        GrammarElement number = parsem(AstNumber.class, lexem(NUMBER, repeat(digit)));
 
-        GrammarElement operator = parsemDummy(lexem(OPERATOR, sign));
+        GrammarElement operator = parsem(lexem(OPERATOR, sign));
 
         // parser
-        GrammarElement grammar = sequence(number, repeat(sequence(operator, parsem(AstBinaryExpression.BUILDER, number))));
+        GrammarElement grammar = sequence(number, repeat(sequence(operator, parsem(AstBinaryExpression.class, number))));
 
         // parse
         GrammarContext c = grammar.parse(source);
@@ -86,9 +90,9 @@ public class ParserTest extends TestCase {
         GrammarElement sign = lexerCharIn("+-*/%");
 
         // lexer
-        GrammarElement number = parsem(AstNumber.BUILDER, lexem(NUMBER, repeat(digit)));
+        GrammarElement number = parsem(AstNumber.class, lexem(NUMBER, repeat(digit)));
 
-        GrammarElement operator = parsemDummy(lexem(OPERATOR, sign));
+        GrammarElement operator = parsem(lexem(OPERATOR, sign));
 
         // parser
         GrammarElement grammar = sequence(number, repeat(parsemNonTerminal(3, sequence(operator, number))));
@@ -107,13 +111,13 @@ public class ParserTest extends TestCase {
         String source = "7 - 10 + 4";
 
         // lexer
-        GrammarElement number = parsem(AstNumber.BUILDER, lexem(NUMBER, repeat(lexerCharIn("0123456789"))));
+        GrammarElement number = parsem(AstNumber.class, lexem(NUMBER, repeat(lexerCharIn("0123456789"))));
 
-        GrammarElement addSign = parsemDummy(lexem(OPERATOR, lexerCharIn("+")));
-        GrammarElement minusSign = parsemDummy(lexem(OPERATOR, lexerCharIn("-")));
+        GrammarElement addSign = parsem(lexem(OPERATOR, lexerCharIn("+")));
+        GrammarElement minusSign = parsem(lexem(OPERATOR, lexerCharIn("-")));
 
-        GrammarElement addition = parsem(AstBinaryExpression.BUILDER, sequence(addSign, number));
-        GrammarElement subtraction = parsem(AstBinaryExpression.BUILDER, sequence(minusSign, number));
+        GrammarElement addition = parsem(AstBinaryExpression.class, sequence(addSign, number));
+        GrammarElement subtraction = parsem(AstBinaryExpression.class, sequence(minusSign, number));
 
         // parser
         GrammarElement grammar = sequence(number, repeat(choice(addition, subtraction)));
@@ -132,16 +136,16 @@ public class ParserTest extends TestCase {
         String source = "7 + 10 * 4 + 7";
 
         // lexer
-        GrammarElement number = parsem(AstNumber.BUILDER, lexem(NUMBER, repeat(lexerCharIn("0123456789"))));
+        GrammarElement number = parsem(AstNumber.class, lexem(NUMBER, repeat(lexerCharIn("0123456789"))));
 
-        GrammarElement addSign = parsemDummy(lexem(OPERATOR, lexerCharIn("+")));
-        GrammarElement multiplySign = parsemDummy(lexem(OPERATOR, lexerCharIn("*")));
+        GrammarElement addSign = parsem(lexem(OPERATOR, lexerCharIn("+")));
+        GrammarElement multiplySign = parsem(lexem(OPERATOR, lexerCharIn("*")));
 
         // <multiplication> := <number> [ { '*' <number> } ]
-        GrammarElement multiplication = sequence(number, optional(repeat(sequence(multiplySign, parsem(AstBinaryExpression.BUILDER, number)))));
+        GrammarElement multiplication = sequence(number, optional(repeat(sequence(multiplySign, parsem(AstBinaryExpression.class, number)))));
 
         // <addition> := <multiplication> [ { '+' <multiplication> } ]
-        GrammarElement addition = sequence(multiplication, optional(repeat(sequence(addSign, parsem(AstBinaryExpression.BUILDER, multiplication)))));
+        GrammarElement addition = sequence(multiplication, optional(repeat(sequence(addSign, parsem(AstBinaryExpression.class, multiplication)))));
 
         // parse
         GrammarContext c = addition.parse(source);
@@ -154,7 +158,7 @@ public class ParserTest extends TestCase {
 
     public void testIfParser() {
 
-        String source = "if() {} elseif() {} elseif() {} else {} ";
+        String source = "if () {} elseif () {} else {} ";
 
         // lexer
         GrammarElement pl = lexem(LexemType.SYMBOL, word("("));
@@ -162,9 +166,9 @@ public class ParserTest extends TestCase {
         GrammarElement bl = lexem(LexemType.SYMBOL, word("{"));
         GrammarElement br = lexem(LexemType.SYMBOL, word("}"));
 
-        GrammarElement if_ = sequence(lexem(KEYWORD, word("if")), pl, pr, bl, br);
-        GrammarElement elseif_ = sequence(lexem(KEYWORD, word("elseif")), pl, pr, bl, br);
-        GrammarElement else_ = sequence(lexem(KEYWORD, word("else")), bl, br);
+        GrammarElement if_ = sequence(lexem(KEYWORD, word("if")), pl, pr, parsem(bl), br);
+        GrammarElement elseif_ = sequence(lexem(KEYWORD, word("elseif")), pl, pr, parsem(bl), br);
+        GrammarElement else_ = sequence(lexem(KEYWORD, word("else")), parsem(bl), br);
 
         GrammarElement grammar = sequence(if_, optional(repeat(elseif_)), optional(else_));
 
@@ -184,20 +188,20 @@ public class ParserTest extends TestCase {
         // lexer
         GrammarElement leftParenthesis = lexem(LexemType.SYMBOL, lexerCharIn("("));
         GrammarElement rightParenthesis = lexem(LexemType.SYMBOL, lexerCharIn(")"));
-        GrammarElement number = parsem(AstNumber.BUILDER, lexem(NUMBER, repeat(lexerCharIn("0123456789"))));
+        GrammarElement number = parsem(AstNumber.class, lexem(NUMBER, repeat(lexerCharIn("0123456789"))));
 
-        GrammarElement addSign = parsemDummy(lexem(OPERATOR, lexerCharIn("+")));
-        GrammarElement multiplySign = parsemDummy(lexem(OPERATOR, lexerCharIn("*")));
+        GrammarElement addSign = parsem(lexem(OPERATOR, lexerCharIn("+")));
+        GrammarElement multiplySign = parsem(lexem(OPERATOR, lexerCharIn("*")));
 
         GrammarElement addition;
         GrammarElement multiplication;
         GrammarNode ident = choice();
 
         // <multiplication> := <number> [ { '*' <number> } ]
-        multiplication = sequence(ident, optional(repeat(sequence(multiplySign, parsem(AstBinaryExpression.BUILDER, ident)))));
+        multiplication = sequence(ident, optional(repeat(sequence(multiplySign, parsem(AstBinaryExpression.class, ident)))));
 
         // <addition> := <multiplication> [ { '+' <multiplication> } ]
-        addition = sequence(multiplication, optional(repeat(sequence(addSign, parsem(AstBinaryExpression.BUILDER, multiplication)))));
+        addition = sequence(multiplication, optional(repeat(sequence(addSign, parsem(AstBinaryExpression.class, multiplication)))));
 
         // <num> := <number> | '(' <addition> ')'
         ident.addAll(number, sequence(leftParenthesis, addition, rightParenthesis));
@@ -219,20 +223,20 @@ public class ParserTest extends TestCase {
         // lexer
         GrammarElement leftParenthesis = lexem(LexemType.SYMBOL, lexerCharIn("("));
         GrammarElement rightParenthesis = lexem(LexemType.SYMBOL, lexerCharIn(")"));
-        GrammarElement number = parsem(AstNumber.BUILDER, lexem(NUMBER, repeat(lexerCharIn("0123456789"))));
+        GrammarElement number = parsem(AstNumber.class, lexem(NUMBER, repeat(lexerCharIn("0123456789"))));
 
-        GrammarElement addSign = parsemDummy(lexem(OPERATOR, lexerCharIn("+")));
-        GrammarElement multiplySign = parsemDummy(lexem(OPERATOR, lexerCharIn("*")));
+        GrammarElement addSign = parsem(lexem(OPERATOR, lexerCharIn("+")));
+        GrammarElement multiplySign = parsem(lexem(OPERATOR, lexerCharIn("*")));
 
         GrammarNode addition = sequence();
         GrammarNode multiplication = sequence();
         GrammarNode ident = choice();
 
         // <multiplication> := <ident> [ { '*' <ident> } ]
-        multiplication.addAll(ident, optional(repeat(sequence(multiplySign, parsem(AstBinaryExpression.BUILDER, ident)))));
+        multiplication.addAll(ident, optional(repeat(sequence(multiplySign, parsem(AstBinaryExpression.class, ident)))));
 
         // <addition> := <multiplication> [ { '+' <multiplication> } ]
-        addition.addAll(multiplication, optional(repeat(sequence(addSign, parsem(AstBinaryExpression.BUILDER, multiplication)))));
+        addition.addAll(multiplication, optional(repeat(sequence(addSign, parsem(AstBinaryExpression.class, multiplication)))));
 
         // <ident> := <number> | '(' <addition> ')'
         ident.addAll(number, sequence(leftParenthesis, addition, rightParenthesis));
@@ -241,45 +245,39 @@ public class ParserTest extends TestCase {
 
     }
 
-    static class AstNumber extends DefaultTerminal<Integer> {
+    static class AstNumber extends Terminal {
 
-        public static final ParsemBuilder BUILDER = new ParsemBuilder() {
-            @Override
-            public ParsemElement buildParsem(ParsemBuildable context) {
-                Lexem lexem = context.getCurrentLexem();
-                return new AstNumber(lexem, Integer.valueOf(lexem.getTerm()));
-            }
-        };
+        private final int value;
 
-        public AstNumber(Lexem lexem, Integer value) {
-            super(lexem, value);
+        public AstNumber(Lexem lexem) {
+            super(lexem);
+            value = Integer.valueOf(lexem.getTerm());
+
         }
 
         @Override
         public String toString() {
-            return "'n" + getValue() + "'";
+            return "'n" + value + "'";
         }
     }
 
     static class AstBinaryExpression extends NonTerminal {
 
-        public static final ParsemBuilder BUILDER = new ParsemBuilder() {
-            @Override
-            public ParsemElement buildParsem(ParsemBuildable context) {
-                ParsemElement right = context.popParsem();
-                ParsemElement operator = context.popParsem();
-                ParsemElement left = context.popParsem();
+        private ParsemElement sign, left, right;
 
-                return new AstBinaryExpression(left.getLexem(), right.getLexem(), operator, left, right);
-            }
-        };
-        private final ParsemElement sign, left, right;
+        public AstBinaryExpression(Lexem lexem) {
+            super(lexem);
+        }
 
-        public AstBinaryExpression(Lexem lexemBegin, Lexem lexemEnd, ParsemElement sign, ParsemElement left, ParsemElement right) {
-            super(lexemBegin, lexemEnd);
-            this.sign = sign;
-            this.left = left;
-            this.right = right;
+        @Override
+        public void build(ParsemBuildable context) {
+            right = context.popParsem();
+            sign = context.popParsem();
+            left = context.popParsem();
+        }
+
+        @Override
+        public void aggregate(FieldCode code, ParsemBuildable context) {
         }
 
         @Override
@@ -287,7 +285,30 @@ public class ParserTest extends TestCase {
             return "(" + sign + " " + left + " " + right + ")";
         }
 
-
     }
 
+    static class AstIf extends NonTerminal {
+
+        private ParsemElement if_, else_;
+        private List<ParsemElement> elseifs;
+
+        public AstIf(Lexem lexem) {
+            super(lexem);
+        }
+
+        @Override
+        public void build(ParsemBuildable context) {
+            if_ = context.popParsem();
+        }
+
+        @Override
+        public void aggregate(FieldCode code, ParsemBuildable context) {
+        }
+
+//        @Override
+//        public String toString() {
+//            return "(" + sign + " " + left + " " + right + ")";
+//        }
+
+    }
 }

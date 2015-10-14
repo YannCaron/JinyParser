@@ -14,6 +14,7 @@ import java.util.*;
 /**
  * The GrammarNode class. An abstract class for all grammar nodes (compounds one),
  */
+@SuppressWarnings("WeakerAccess")
 public abstract class GrammarNode extends GrammarElement implements Iterable<GrammarElement> {
 
 	private final List<GrammarElement> children;
@@ -21,7 +22,7 @@ public abstract class GrammarNode extends GrammarElement implements Iterable<Gra
 	/**
 	 * Default and mandatory constructor. Initialize internal resources.
 	 */
-	GrammarNode() {
+	public GrammarNode() {
 		super();
 		this.children = new ArrayList<GrammarElement>();
 	}
@@ -31,7 +32,8 @@ public abstract class GrammarNode extends GrammarElement implements Iterable<Gra
 	 *
 	 * @param name the grammar name.
 	 */
-	GrammarNode(String name) {
+	public GrammarNode(String name) {
+		super();
 		this.children = new ArrayList<GrammarElement>();
 	}
 

@@ -20,7 +20,7 @@ public class Word extends GrammarLeaf {
      *
      * @param word the entire word to test.
      */
-    Word(String word) {
+    public Word(String word) {
         this.word = word;
     }
 

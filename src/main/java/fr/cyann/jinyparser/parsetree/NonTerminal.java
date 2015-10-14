@@ -14,12 +14,15 @@ import fr.cyann.jinyparser.lexem.Lexem;
  */
 public abstract class NonTerminal extends ParsemElement {
 
-	private final Lexem lexemEnd;
+	private Lexem lexemEnd;
 
-	public NonTerminal(Lexem lexemBegin, Lexem lexemEnd) {
-		super(lexemBegin);
-		this.lexemEnd = lexemEnd;
+	public NonTerminal(Lexem lexem) {
+		super(lexem);
 	}
+
+	public abstract void build(ParsemBuildable context);
+
+	public abstract void aggregate(FieldCode code, ParsemBuildable context);
 
 	public Lexem getLexemEnd() {
 		return lexemEnd;

@@ -1,4 +1,4 @@
-package fr.cyann.jinyparser.lexem;/**
+package fr.cyann.jinyparser.parsetree;/**
  * Copyright (C) 01/10/15 Yann Caron aka cyann
  * <p/>
  * Cette œuvre est mise à disposition sous licence Attribution -
@@ -12,16 +12,13 @@ package fr.cyann.jinyparser.lexem;/**
  * An extensible Enum of token types.<br>
  * SEPARATOR and SYMBOL are default ones.
  */
-public class LexemType {
+public class FieldCode {
 
 	/**
-	 * Symbol lexem type.
+	 * Default field code.
 	 */
-	public static final LexemType SYMBOL = new LexemType("SYMBOL");
-	/**
-	 * Separator lexem type.
-	 */
-	public static LexemType SEPARATOR = new LexemType("SEPARATOR");
+	public static final FieldCode DEFAULT = new FieldCode("DEFAULT");
+
 	private static int typeCounter;
 	private final int code;
 	private final String name;
@@ -30,7 +27,7 @@ public class LexemType {
 	 * Default constructor.
 	 * @param name the type name.
 	 */
-	public LexemType(String name) {
+	public FieldCode(String name) {
 		this.name = name;
 		code = typeCounter++;
 	}
@@ -45,7 +42,7 @@ public class LexemType {
 		if (this == o) return true;
 		if (o == null || getClass() != o.getClass()) return false;
 
-		LexemType lexemType = (LexemType) o;
+		FieldCode lexemType = (FieldCode) o;
 
 		return code == lexemType.code;
 

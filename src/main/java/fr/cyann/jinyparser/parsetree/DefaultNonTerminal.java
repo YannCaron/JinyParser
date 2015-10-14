@@ -46,8 +46,8 @@ public class DefaultNonTerminal extends NonTerminal {
         }
     }
 
-    private DefaultNonTerminal(Lexem lexemBegin, Lexem lexemEnd, List<ParsemElement> children) {
-        super(lexemBegin, lexemEnd);
+    public DefaultNonTerminal(Lexem lexemBegin, Lexem lexemEnd, List<ParsemElement> children) {
+        super(lexemBegin);
         this.children = children;
     }
 
@@ -72,5 +72,15 @@ public class DefaultNonTerminal extends NonTerminal {
         sb.append(')');
 
         return sb.toString();
+    }
+
+    @Override
+    public void build(ParsemBuildable context) {
+
+    }
+
+    @Override
+    public void aggregate(FieldCode code, ParsemBuildable context) {
+
     }
 }

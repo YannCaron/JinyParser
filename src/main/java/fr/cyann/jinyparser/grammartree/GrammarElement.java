@@ -19,6 +19,7 @@ import java.util.Locale;
  * Based on Interpreter / Composite GoF design pattern. <br>
  * Give the ability to declare (declarative programming) the language grammar by nesting grammars elements together.
  */
+@SuppressWarnings("WeakerAccess")
 public abstract class GrammarElement {
 
 	/**
@@ -36,6 +37,21 @@ public abstract class GrammarElement {
 	 * @return true if parsing succeed, false otherwise.
 	 */
 	protected abstract boolean parse(GrammarContext context);
+
+	/**
+	 * Launch the lookahead search from a parsing method.
+	 *
+	 * @param context the parsing context that contains all necessary resources to the parsing (iterators, flags and so on).
+	 * @param element the element where to launch the lookahead
+	 * @return true if lookahead succeed, false otherwise.
+	 */
+	protected boolean launchLookahead(GrammarContext context, GrammarElement element) {
+		context.markChar();
+		boolean lookaheadResult = element.lookahead(context);
+		context.rollbackChar();
+
+		return lookaheadResult;
+	}
 
 	/**
 	 * The parsing entry method.

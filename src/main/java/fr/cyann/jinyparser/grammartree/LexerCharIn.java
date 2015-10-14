@@ -20,7 +20,7 @@ public class LexerCharIn extends GrammarLeaf {
 	 *
 	 * @param characters the list of character to test.
 	 */
-	LexerCharIn(String characters) {
+	public LexerCharIn(String characters) {
 		this.characters = characters;
 	}
 
