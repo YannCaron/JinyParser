@@ -3,6 +3,7 @@ package fr.cyann.jinyparser.grammartree;
 import fr.cyann.jinyparser.lexem.LexemType;
 import fr.cyann.jinyparser.parsetree.DefaultNonTerminal;
 import fr.cyann.jinyparser.parsetree.DefaultTerminal;
+import fr.cyann.jinyparser.parsetree.FieldCode;
 import fr.cyann.jinyparser.parsetree.ParsemElement;
 
 /**
@@ -84,27 +85,36 @@ public final class GrammarFactory {
     }
 
     /**
-     * Grammar element that produce parsem (build parse tree element in the stack).
-     * @param clazz the parsem element class to create.
-     * @param decorated the grammar that decide if parsem will be produced.
+     * Grammar element that produce a default terminal create.
+     * @param decorated the grammar that decide if create will be produced.
      * @return the new grammar element.
      */
-    public static GrammarElement parsem(Class<? extends ParsemElement> clazz, GrammarElement decorated) {
-        return new Parsem(clazz, decorated);
+    public static GrammarElement create(GrammarElement decorated) {
+        return new ParsemCreator(DefaultTerminal.class, decorated);
     }
 
     /**
-     * Grammar element that produce a default terminal parsem.
-     * @param decorated the grammar that decide if parsem will be produced.
+     * Grammar element that produce create (build parse tree element in the stack).
+     * @param clazz the create element class to create.
+     * @param decorated the grammar that decide if create will be produced.
      * @return the new grammar element.
      */
-    public static GrammarElement parsem(GrammarElement decorated) {
-        return new Parsem(DefaultTerminal.class, decorated);
+    public static GrammarElement create(Class<? extends ParsemElement> clazz, GrammarElement decorated) {
+        return new ParsemCreator(clazz, decorated);
     }
 
     /**
-     * Grammar element that produce a default non terminal parsem.
-     * @param decorated the grammar that decide if parsem will be produced.
+     * Grammar element that aggregate the current lexem with the previous code according a code.
+     * @param decorated the grammar that decide if create will be produced.
+     * @return the new grammar element.
+     */
+    public static GrammarElement aggregate(FieldCode code, GrammarElement decorated) {
+        return new ParsemAggregator(code, decorated);
+    }
+
+    /**
+     * Grammar element that produce a default non terminal create.
+     * @param decorated the grammar that decide if create will be produced.
      * @return the new grammar element.
      */
     public static GrammarElement parsemNonTerminal(int length, GrammarElement decorated) {

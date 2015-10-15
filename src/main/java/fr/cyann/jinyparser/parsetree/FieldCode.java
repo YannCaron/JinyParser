@@ -58,6 +58,23 @@ public class FieldCode {
 	}
 
 	/**
+	 * The code accessor.
+	 * @return the code.
+	 */
+	public int getCode() {
+		return code;
+	}
+
+	/**
+	 * The name accessor.
+	 *
+	 * @return the name.
+	 */
+	public String getName() {
+		return name;
+	}
+
+	/**
 	 * Give the string representation of the object.
 	 * @return the string representation.
 	 */

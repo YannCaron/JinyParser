@@ -12,16 +12,15 @@ package fr.cyann.jinyparser.grammartree;
 import fr.cyann.jinyparser.exceptions.JinyException;
 import fr.cyann.jinyparser.lexem.Lexem;
 import fr.cyann.jinyparser.parsetree.NonTerminal;
-import fr.cyann.jinyparser.parsetree.ParsemBuildable;
 import fr.cyann.jinyparser.parsetree.ParsemElement;
 import fr.cyann.jinyparser.utils.MultilingualMessage;
 
 import java.lang.reflect.Constructor;
 
 /**
- * The Parsem class definition.<br>
+ * The ParsemCreator class definition.<br>
  */
-public class Parsem extends GrammarDecorator {
+public class ParsemCreator extends GrammarDecorator {
 
     private final Class<? extends ParsemElement> clazz;
 
@@ -31,7 +30,7 @@ public class Parsem extends GrammarDecorator {
      * @param clazz the grammar element class to create.
      * @param decorated the decorated grammar element.
      */
-    public Parsem(Class<? extends ParsemElement> clazz, GrammarElement decorated) {
+    public ParsemCreator(Class<? extends ParsemElement> clazz, GrammarElement decorated) {
         super(decorated);
         this.clazz = clazz;
     }
@@ -61,12 +60,12 @@ public class Parsem extends GrammarDecorator {
                 ParsemElement parsem = constructor.newInstance(context.getCurrentLexem());
 
                 if (parsem instanceof NonTerminal) {
-                    ((NonTerminal)parsem).build(context);
+                    parsem.build(context);
                 }
 
                 context.pushParsem(parsem);
             } catch (Exception e) {
-                throw new JinyException(MultilingualMessage.create(e.getMessage()));
+                throw new JinyException(MultilingualMessage.create(e.toString()));
             }
 
         }

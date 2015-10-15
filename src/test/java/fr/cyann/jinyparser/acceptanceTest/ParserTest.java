@@ -16,6 +16,7 @@ import fr.cyann.jinyparser.lexem.LexemType;
 import fr.cyann.jinyparser.parsetree.*;
 import junit.framework.TestCase;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static fr.cyann.jinyparser.grammartree.GrammarFactory.*;
@@ -30,6 +31,7 @@ public class ParserTest extends TestCase {
     private static final LexemType KEYWORD = new LexemType("keyword");
 
     private static final FieldCode ELSEIF_STMT = new FieldCode("elseif statement");
+    private static final FieldCode ELSE_STMT = new FieldCode("else statement");
 
     public void testTrivialParser() {
 
@@ -40,12 +42,12 @@ public class ParserTest extends TestCase {
         GrammarElement sign = lexerCharIn("+-*/%");
 
         // lexer
-        GrammarElement number = parsem(AstNumber.class, lexem(NUMBER, repeat(digit)));
+        GrammarElement number = create(AstNumber.class, lexem(NUMBER, repeat(digit)));
 
-        GrammarElement operator = parsem(lexem(OPERATOR, sign));
+        GrammarElement operator = create(lexem(OPERATOR, sign));
 
         // parser
-        GrammarElement grammar = sequence(number, repeat(parsem(AstBinaryExpression.class, sequence(operator, number))));
+        GrammarElement grammar = sequence(number, repeat(create(AstBinaryExpression.class, sequence(operator, number))));
 
         // parse
         GrammarContext c = grammar.parse(source);
@@ -65,12 +67,12 @@ public class ParserTest extends TestCase {
         GrammarElement sign = lexerCharIn("+");
 
         // lexer
-        GrammarElement number = parsem(AstNumber.class, lexem(NUMBER, repeat(digit)));
+        GrammarElement number = create(AstNumber.class, lexem(NUMBER, repeat(digit)));
 
-        GrammarElement operator = parsem(lexem(OPERATOR, sign));
+        GrammarElement operator = create(lexem(OPERATOR, sign));
 
         // parser
-        GrammarElement grammar = sequence(number, repeat(sequence(operator, parsem(AstBinaryExpression.class, number))));
+        GrammarElement grammar = sequence(number, repeat(sequence(operator, create(AstBinaryExpression.class, number))));
 
         // parse
         GrammarContext c = grammar.parse(source);
@@ -90,9 +92,9 @@ public class ParserTest extends TestCase {
         GrammarElement sign = lexerCharIn("+-*/%");
 
         // lexer
-        GrammarElement number = parsem(AstNumber.class, lexem(NUMBER, repeat(digit)));
+        GrammarElement number = create(AstNumber.class, lexem(NUMBER, repeat(digit)));
 
-        GrammarElement operator = parsem(lexem(OPERATOR, sign));
+        GrammarElement operator = create(lexem(OPERATOR, sign));
 
         // parser
         GrammarElement grammar = sequence(number, repeat(parsemNonTerminal(3, sequence(operator, number))));
@@ -111,13 +113,13 @@ public class ParserTest extends TestCase {
         String source = "7 - 10 + 4";
 
         // lexer
-        GrammarElement number = parsem(AstNumber.class, lexem(NUMBER, repeat(lexerCharIn("0123456789"))));
+        GrammarElement number = create(AstNumber.class, lexem(NUMBER, repeat(lexerCharIn("0123456789"))));
 
-        GrammarElement addSign = parsem(lexem(OPERATOR, lexerCharIn("+")));
-        GrammarElement minusSign = parsem(lexem(OPERATOR, lexerCharIn("-")));
+        GrammarElement addSign = create(lexem(OPERATOR, lexerCharIn("+")));
+        GrammarElement minusSign = create(lexem(OPERATOR, lexerCharIn("-")));
 
-        GrammarElement addition = parsem(AstBinaryExpression.class, sequence(addSign, number));
-        GrammarElement subtraction = parsem(AstBinaryExpression.class, sequence(minusSign, number));
+        GrammarElement addition = create(AstBinaryExpression.class, sequence(addSign, number));
+        GrammarElement subtraction = create(AstBinaryExpression.class, sequence(minusSign, number));
 
         // parser
         GrammarElement grammar = sequence(number, repeat(choice(addition, subtraction)));
@@ -136,16 +138,16 @@ public class ParserTest extends TestCase {
         String source = "7 + 10 * 4 + 7";
 
         // lexer
-        GrammarElement number = parsem(AstNumber.class, lexem(NUMBER, repeat(lexerCharIn("0123456789"))));
+        GrammarElement number = create(AstNumber.class, lexem(NUMBER, repeat(lexerCharIn("0123456789"))));
 
-        GrammarElement addSign = parsem(lexem(OPERATOR, lexerCharIn("+")));
-        GrammarElement multiplySign = parsem(lexem(OPERATOR, lexerCharIn("*")));
+        GrammarElement addSign = create(lexem(OPERATOR, lexerCharIn("+")));
+        GrammarElement multiplySign = create(lexem(OPERATOR, lexerCharIn("*")));
 
         // <multiplication> := <number> [ { '*' <number> } ]
-        GrammarElement multiplication = sequence(number, optional(repeat(sequence(multiplySign, parsem(AstBinaryExpression.class, number)))));
+        GrammarElement multiplication = sequence(number, optional(repeat(sequence(multiplySign, create(AstBinaryExpression.class, number)))));
 
         // <addition> := <multiplication> [ { '+' <multiplication> } ]
-        GrammarElement addition = sequence(multiplication, optional(repeat(sequence(addSign, parsem(AstBinaryExpression.class, multiplication)))));
+        GrammarElement addition = sequence(multiplication, optional(repeat(sequence(addSign, create(AstBinaryExpression.class, multiplication)))));
 
         // parse
         GrammarContext c = addition.parse(source);
@@ -166,18 +168,18 @@ public class ParserTest extends TestCase {
         GrammarElement bl = lexem(LexemType.SYMBOL, word("{"));
         GrammarElement br = lexem(LexemType.SYMBOL, word("}"));
 
-        GrammarElement if_ = sequence(lexem(KEYWORD, word("if")), pl, pr, parsem(bl), br);
-        GrammarElement elseif_ = sequence(lexem(KEYWORD, word("elseif")), pl, pr, parsem(bl), br);
-        GrammarElement else_ = sequence(lexem(KEYWORD, word("else")), parsem(bl), br);
+        GrammarElement if_ = sequence(create(lexem(KEYWORD, word("if"))), pl, pr, bl, br);
+        GrammarElement elseif_ = sequence(create(lexem(KEYWORD, word("elseif"))), pl, pr, bl, br);
+        GrammarElement else_ = sequence(create(lexem(KEYWORD, word("else"))), bl, br);
 
-        GrammarElement grammar = sequence(if_, optional(repeat(elseif_)), optional(else_));
+        GrammarElement grammar = sequence(create(AstIf.class, if_), optional(repeat(aggregate(ELSEIF_STMT, elseif_))), optional(aggregate(ELSE_STMT, else_)));
 
         // parse
         GrammarContext c = grammar.parse(source);
 
         System.out.println("Parse tree: " + c.getParseTree());
 
-        //assertEquals("('+' ('+' 'n7' ('*' 'n10' 'n4')) 'n7')", c.getParseTree().toString());
+        assertEquals("'if' (['elseif'] 'else')", c.getParseTree().toString());
 
     }
 
@@ -188,20 +190,20 @@ public class ParserTest extends TestCase {
         // lexer
         GrammarElement leftParenthesis = lexem(LexemType.SYMBOL, lexerCharIn("("));
         GrammarElement rightParenthesis = lexem(LexemType.SYMBOL, lexerCharIn(")"));
-        GrammarElement number = parsem(AstNumber.class, lexem(NUMBER, repeat(lexerCharIn("0123456789"))));
+        GrammarElement number = create(AstNumber.class, lexem(NUMBER, repeat(lexerCharIn("0123456789"))));
 
-        GrammarElement addSign = parsem(lexem(OPERATOR, lexerCharIn("+")));
-        GrammarElement multiplySign = parsem(lexem(OPERATOR, lexerCharIn("*")));
+        GrammarElement addSign = create(lexem(OPERATOR, lexerCharIn("+")));
+        GrammarElement multiplySign = create(lexem(OPERATOR, lexerCharIn("*")));
 
         GrammarElement addition;
         GrammarElement multiplication;
         GrammarNode ident = choice();
 
         // <multiplication> := <number> [ { '*' <number> } ]
-        multiplication = sequence(ident, optional(repeat(sequence(multiplySign, parsem(AstBinaryExpression.class, ident)))));
+        multiplication = sequence(ident, optional(repeat(sequence(multiplySign, create(AstBinaryExpression.class, ident)))));
 
         // <addition> := <multiplication> [ { '+' <multiplication> } ]
-        addition = sequence(multiplication, optional(repeat(sequence(addSign, parsem(AstBinaryExpression.class, multiplication)))));
+        addition = sequence(multiplication, optional(repeat(sequence(addSign, create(AstBinaryExpression.class, multiplication)))));
 
         // <num> := <number> | '(' <addition> ')'
         ident.addAll(number, sequence(leftParenthesis, addition, rightParenthesis));
@@ -223,20 +225,20 @@ public class ParserTest extends TestCase {
         // lexer
         GrammarElement leftParenthesis = lexem(LexemType.SYMBOL, lexerCharIn("("));
         GrammarElement rightParenthesis = lexem(LexemType.SYMBOL, lexerCharIn(")"));
-        GrammarElement number = parsem(AstNumber.class, lexem(NUMBER, repeat(lexerCharIn("0123456789"))));
+        GrammarElement number = create(AstNumber.class, lexem(NUMBER, repeat(lexerCharIn("0123456789"))));
 
-        GrammarElement addSign = parsem(lexem(OPERATOR, lexerCharIn("+")));
-        GrammarElement multiplySign = parsem(lexem(OPERATOR, lexerCharIn("*")));
+        GrammarElement addSign = create(lexem(OPERATOR, lexerCharIn("+")));
+        GrammarElement multiplySign = create(lexem(OPERATOR, lexerCharIn("*")));
 
         GrammarNode addition = sequence();
         GrammarNode multiplication = sequence();
         GrammarNode ident = choice();
 
         // <multiplication> := <ident> [ { '*' <ident> } ]
-        multiplication.addAll(ident, optional(repeat(sequence(multiplySign, parsem(AstBinaryExpression.class, ident)))));
+        multiplication.addAll(ident, optional(repeat(sequence(multiplySign, create(AstBinaryExpression.class, ident)))));
 
         // <addition> := <multiplication> [ { '+' <multiplication> } ]
-        addition.addAll(multiplication, optional(repeat(sequence(addSign, parsem(AstBinaryExpression.class, multiplication)))));
+        addition.addAll(multiplication, optional(repeat(sequence(addSign, create(AstBinaryExpression.class, multiplication)))));
 
         // <ident> := <number> | '(' <addition> ')'
         ident.addAll(number, sequence(leftParenthesis, addition, rightParenthesis));
@@ -289,11 +291,12 @@ public class ParserTest extends TestCase {
 
     static class AstIf extends NonTerminal {
 
+        private final List<ParsemElement> elseifs;
         private ParsemElement if_, else_;
-        private List<ParsemElement> elseifs;
 
         public AstIf(Lexem lexem) {
             super(lexem);
+            elseifs = new ArrayList<ParsemElement>();
         }
 
         @Override
@@ -303,12 +306,17 @@ public class ParserTest extends TestCase {
 
         @Override
         public void aggregate(FieldCode code, ParsemElement element) {
+            if (code.equals(ELSEIF_STMT)) {
+                elseifs.add(element);
+            } else if (code.equals(ELSE_STMT)) {
+                else_ = element;
+            }
         }
 
-//        @Override
-//        public String toString() {
-//            return "(" + sign + " " + left + " " + right + ")";
-//        }
+        @Override
+        public String toString() {
+            return if_.toString() + " (" + elseifs.toString() + " " + else_ + ")";
+        }
 
     }
 }
