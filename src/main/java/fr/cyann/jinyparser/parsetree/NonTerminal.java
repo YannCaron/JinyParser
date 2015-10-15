@@ -20,10 +20,6 @@ public abstract class NonTerminal extends ParsemElement {
 		super(lexem);
 	}
 
-	public abstract void build(ParsemBuildable context);
-
-	public abstract void aggregate(FieldCode code, ParsemBuildable context);
-
 	public Lexem getLexemEnd() {
 		return lexemEnd;
 	}

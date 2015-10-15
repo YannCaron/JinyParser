@@ -7,7 +7,9 @@ package fr.cyann.jinyparser.parsetree;/**
  * ou écrivez à Creative Commons, 444 Castro Street, Suite 900, Mountain View, California, 94041, USA.
  **/
 
+import fr.cyann.jinyparser.exceptions.JinyException;
 import fr.cyann.jinyparser.lexem.Lexem;
+import fr.cyann.jinyparser.utils.MultilingualMessage;
 
 /**
  * The Terminal definition.
@@ -17,6 +19,14 @@ public abstract class Terminal extends ParsemElement {
 
 	public Terminal(Lexem lexem) {
 		super(lexem);
+	}
+
+	public void build(ParsemBuildable context) {
+		// do nothing
+	}
+
+	public void aggregate(FieldCode code, ParsemElement element) {
+		throw new JinyException(MultilingualMessage.create("Illegal function call ! Cannot aggregate on terminal parsem [%s] with [%s] !").setArgs(this, element));
 	}
 
 }

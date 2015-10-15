@@ -11,9 +11,9 @@ package fr.cyann.jinyparser.acceptanceTest;
 import fr.cyann.jinyparser.grammartree.GrammarContext;
 import fr.cyann.jinyparser.grammartree.GrammarElement;
 import fr.cyann.jinyparser.grammartree.GrammarNode;
-import fr.cyann.jinyparser.parsetree.*;
 import fr.cyann.jinyparser.lexem.Lexem;
 import fr.cyann.jinyparser.lexem.LexemType;
+import fr.cyann.jinyparser.parsetree.*;
 import junit.framework.TestCase;
 
 import java.util.List;
@@ -277,7 +277,7 @@ public class ParserTest extends TestCase {
         }
 
         @Override
-        public void aggregate(FieldCode code, ParsemBuildable context) {
+        public void aggregate(FieldCode code, ParsemElement element) {
         }
 
         @Override
@@ -302,7 +302,7 @@ public class ParserTest extends TestCase {
         }
 
         @Override
-        public void aggregate(FieldCode code, ParsemBuildable context) {
+        public void aggregate(FieldCode code, ParsemElement element) {
         }
 
 //        @Override

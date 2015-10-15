@@ -22,6 +22,11 @@ public class DefaultNonTerminal extends NonTerminal {
 
     private final List<ParsemElement> children;
 
+    public DefaultNonTerminal(Lexem lexemBegin, Lexem lexemEnd, List<ParsemElement> children) {
+        super(lexemBegin);
+        this.children = children;
+    }
+
     public static ParsemBuilder BUILDER(final int length) {
         return new ParsemBuilder() {
             @Override
@@ -44,11 +49,6 @@ public class DefaultNonTerminal extends NonTerminal {
         for (int i = length - 1; i>=0; i--) {
             children.add(last - 1, context.popParsem());
         }
-    }
-
-    public DefaultNonTerminal(Lexem lexemBegin, Lexem lexemEnd, List<ParsemElement> children) {
-        super(lexemBegin);
-        this.children = children;
     }
 
     int size() {
@@ -80,7 +80,7 @@ public class DefaultNonTerminal extends NonTerminal {
     }
 
     @Override
-    public void aggregate(FieldCode code, ParsemBuildable context) {
+    public void aggregate(FieldCode code, ParsemElement element) {
 
     }
 }
