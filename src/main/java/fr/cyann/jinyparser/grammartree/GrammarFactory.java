@@ -3,7 +3,6 @@ package fr.cyann.jinyparser.grammartree;
 import fr.cyann.jinyparser.lexem.LexemType;
 import fr.cyann.jinyparser.parsetree.DefaultNonTerminal;
 import fr.cyann.jinyparser.parsetree.DefaultTerminal;
-import fr.cyann.jinyparser.parsetree.FieldCode;
 import fr.cyann.jinyparser.parsetree.ParsemElement;
 
 /**
@@ -105,11 +104,12 @@ public final class GrammarFactory {
 
     /**
      * Grammar element that aggregate the current lexem with the previous code according a code.
+     * @param fieldName the name of the field that will accept the child parsem.
      * @param decorated the grammar that decide if create will be produced.
      * @return the new grammar element.
      */
-    public static GrammarElement aggregate(FieldCode code, GrammarElement decorated) {
-        return new ParsemAggregator(code, decorated);
+    public static GrammarElement aggregate(String fieldName, GrammarElement decorated) {
+        return new ParsemAggregator(fieldName, decorated);
     }
 
     /**

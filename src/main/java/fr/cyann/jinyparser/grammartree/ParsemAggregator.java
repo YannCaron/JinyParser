@@ -9,7 +9,6 @@ package fr.cyann.jinyparser.grammartree;
  **/
 
 
-import fr.cyann.jinyparser.parsetree.FieldCode;
 import fr.cyann.jinyparser.parsetree.ParsemElement;
 
 /**
@@ -17,17 +16,17 @@ import fr.cyann.jinyparser.parsetree.ParsemElement;
  */
 public class ParsemAggregator extends GrammarDecorator {
 
-    private final FieldCode code;
+    private final String fieldName;
 
     /**
      * Default constructor.
      *
-     * @param code      the field code to aggregate.
+     * @param fieldName the name of the field to aggregate.
      * @param decorated the decorated element.
      */
-    public ParsemAggregator(FieldCode code, GrammarElement decorated) {
+    public ParsemAggregator(String fieldName, GrammarElement decorated) {
         super(decorated);
-        this.code = code;
+        this.fieldName = fieldName;
     }
 
     /**
@@ -51,7 +50,7 @@ public class ParsemAggregator extends GrammarDecorator {
             ParsemElement elementToAggregate = context.popParsem();
             ParsemElement nonTerminal = context.popParsem();
 
-            nonTerminal.aggregate(code, elementToAggregate);
+            nonTerminal.aggregate(fieldName, elementToAggregate);
 
             context.pushParsem(nonTerminal);
 

@@ -160,7 +160,7 @@ public class ParserTest extends TestCase {
 
     public void testIfParser() {
 
-        String source = "if () {} elseif () {} else {} ";
+        String source = "if () {} elseif () {} elseif () {} else {} ";
 
         // lexer
         GrammarElement pl = lexem(LexemType.SYMBOL, word("("));
@@ -169,17 +169,17 @@ public class ParserTest extends TestCase {
         GrammarElement br = lexem(LexemType.SYMBOL, word("}"));
 
         GrammarElement if_ = sequence(create(lexem(KEYWORD, word("if"))), pl, pr, bl, br);
-        GrammarElement elseif_ = sequence(create(lexem(KEYWORD, word("elseif"))), pl, pr, bl, br);
+        GrammarElement elseif = sequence(create(lexem(KEYWORD, word("elseif"))), pl, pr, bl, br);
         GrammarElement else_ = sequence(create(lexem(KEYWORD, word("else"))), bl, br);
 
-        GrammarElement grammar = sequence(create(AstIf.class, if_), optional(repeat(aggregate(ELSEIF_STMT, elseif_))), optional(aggregate(ELSE_STMT, else_)));
+        GrammarElement grammar = sequence(create(AstIf.class, if_), optional(repeat(aggregate("elseif", elseif))), optional(aggregate("else", else_)));
 
         // parse
         GrammarContext c = grammar.parse(source);
 
         System.out.println("Parse tree: " + c.getParseTree());
 
-        assertEquals("'if' (['elseif'] 'else')", c.getParseTree().toString());
+        assertEquals("'if' (['elseif', 'elseif'] 'else')", c.getParseTree().toString());
 
     }
 
@@ -279,10 +279,6 @@ public class ParserTest extends TestCase {
         }
 
         @Override
-        public void aggregate(FieldCode code, ParsemElement element) {
-        }
-
-        @Override
         public String toString() {
             return "(" + sign + " " + left + " " + right + ")";
         }
@@ -291,8 +287,11 @@ public class ParserTest extends TestCase {
 
     static class AstIf extends NonTerminal {
 
+        @AggregateField("elseif")
         private final List<ParsemElement> elseifs;
-        private ParsemElement if_, else_;
+        private ParsemElement if_;
+        @AggregateField("else")
+        private ParsemElement else_;
 
         public AstIf(Lexem lexem) {
             super(lexem);
@@ -302,15 +301,6 @@ public class ParserTest extends TestCase {
         @Override
         public void build(ParsemBuildable context) {
             if_ = context.popParsem();
-        }
-
-        @Override
-        public void aggregate(FieldCode code, ParsemElement element) {
-            if (code.equals(ELSEIF_STMT)) {
-                elseifs.add(element);
-            } else if (code.equals(ELSE_STMT)) {
-                else_ = element;
-            }
         }
 
         @Override

@@ -27,6 +27,6 @@ public abstract class ParsemElement {
 
 	public abstract void build(ParsemBuildable context);
 
-	public abstract void aggregate(FieldCode code, ParsemElement element);
+	public abstract void aggregate(String fieldName, ParsemElement element);
 
 }

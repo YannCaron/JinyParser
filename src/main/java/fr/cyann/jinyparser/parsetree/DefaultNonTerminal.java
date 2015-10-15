@@ -79,8 +79,4 @@ public class DefaultNonTerminal extends NonTerminal {
 
     }
 
-    @Override
-    public void aggregate(FieldCode code, ParsemElement element) {
-
-    }
 }
