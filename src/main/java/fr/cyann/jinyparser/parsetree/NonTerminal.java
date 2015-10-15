@@ -46,7 +46,7 @@ public abstract class NonTerminal extends ParsemElement {
                 if (annotation != null && annotation.value().equals(fieldName)) {
 
                     if (List.class.isAssignableFrom(field.getType())) {
-                        ((List) field.get(this)).add(element);
+                        ((List<ParsemElement>) field.get(this)).add(element);
                     } else {
                         field.set(this, element);
                     }
