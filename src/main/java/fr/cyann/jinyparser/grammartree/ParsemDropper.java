@@ -9,29 +9,25 @@ package fr.cyann.jinyparser.grammartree;
  **/
 
 
-import fr.cyann.jinyparser.exceptions.JinyException;
-import fr.cyann.jinyparser.lexem.Lexem;
 import fr.cyann.jinyparser.parsetree.ParsemElement;
-import fr.cyann.jinyparser.utils.MultilingualMessage;
-
-import java.lang.reflect.Constructor;
 
 /**
- * The ParsemCreator class definition.<br>
+ * The ParsemDropper class definition.<br>
+ * Aggregate self parsem with previous created one. Result parsem is the previous one.
  */
-public class ParsemCreator extends GrammarDecorator {
+public class ParsemDropper extends GrammarDecorator {
 
-    private final Class<? extends ParsemElement> clazz;
+    private final String fieldName;
 
     /**
      * Default constructor.
      *
-     * @param clazz the grammar element class to create.
-     * @param decorated the decorated grammar element.
+     * @param fieldName the name of the field to drop.
+     * @param decorated the decorated element.
      */
-    public ParsemCreator(Class<? extends ParsemElement> clazz, GrammarElement decorated) {
+    public ParsemDropper(String fieldName, GrammarElement decorated) {
         super(decorated);
-        this.clazz = clazz;
+        this.fieldName = fieldName;
     }
 
     /**
@@ -52,17 +48,12 @@ public class ParsemCreator extends GrammarDecorator {
         boolean res = decorated.parse(context);
 
         if (res) {
+            ParsemElement elementToAggregate = context.popParsem();
+            ParsemElement nonTerminal = context.popParsem();
 
-            try {
+            nonTerminal.aggregate(fieldName, elementToAggregate);
 
-                Constructor<? extends ParsemElement> constructor = clazz.getConstructor(Lexem.class);
-                constructor.setAccessible(true);
-                ParsemElement parsem = constructor.newInstance(context.getCurrentLexem());
-                context.pushParsem(parsem);
-
-            } catch (Exception e) {
-                throw new JinyException(MultilingualMessage.create(e.toString()));
-            }
+            context.pushParsem(nonTerminal);
 
         }
 

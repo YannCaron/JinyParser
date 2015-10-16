@@ -25,8 +25,6 @@ public abstract class ParsemElement {
 		return lexem;
 	}
 
-	public abstract void build(ParsemBuildable context);
-
 	public abstract void aggregate(String fieldName, ParsemElement element);
 
 }

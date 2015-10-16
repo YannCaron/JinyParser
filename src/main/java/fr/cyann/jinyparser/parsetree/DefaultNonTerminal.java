@@ -74,9 +74,4 @@ public class DefaultNonTerminal extends NonTerminal {
         return sb.toString();
     }
 
-    @Override
-    public void build(ParsemBuildable context) {
-
-    }
-
 }

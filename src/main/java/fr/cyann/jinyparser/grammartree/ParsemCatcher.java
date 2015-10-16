@@ -12,19 +12,20 @@ package fr.cyann.jinyparser.grammartree;
 import fr.cyann.jinyparser.parsetree.ParsemElement;
 
 /**
- * The ParsemCreator class definition.<br>
+ * The ParsemCatcher class definition.<br>
+ * Aggregate previous created parsem with self. Self parsem is the result.
  */
-public class ParsemAggregator extends GrammarDecorator {
+public class ParsemCatcher extends GrammarDecorator {
 
     private final String fieldName;
 
     /**
      * Default constructor.
      *
-     * @param fieldName the name of the field to aggregate.
+     * @param fieldName the name of the field to drop.
      * @param decorated the decorated element.
      */
-    public ParsemAggregator(String fieldName, GrammarElement decorated) {
+    public ParsemCatcher(String fieldName, GrammarElement decorated) {
         super(decorated);
         this.fieldName = fieldName;
     }
@@ -47,8 +48,8 @@ public class ParsemAggregator extends GrammarDecorator {
         boolean res = decorated.parse(context);
 
         if (res) {
-            ParsemElement elementToAggregate = context.popParsem();
             ParsemElement nonTerminal = context.popParsem();
+            ParsemElement elementToAggregate = context.popParsem();
 
             nonTerminal.aggregate(fieldName, elementToAggregate);
 

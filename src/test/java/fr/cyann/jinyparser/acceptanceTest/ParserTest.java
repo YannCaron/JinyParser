@@ -158,6 +158,27 @@ public class ParserTest extends TestCase {
 
     }
 
+    public void testOperatorLevelParser2() {
+
+        String source = "7 + 10";
+
+        // lexer
+        GrammarElement number = produce(NUMBER, AstNumber.class, repeat(lexerCharIn("0123456789")));
+
+        GrammarElement addSign = produce(OPERATOR, lexerCharIn("+"));
+
+        // <addition> := <number> [ { '+' <number> } ]
+        GrammarElement addition = sequence(number, optional(repeat(sequence(addSign, createAndCatch(number, AstBinaryExpression.class, "left", "sign", "right")))));
+
+        // parse
+        GrammarContext c = addition.parse(source);
+
+        System.out.println("Parse tree: " + c.getParseTree());
+
+        assertEquals("('+' 'n7' 'n10')", c.getParseTree().toString());
+
+    }
+
     public void testIfParser() {
 
         String source = "if () {} elseif () {} elseif () {} else {} ";
@@ -168,18 +189,18 @@ public class ParserTest extends TestCase {
         GrammarElement bl = lexem(LexemType.SYMBOL, word("{"));
         GrammarElement br = lexem(LexemType.SYMBOL, word("}"));
 
-        GrammarElement if_ = sequence(create(lexem(KEYWORD, word("if"))), pl, pr, bl, br);
-        GrammarElement elseif = sequence(create(lexem(KEYWORD, word("elseif"))), pl, pr, bl, br);
-        GrammarElement else_ = sequence(create(lexem(KEYWORD, word("else"))), bl, br);
+        GrammarElement if_ = sequence(produce(KEYWORD, AstIf.class, word("if")), pl, pr, bl, br);
+        GrammarElement elseif = sequence(produceAndDrop(KEYWORD, "elseif", word("elseif")), pl, pr, bl, br);
+        GrammarElement else_ = sequence(produceAndDrop(KEYWORD, "else", word("else")), bl, br);
 
-        GrammarElement grammar = sequence(create(AstIf.class, if_), optional(repeat(aggregate("elseif", elseif))), optional(aggregate("else", else_)));
+        GrammarElement grammar = sequence(if_, optional(repeat(elseif)), optional(else_));
 
         // parse
         GrammarContext c = grammar.parse(source);
 
         System.out.println("Parse tree: " + c.getParseTree());
 
-        assertEquals("'if' (['elseif', 'elseif'] 'else')", c.getParseTree().toString());
+        assertEquals("if (['elseif', 'elseif'] 'else')", c.getParseTree().toString());
 
     }
 
@@ -265,17 +286,15 @@ public class ParserTest extends TestCase {
 
     static class AstBinaryExpression extends NonTerminal {
 
-        private ParsemElement sign, left, right;
+        @AggregateField("left")
+        private ParsemElement left;
+        @AggregateField("sign")
+        private ParsemElement sign;
+        @AggregateField("right")
+        private ParsemElement right;
 
         public AstBinaryExpression(Lexem lexem) {
             super(lexem);
-        }
-
-        @Override
-        public void build(ParsemBuildable context) {
-            right = context.popParsem();
-            sign = context.popParsem();
-            left = context.popParsem();
         }
 
         @Override
@@ -299,13 +318,8 @@ public class ParserTest extends TestCase {
         }
 
         @Override
-        public void build(ParsemBuildable context) {
-            if_ = context.popParsem();
-        }
-
-        @Override
         public String toString() {
-            return if_.toString() + " (" + elseifs.toString() + " " + else_ + ")";
+            return "if (" + elseifs.toString() + " " + else_ + ")";
         }
 
     }

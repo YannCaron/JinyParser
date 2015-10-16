@@ -31,12 +31,6 @@ public abstract class NonTerminal extends ParsemElement {
 
     @Override
     public void aggregate(String fieldName, ParsemElement element) {
-        /*if (code.equals(ELSEIF_STMT)) {
-            elseifs.add(element);
-		} else if (code.equals(ELSE_STMT)) {
-			else_ = element;
-		}*/
-
         try {
             for (Field field : this.getClass().getDeclaredFields()) {
                 field.setAccessible(true);

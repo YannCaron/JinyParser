@@ -26,7 +26,7 @@ public abstract class Terminal extends ParsemElement {
 	}
 
 	public void aggregate(String fieldName, ParsemElement element) {
-		throw new JinyException(MultilingualMessage.create("Illegal function call ! Cannot aggregate on terminal create [%s] with [%s] !").setArgs(this, element));
+		throw new JinyException(MultilingualMessage.create("Illegal function call ! Cannot drop on terminal create [%s] with [%s] !").setArgs(this, element));
 	}
 
 }

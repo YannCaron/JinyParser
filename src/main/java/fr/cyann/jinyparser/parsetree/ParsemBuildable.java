@@ -23,7 +23,7 @@ public interface ParsemBuildable {
     Lexem getCurrentLexem();
 
     /**
-     * Pop (get and remove) ast element from the top of parser stack. Useful to aggregate elements together to build the tree.
+     * Pop (get and remove) ast element from the top of parser stack. Useful to drop elements together to build the tree.
      * @return the ast element at the top.
      */
     ParsemElement popParsem();
