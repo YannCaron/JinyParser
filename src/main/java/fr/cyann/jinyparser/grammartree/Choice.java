@@ -24,13 +24,6 @@ public class Choice extends GrammarNode {
 	/**
 	 * {@inheritDoc}
 	 */
-	public Choice(String name) {
-		super(name);
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	protected boolean lookahead(GrammarContext context) {
 

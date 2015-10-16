@@ -27,16 +27,6 @@ public abstract class GrammarNode extends GrammarElement implements Iterable<Gra
 		this.children = new ArrayList<GrammarElement>();
 	}
 
-	/**
-	 * Constructor with name. Useful for BNF expression of the grammar.
-	 *
-	 * @param name the grammar name.
-	 */
-	public GrammarNode(String name) {
-		super();
-		this.children = new ArrayList<GrammarElement>();
-	}
-
 	GrammarNode(GrammarElement[] children) {
 		this.children = Arrays.asList(children);
 	}

@@ -26,13 +26,6 @@ public class Sequence extends GrammarNode {
 	/**
 	 * {@inheritDoc}
 	 */
-	public Sequence(String name) {
-		super(name);
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	protected boolean lookahead(GrammarContext context) {
 		for (GrammarElement child : this) {
