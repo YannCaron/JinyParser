@@ -183,6 +183,15 @@ public final class GrammarFactory {
     }
 
     // TODO : javadoc
+    public static GrammarElement produceAndCatch(GrammarElement decorated, LexemType lexemType, int howManyParsem) {
+        String[] names = new String[howManyParsem];
+        for (int i = 0; i < howManyParsem; i++) {
+            names[i] = DefaultNonTerminal.SUB_NODE_IDENTITY;
+        }
+        return produceAndCatch(decorated, lexemType, DefaultNonTerminal.class, names);
+    }
+
+    // TODO : javadoc
     public static GrammarElement produceAndCatch(GrammarElement decorated, LexemType lexemType, Class<? extends ParsemElement> parsemClass, String... fieldNames) {
         GrammarElement grammar = produce(decorated, lexemType, parsemClass);
         for (int i = fieldNames.length - 1; i >= 0; i--) {
@@ -192,14 +201,7 @@ public final class GrammarFactory {
 
         return grammar;
     }
-    /**
-     * Grammar element that produce a default non terminal create.
-     * @param decorated the grammar that decide if create will be produced.
-     * @return the new grammar element.
-     */
-    public static GrammarElement parsemNonTerminal(GrammarElement decorated, int length) {
-        return new ParsemProducer(decorated, DefaultNonTerminal.BUILDER(length));
-    }
+
     /**
      * Create a new separator manager grammar element.
      * @param decorated the grammar element to decorate.

@@ -12,6 +12,7 @@ import fr.cyann.jinyparser.lexem.Lexem;
 import fr.cyann.jinyparser.utils.MultilingualMessage;
 
 import java.lang.reflect.Field;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -31,27 +32,44 @@ public abstract class NonTerminal extends ParsemElement {
 
     @Override
     public void aggregate(String fieldName, ParsemElement element) {
+        boolean found = false;
+        List<String> names = new ArrayList<String>();
+
         try {
             for (Field field : this.getClass().getDeclaredFields()) {
                 field.setAccessible(true);
 
                 AggregateField annotation = field.getAnnotation(AggregateField.class);
 
-                if (annotation != null && annotation.value().equals(fieldName)) {
+                String name = field.getName();
+                if (annotation != null && !annotation.identity().equals(AggregateField.DEFAULT_IDENTITY)) {
+                    name = annotation.identity();
+                    names.add(name);
+                }
+
+                if (annotation != null && (name.equals(fieldName))) {
 
                     if (List.class.isAssignableFrom(field.getType())) {
-                        ((List<ParsemElement>) field.get(this)).add(element);
+                        ((List<ParsemElement>) field.get(this)).add(0, element);
+                        found = true;
                     } else {
                         field.set(this, element);
+                        found = true;
                     }
-
                 }
+
 
 
             }
         } catch (Exception e) {
             throw new JinyException(MultilingualMessage.create(e.toString()));
         }
+
+        if (!found)
+            throw new JinyException(MultilingualMessage
+                    .create("Field [%s] not found in class [%s].\nPerhaps you forgot the @AggregateField annotation or made a mistake with the name.\nAvailable fields are: %s.")
+                    .setArgs(fieldName, this.getClass().toString(), names));
+
     }
 
 }

@@ -16,39 +16,19 @@ import java.util.List;
 
 /**
  * The DefaultNonTerminal class definition.<br>
+ * Aggregate its sub element with SUB_NODE_IDENTITY identity.
  * -
  */
 public class DefaultNonTerminal extends NonTerminal {
 
+    public static final String SUB_NODE_IDENTITY = "subNodes";
+
+    @AggregateField(identity = SUB_NODE_IDENTITY)
     private final List<ParsemElement> children;
 
-    public DefaultNonTerminal(Lexem lexemBegin, Lexem lexemEnd, List<ParsemElement> children) {
+    public DefaultNonTerminal(Lexem lexemBegin) {
         super(lexemBegin);
-        this.children = children;
-    }
-
-    public static ParsemBuilder BUILDER(final int length) {
-        return new ParsemBuilder() {
-            @Override
-            public ParsemElement buildParsem(ParsemBuildable context) {
-                List<ParsemElement> children = new ArrayList<ParsemElement>();
-
-                for (int i = length - 1; i>=0; i--) {
-                    children.add(0, context.popParsem());
-                }
-
-                return new DefaultNonTerminal(children.get(0).getLexem(), children.get(length - 1).getLexem(), children);
-            }
-        };
-    }
-
-    public void append(int length, ParsemBuildable context) {
-
-        int last = children.size();
-
-        for (int i = length - 1; i>=0; i--) {
-            children.add(last - 1, context.popParsem());
-        }
+        this.children = new ArrayList<ParsemElement>();
     }
 
     int size() {

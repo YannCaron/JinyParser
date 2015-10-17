@@ -60,7 +60,7 @@ public class ParserTest extends TestCase {
 
     }
 
-    public void testTrivialNotParsing() {
+    public void testTrivialParsingError() {
 
         String source = "7 + 10 - 4";
 
@@ -90,26 +90,26 @@ public class ParserTest extends TestCase {
 
     public void testTrivialDefaultParsemParser() {
 
-        String source = "7 + 10 + 4";
+        String source = "7 + 10 - 4";
 
         // term
         GrammarElement digit = lexerCharIn("0123456789");
-        GrammarElement sign = lexerCharIn("+-*/%");
+        GrammarElement sign = lexerCharIn("+-*%/");
 
         // lexer
-        GrammarElement number = create(lexem(repeat(digit), NUMBER), AstNumber.class);
+        GrammarElement number = produce(repeat(digit), NUMBER);
 
-        GrammarElement operator = create(lexem(sign, OPERATOR));
+        GrammarElement operator = produce(sign, OPERATOR);
 
         // parser
-        GrammarElement grammar = sequence(number, repeat(parsemNonTerminal(sequence(operator, number), 3)));
+        GrammarElement grammar = sequence(number, repeat(sequence(operator, produceAndCatch(number, NUMBER, 3))));
 
         // parse
         GrammarContext c = grammar.parse(source);
 
         System.out.println("Parse tree: " + c.getParseTree());
 
-        assertEquals("(('n7' '+' 'n10') '+' 'n4')", c.getParseTree().toString());
+        assertEquals("(('7' '+' '10') '-' '4')", c.getParseTree().toString());
 
     }
 
@@ -281,11 +281,11 @@ public class ParserTest extends TestCase {
 
     static class AstBinaryExpression extends NonTerminal {
 
-        @AggregateField("left")
+        @AggregateField()
         private ParsemElement left;
-        @AggregateField("sign")
+        @AggregateField()
         private ParsemElement sign;
-        @AggregateField("right")
+        @AggregateField()
         private ParsemElement right;
 
         public AstBinaryExpression(Lexem lexem) {
@@ -301,10 +301,10 @@ public class ParserTest extends TestCase {
 
     static class AstIf extends NonTerminal {
 
-        @AggregateField("elseif")
+        @AggregateField(identity = "elseif")
         private final List<ParsemElement> elseifs;
         private ParsemElement if_;
-        @AggregateField("else")
+        @AggregateField(identity = "else")
         private ParsemElement else_;
 
         public AstIf(Lexem lexem) {
