@@ -20,7 +20,7 @@ public class SeparatorsManager extends GrammarDecorator {
 	 * <i>' ' | '\t' | '\0' | '\n'(new line)</i>
 	 */
 	private static final GrammarElement DEFAULT_SEPARATOR =
-			optional(choice().addAll(lexerCharIn(" \t\0"), lineIncrementer(lexerCharIn("\n"))));
+            optional(choice().addAll(charIn(" \t\0"), lineIncrementer(charIn("\n"))));
 
 	private final GrammarElement separator;
 

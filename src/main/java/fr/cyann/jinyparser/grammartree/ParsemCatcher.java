@@ -9,7 +9,9 @@ package fr.cyann.jinyparser.grammartree;
  **/
 
 
+import fr.cyann.jinyparser.exceptions.JinyException;
 import fr.cyann.jinyparser.parsetree.ParsemElement;
+import fr.cyann.jinyparser.utils.MultilingualMessage;
 
 /**
  * The ParsemCatcher class definition.<br>
@@ -48,7 +50,13 @@ public class ParsemCatcher extends GrammarDecorator {
         boolean res = decorated.parse(context);
 
         if (res) {
+
+            if (context.isParserEmpty())
+                throw new JinyException(MultilingualMessage.create("ParsemCatcher [%s] try to pop parsem from the stack, but the stack is empty. No parsem was previously created.").setArgs(fieldName));
             ParsemElement nonTerminal = context.popParsem();
+
+            if (context.isParserEmpty())
+                throw new JinyException(MultilingualMessage.create("ParsemCatcher [%s] try to pop parsem from the stack, but the stack is empty. Not enough parsem has been created.").setArgs(fieldName));
             ParsemElement elementToAggregate = context.popParsem();
 
             nonTerminal.aggregate(fieldName, elementToAggregate);

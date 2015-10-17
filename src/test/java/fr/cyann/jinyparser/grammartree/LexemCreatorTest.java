@@ -14,7 +14,7 @@ import static fr.cyann.jinyparser.grammartree.GrammarFactory.produce;
  * ou écrivez à Creative Commons, 444 Castro Street, Suite 900, Mountain View, California, 94041, USA.
  **/
 
-public class LexemProducerTest extends TestCase {
+public class LexemCreatorTest extends TestCase {
 
     public void testLookahead() throws Exception {
 
@@ -29,7 +29,8 @@ public class LexemProducerTest extends TestCase {
         try {
             assertNull(context.popParsem());
             fail("parsem stack should be empty !");
-        } catch (Exception ex) {
+        } finally {
+            System.out.println("success");
         }
         assertEquals(true, context.isTerminated());
 

@@ -7,10 +7,10 @@ package fr.cyann.jinyparser.grammartree;/**
  * ou écrivez à Creative Commons, 444 Castro Street, Suite 900, Mountain View, California, 94041, USA.
  **/
 
-import fr.cyann.jinyparser.parsetree.ParsemBuildable;
-import fr.cyann.jinyparser.parsetree.ParsemElement;
 import fr.cyann.jinyparser.lexem.Lexem;
 import fr.cyann.jinyparser.lexem.SourcePosition;
+import fr.cyann.jinyparser.parsetree.ParsemBuildable;
+import fr.cyann.jinyparser.parsetree.ParsemElement;
 import fr.cyann.jinyparser.utils.StringLookaheadIterator;
 
 import java.util.ArrayList;
@@ -186,6 +186,10 @@ public class GrammarContext implements ParsemBuildable {
 	public ParsemElement popParsem() {
 		return parser.pop();
 	}
+
+    public boolean isParserEmpty() {
+        return parser.empty();
+    }
 
 	/**
 	 * Get the root element of the parse tree.

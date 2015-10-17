@@ -41,7 +41,7 @@ public class LexerTest extends TestCase {
 		String source = " 12 345\n8";
 
 		// term
-		GrammarElement digit = lexerCharIn("0123456789");
+        GrammarElement digit = charIn("0123456789");
 
 		// lexer
         GrammarElement number = lexem(repeat(digit), NUMBER);
@@ -62,8 +62,8 @@ public class LexerTest extends TestCase {
 		String source = "7 + 10 - 5 + 4";
 
 		// term
-		GrammarElement digit = lexerCharIn("0123456789");
-		GrammarElement sign = lexerCharIn("+-*/%");
+        GrammarElement digit = charIn("0123456789");
+        GrammarElement sign = charIn("+-*/%");
 
 		// lexer
         GrammarElement number = lexem(repeat(digit), NUMBER);

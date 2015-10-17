@@ -16,7 +16,7 @@ public abstract class GrammarDecorator extends GrammarElement {
 	/**
 	 * The decorated object.
 	 */
-	protected GrammarElement decorated;
+    protected final GrammarElement decorated;
 
 	/**
 	 * Default and mandatory constructor. Decorated object if final.

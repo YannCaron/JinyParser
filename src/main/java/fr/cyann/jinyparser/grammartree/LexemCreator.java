@@ -12,10 +12,10 @@ import fr.cyann.jinyparser.lexem.Lexem;
 import fr.cyann.jinyparser.lexem.LexemType;
 
 /**
- * The LexemProducer class. Each time the decorated grammar element is parsed, it produce a Lexem and store it into the context.<br>
+ * The LexemCreator class. Each time the decorated grammar element is parsed, it produce a Lexem and store it into the context.<br>
  * That represent the lexer production function.
  */
-public class LexemProducer extends GrammarDecorator {
+public class LexemCreator extends GrammarDecorator {
 
 	private final LexemType lexemType;
 
@@ -24,7 +24,7 @@ public class LexemProducer extends GrammarDecorator {
 	 *
 	 * @param decorated the decorated object.
 	 */
-    LexemProducer(GrammarElement decorated) {
+    LexemCreator(GrammarElement decorated) {
         super(decorated);
         this.lexemType = LexemType.NONE;
     }
@@ -35,7 +35,7 @@ public class LexemProducer extends GrammarDecorator {
      * @param decorated the decorated object.
      * @param lexemType the token type to produce.
      */
-    LexemProducer(GrammarElement decorated, LexemType lexemType) {
+    LexemCreator(GrammarElement decorated, LexemType lexemType) {
         super(decorated);
 		this.lexemType = lexemType;
 	}

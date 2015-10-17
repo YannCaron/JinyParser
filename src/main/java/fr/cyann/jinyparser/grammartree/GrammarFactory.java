@@ -68,8 +68,8 @@ public final class GrammarFactory {
      * @param lexemType the token type of the token to produce.
      * @return the new grammar element.
      */
-    public static LexemProducer lexemRaw(GrammarElement decorated, LexemType lexemType) {
-        return new LexemProducer(decorated, lexemType);
+    public static LexemCreator lexemRaw(GrammarElement decorated, LexemType lexemType) {
+        return new LexemCreator(decorated, lexemType);
     }
 
     /**
@@ -80,7 +80,7 @@ public final class GrammarFactory {
      * @return the new grammar element.
      */
     public static GrammarElement lexem(GrammarElement decorated, LexemType lexemType) {
-        return new SeparatorsManager(new LexemProducer(decorated, lexemType));
+        return new SeparatorsManager(new LexemCreator(decorated, lexemType));
     }
 
     /**
@@ -255,8 +255,8 @@ public final class GrammarFactory {
      * @param terms the list of character to recognize.
      * @return the new grammar element.
      */
-    public static LexerCharIn lexerCharIn(String terms) {
-        return new LexerCharIn(terms);
+    public static CharIn charIn(String terms) {
+        return new CharIn(terms);
     }
 
 

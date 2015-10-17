@@ -8,9 +8,9 @@ package fr.cyann.jinyparser.grammartree;/**
  **/
 
 /**
- * The LexerCharIn definition.
+ * The CharIn definition.
  */
-public class LexerCharIn extends GrammarLeaf {
+public class CharIn extends GrammarLeaf {
 
 
 	private final String characters;
@@ -20,8 +20,8 @@ public class LexerCharIn extends GrammarLeaf {
 	 *
 	 * @param characters the list of character to test.
 	 */
-	public LexerCharIn(String characters) {
-		this.characters = characters;
+    public CharIn(String characters) {
+        this.characters = characters;
 	}
 
 	private boolean isTerm(GrammarContext context) {

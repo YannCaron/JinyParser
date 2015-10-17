@@ -2,7 +2,6 @@ package fr.cyann.jinyparser.grammartree;
 
 import junit.framework.TestCase;
 
-import static fr.cyann.jinyparser.grammartree.GrammarFactory.sequence;
 import static fr.cyann.jinyparser.grammartree.GrammarFactory.word;
 
 /**
@@ -14,25 +13,21 @@ import static fr.cyann.jinyparser.grammartree.GrammarFactory.word;
  * ou écrivez à Creative Commons, 444 Castro Street, Suite 900, Mountain View, California, 94041, USA.
  **/
 
-public class SequenceTest extends TestCase {
+public class WordTest extends TestCase {
 
     public void testLookahead() throws Exception {
+        String source = "abc";
 
-        GrammarElement sequence = sequence(word("a"), word("b"));
-
-        assertTrue(sequence.lookahead(new GrammarContext("ab")));
-        assertTrue(sequence.lookahead(new GrammarContext("abc")));
-        assertFalse(sequence.lookahead(new GrammarContext("ac")));
-
+        assertTrue(word("abc").lookahead(new GrammarContext(source)));
+        assertFalse(word("abd").lookahead(new GrammarContext(source)));
+        assertTrue(word("ab").lookahead(new GrammarContext(source)));
     }
 
     public void testParse() throws Exception {
+        String source = "abc";
 
-        GrammarElement sequence = sequence(word("a"), word("b"));
-
-        assertTrue(sequence.parse(new GrammarContext("ab")));
-        assertTrue(sequence.parse(new GrammarContext("abc")));
-        assertFalse(sequence.parse(new GrammarContext("ac")));
-
+        assertTrue(word("abc").parse(new GrammarContext(source)));
+        assertFalse(word("abd").parse(new GrammarContext(source)));
+        assertTrue(word("ab").parse(new GrammarContext(source)));
     }
 }
