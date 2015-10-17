@@ -22,11 +22,11 @@ public class ParsemProducer extends GrammarDecorator {
 	/**
 	 * Default constructor.
 	 *
-	 * @param builder   the builder to build parse tree element.
-	 * @param decorated the decorated grammar element.
-	 */
-	public ParsemProducer(ParsemBuilder builder, GrammarElement decorated) {
-		super(decorated);
+     * @param decorated the decorated grammar element.
+     * @param builder   the builder to build parse tree element.
+     */
+    public ParsemProducer(GrammarElement decorated, ParsemBuilder builder) {
+        super(decorated);
 		this.builder = builder;
 	}
 

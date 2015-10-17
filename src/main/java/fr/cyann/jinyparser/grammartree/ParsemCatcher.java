@@ -22,10 +22,10 @@ public class ParsemCatcher extends GrammarDecorator {
     /**
      * Default constructor.
      *
-     * @param fieldName the name of the field to drop.
      * @param decorated the decorated element.
+     * @param fieldName the name of the field to drop.
      */
-    public ParsemCatcher(String fieldName, GrammarElement decorated) {
+    public ParsemCatcher(GrammarElement decorated, String fieldName) {
         super(decorated);
         this.fieldName = fieldName;
     }

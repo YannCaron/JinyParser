@@ -15,7 +15,11 @@ package fr.cyann.jinyparser.lexem;/**
 public class LexemType {
 
 	/**
-	 * Symbol lexem type.
+     * Default lexem type.
+     */
+    public static final LexemType NONE = new LexemType("NONE");
+    /**
+     * Symbol lexem type.
 	 */
 	public static final LexemType SYMBOL = new LexemType("SYMBOL");
 	/**

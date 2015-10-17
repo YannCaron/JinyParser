@@ -21,7 +21,7 @@ public class LexemProducerTest extends TestCase {
         String source = "abc";
         GrammarContext context = new GrammarContext(source);
 
-        GrammarElement producer = produce(LexemType.SYMBOL, new Word("abc"));
+        GrammarElement producer = produce(new Word("abc"), LexemType.SYMBOL);
 
         boolean result = producer.lookahead(context);
 
@@ -40,7 +40,7 @@ public class LexemProducerTest extends TestCase {
         String source = "abc";
         GrammarContext context = new GrammarContext(source);
 
-        GrammarElement producer = produce(LexemType.SYMBOL, new Word("abc"));
+        GrammarElement producer = produce(new Word("abc"), LexemType.SYMBOL);
 
         boolean result = producer.parse(context);
 

@@ -22,11 +22,21 @@ public class LexemProducer extends GrammarDecorator {
 	/**
 	 * The default and mandatory constructor.
 	 *
-	 * @param lexemType the token type to produce.
 	 * @param decorated the decorated object.
 	 */
-	LexemProducer(LexemType lexemType, GrammarElement decorated) {
-		super(decorated);
+    LexemProducer(GrammarElement decorated) {
+        super(decorated);
+        this.lexemType = LexemType.NONE;
+    }
+
+    /**
+     * The default and mandatory constructor.
+     *
+     * @param decorated the decorated object.
+     * @param lexemType the token type to produce.
+     */
+    LexemProducer(GrammarElement decorated, LexemType lexemType) {
+        super(decorated);
 		this.lexemType = lexemType;
 	}
 

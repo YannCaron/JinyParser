@@ -8,14 +8,16 @@ package fr.cyann.jinyparser.acceptanceTest;
  * ou écrivez à Creative Commons, 444 Castro Street, Suite 900, Mountain View, California, 94041, USA.
  **/
 
-import fr.cyann.jinyparser.grammartree.*;
-import fr.cyann.jinyparser.lexem.LexemType;
+import fr.cyann.jinyparser.grammartree.GrammarContext;
+import fr.cyann.jinyparser.grammartree.GrammarElement;
 import fr.cyann.jinyparser.lexem.Lexem;
+import fr.cyann.jinyparser.lexem.LexemType;
 import junit.framework.TestCase;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
 import static fr.cyann.jinyparser.grammartree.GrammarFactory.*;
 
 /**
@@ -42,7 +44,7 @@ public class LexerTest extends TestCase {
 		GrammarElement digit = lexerCharIn("0123456789");
 
 		// lexer
-		GrammarElement number = lexem(NUMBER, repeat(digit));
+        GrammarElement number = lexem(repeat(digit), NUMBER);
 
 		// parser
 		GrammarElement grammar = sequence(number, number, number, number);
@@ -64,9 +66,9 @@ public class LexerTest extends TestCase {
 		GrammarElement sign = lexerCharIn("+-*/%");
 
 		// lexer
-		GrammarElement number = lexem(NUMBER, repeat(digit));
+        GrammarElement number = lexem(repeat(digit), NUMBER);
 
-		GrammarElement operator = lexem(LexemType.SYMBOL, sign);
+        GrammarElement operator = lexem(sign, LexemType.SYMBOL);
 
 		// parser
 		GrammarElement grammar = sequence(number, repeat(sequence(operator, number)));

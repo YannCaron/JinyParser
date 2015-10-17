@@ -64,23 +64,23 @@ public final class GrammarFactory {
 
     /**
      * Create a new token producer grammar element.
-     * @param lexemType the token type of the token to produce.
      * @param decorated the grammar that decide if lexem will be produced.
+     * @param lexemType the token type of the token to produce.
      * @return the new grammar element.
      */
-    public static LexemProducer lexemProducer(LexemType lexemType, GrammarElement decorated) {
-        return new LexemProducer(lexemType, decorated);
+    public static LexemProducer lexemRaw(GrammarElement decorated, LexemType lexemType) {
+        return new LexemProducer(decorated, lexemType);
     }
 
     /**
      * Grammar element that produce lexem (build token on lexer).<br>
      * Create also a new token producer grammar element that manage separators.
-     * @param lexemType the token type of the token to produce.
      * @param decorated the grammar element to decorate.
+     * @param lexemType the token type of the token to produce.
      * @return the new grammar element.
      */
-    public static GrammarElement lexem(LexemType lexemType, GrammarElement decorated) {
-        return new SeparatorsManager(new LexemProducer(lexemType, decorated));
+    public static GrammarElement lexem(GrammarElement decorated, LexemType lexemType) {
+        return new SeparatorsManager(new LexemProducer(decorated, lexemType));
     }
 
     /**
@@ -89,106 +89,116 @@ public final class GrammarFactory {
      * @return the new grammar element.
      */
     public static GrammarElement create(GrammarElement decorated) {
-        return new ParsemCreator(DefaultTerminal.class, decorated);
+        return new ParsemCreator(decorated, DefaultTerminal.class);
     }
 
     /**
      * Grammar element that produce create (build parse tree element in the stack).
-     * @param clazz the create element class to create.
      * @param decorated the grammar that decide if create will be produced.
+     * @param clazz the create element class to create.
      * @return the new grammar element.
      */
-    public static GrammarElement create(Class<? extends ParsemElement> clazz, GrammarElement decorated) {
-        return new ParsemCreator(clazz, decorated);
+    public static GrammarElement create(GrammarElement decorated, Class<? extends ParsemElement> clazz) {
+        return new ParsemCreator(decorated, clazz);
     }
 
     /**
      * Grammar element that drop the current parsem to the previous code according a code to aggregate them together.
-     * @param fieldName the name of the field that will accept the child parsem.
      * @param decorated the grammar that decide if create will be produced.
+     * @param fieldName the name of the field that will accept the child parsem.
      * @return the new grammar element.
      */
-    public static GrammarElement dropper(String fieldName, GrammarElement decorated) {
-        return new ParsemDropper(fieldName, decorated);
+    public static GrammarElement dropper(GrammarElement decorated, String fieldName) {
+        return new ParsemDropper(decorated, fieldName);
     }
 
     /**
      * Grammar element that catch the previous parsem to aggregate with the current one.
      *
-     * @param fieldName the name of the field that will accept the child parsem.
      * @param decorated the grammar that decide if create will be produced.
+     * @param fieldName the name of the field that will accept the child parsem.
      * @return the new grammar element.
      */
-    public static GrammarElement catcher(String fieldName, GrammarElement decorated) {
-        return new ParsemCatcher(fieldName, decorated);
+    public static GrammarElement catcher(GrammarElement decorated, String fieldName) {
+        return new ParsemCatcher(decorated, fieldName);
     }
 
     /**
      * Create a lexem that manage spaces and then a parsem.
      *
-     * @param lexemType the type of the lexem to create.
      * @param decorated the grammar that decide if create will be produced.
+     * @param lexemType the type of the lexem to create.
      * @return the created grammar element.
      */
-    public static GrammarElement produce(LexemType lexemType, GrammarElement decorated) {
-        return create(DefaultTerminal.class, lexem(lexemType, decorated));
+    public static GrammarElement produce(GrammarElement decorated, LexemType lexemType) {
+        return create(lexem(decorated, lexemType), DefaultTerminal.class);
     }
 
     /**
      * Create a lexem that manage spaces and then a parsem.
      *
+     * @param decorated   the grammar that decide if create will be produced.
      * @param lexemType   the type of the lexem to create.
      * @param parsemClass the class of the parsem to create.
-     * @param decorated   the grammar that decide if create will be produced.
      * @return the created grammar element.
      */
-    public static GrammarElement produce(LexemType lexemType, Class<? extends ParsemElement> parsemClass, GrammarElement decorated) {
-        return create(parsemClass, lexem(lexemType, decorated));
+    public static GrammarElement produce(GrammarElement decorated, LexemType lexemType, Class<? extends ParsemElement> parsemClass) {
+        return create(lexem(decorated, lexemType), parsemClass);
     }
 
     /**
      * Create a lexem that manage spaces, then a parsem and then drop it to the last created one.
      *
+     * @param decorated the grammar that decide if create will be produced.
      * @param lexemType the type of the lexem to create.
      * @param fieldName the name of the field that will accept the child parsem.
-     * @param decorated the grammar that decide if create will be produced.
      * @return the created grammar element.
      */
-    public static GrammarElement produceAndDrop(LexemType lexemType, String fieldName, GrammarElement decorated) {
-        return dropper(fieldName, produce(lexemType, decorated));
+    public static GrammarElement produceAndDrop(GrammarElement decorated, LexemType lexemType, String fieldName) {
+        return dropper(produce(decorated, lexemType), fieldName);
     }
 
     /**
      * Create a lexem that manage spaces, then a parsem and then drop it to the last created one.
      *
+     * @param decorated   the grammar that decide if create will be produced.
      * @param lexemType   the type of the lexem to create.
      * @param parsemClass the class of the parsem to create.
      * @param fieldName   the name of the field that will accept the child parsem.
-     * @param decorated   the grammar that decide if create will be produced.
      * @return the created grammar element.
      */
-    public static GrammarElement produceAndDrop(LexemType lexemType, Class<? extends ParsemElement> parsemClass, String fieldName, GrammarElement decorated) {
-        return dropper(fieldName, produce(lexemType, parsemClass, decorated));
+    public static GrammarElement produceAndDrop(GrammarElement decorated, LexemType lexemType, Class<? extends ParsemElement> parsemClass, String fieldName) {
+        return dropper(produce(decorated, lexemType, parsemClass), fieldName);
     }
 
+    // TODO : javadoc
     public static GrammarElement createAndCatch(GrammarElement decorated, Class<? extends ParsemElement> parsemClass, String... fieldNames) {
-        GrammarElement grammar = create(parsemClass, decorated);
+        GrammarElement grammar = create(decorated, parsemClass);
         for (int i = fieldNames.length - 1; i >= 0; i--) {
             String fieldName = fieldNames[i];
-            grammar = catcher(fieldName, grammar);
+            grammar = catcher(grammar, fieldName);
         }
 
         return grammar;
     }
 
+    // TODO : javadoc
+    public static GrammarElement produceAndCatch(GrammarElement decorated, LexemType lexemType, Class<? extends ParsemElement> parsemClass, String... fieldNames) {
+        GrammarElement grammar = produce(decorated, lexemType, parsemClass);
+        for (int i = fieldNames.length - 1; i >= 0; i--) {
+            String fieldName = fieldNames[i];
+            grammar = catcher(grammar, fieldName);
+        }
 
+        return grammar;
+    }
     /**
      * Grammar element that produce a default non terminal create.
      * @param decorated the grammar that decide if create will be produced.
      * @return the new grammar element.
      */
-    public static GrammarElement parsemNonTerminal(int length, GrammarElement decorated) {
-        return new ParsemProducer(DefaultNonTerminal.BUILDER(length), decorated);
+    public static GrammarElement parsemNonTerminal(GrammarElement decorated, int length) {
+        return new ParsemProducer(decorated, DefaultNonTerminal.BUILDER(length));
     }
     /**
      * Create a new separator manager grammar element.
