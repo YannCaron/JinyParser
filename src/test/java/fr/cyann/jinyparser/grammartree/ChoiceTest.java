@@ -2,6 +2,9 @@ package fr.cyann.jinyparser.grammartree;
 
 import junit.framework.TestCase;
 
+import static fr.cyann.jinyparser.grammartree.GrammarFactory.choice;
+import static fr.cyann.jinyparser.grammartree.GrammarFactory.word;
+
 /**
  * Copyright (C) 16/10/15 Yann Caron aka cyann
  * <p/>
@@ -18,7 +21,7 @@ public class ChoiceTest extends TestCase {
         String source = "abc";
         GrammarContext context = new GrammarContext(source);
 
-        GrammarElement choice = new Choice().addAll(new Word("a"), new Word("b"));
+        GrammarElement choice = choice(word("a"), word("b"));
 
         assertTrue(choice.lookahead(context));
         assertTrue(choice.lookahead(context));
@@ -32,7 +35,7 @@ public class ChoiceTest extends TestCase {
         String source = "abc";
         GrammarContext context = new GrammarContext(source);
 
-        GrammarElement choice = new Choice().addAll(new Word("a"), new Word("b"));
+        GrammarElement choice = choice(word("a"), word("b"));
 
         assertTrue(choice.parse(context));
         assertTrue(choice.parse(context));

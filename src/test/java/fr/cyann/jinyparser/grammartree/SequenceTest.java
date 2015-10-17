@@ -2,6 +2,9 @@ package fr.cyann.jinyparser.grammartree;
 
 import junit.framework.TestCase;
 
+import static fr.cyann.jinyparser.grammartree.GrammarFactory.sequence;
+import static fr.cyann.jinyparser.grammartree.GrammarFactory.word;
+
 /**
  * Copyright (C) 17/10/15 Yann Caron aka cyann
  * <p/>
@@ -18,7 +21,7 @@ public class SequenceTest extends TestCase {
         String source = "abc";
         GrammarContext context = new GrammarContext(source);
 
-        GrammarElement sequence = new Sequence().addAll(new Word("a"), new Word("b"));
+        GrammarElement sequence = sequence(word("a"), word("b"));
 
         assertTrue(sequence.lookahead(new GrammarContext("ab")));
         assertTrue(sequence.lookahead(new GrammarContext("abc")));
@@ -31,7 +34,7 @@ public class SequenceTest extends TestCase {
         String source = "abc";
         GrammarContext context = new GrammarContext(source);
 
-        GrammarElement sequence = new Sequence().addAll(new Word("a"), new Word("b"));
+        GrammarElement sequence = sequence(word("a"), word("b"));
 
         assertTrue(sequence.parse(new GrammarContext("ab")));
         assertTrue(sequence.parse(new GrammarContext("abc")));
