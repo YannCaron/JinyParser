@@ -159,6 +159,17 @@ public final class GrammarFactory {
     }
 
     /**
+     * Create a lexem that manage spaces, then a parsem and then drop it to the last created one (a defaultNonTerminal node).
+     *
+     * @param decorated the grammar that decide if create will be produced.
+     * @param lexemType the type of the lexem to create.
+     * @return the created grammar element.
+     */
+    public static GrammarElement produceAndDrop(GrammarElement decorated, LexemType lexemType) {
+        return dropper(produce(decorated, lexemType), DefaultNonTerminal.SUB_NODE_IDENTITY);
+    }
+
+    /**
      * Create a lexem that manage spaces, then a parsem and then drop it to the last created one.
      *
      * @param decorated   the grammar that decide if create will be produced.
@@ -169,6 +180,21 @@ public final class GrammarFactory {
      */
     public static GrammarElement produceAndDrop(GrammarElement decorated, LexemType lexemType, Class<? extends ParsemElement> parsemClass, String fieldName) {
         return dropper(produce(decorated, lexemType, parsemClass), fieldName);
+    }
+
+    /**
+     * Create a defaultNonTerminal node and catch the previously created parsem to it.
+     *
+     * @param decorated     the grammar that decide if create will be produced.
+     * @param howManyParsem how many previously created parsem.
+     * @return the created grammar element.
+     */
+    public static GrammarElement createAndCatch(GrammarElement decorated, int howManyParsem) {
+        String[] names = new String[howManyParsem];
+        for (int i = 0; i < howManyParsem; i++) {
+            names[i] = DefaultNonTerminal.SUB_NODE_IDENTITY;
+        }
+        return createAndCatch(decorated, DefaultNonTerminal.class, names);
     }
 
     // TODO : javadoc
