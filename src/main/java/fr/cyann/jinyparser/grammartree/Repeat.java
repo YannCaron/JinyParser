@@ -20,8 +20,12 @@ public class Repeat extends GrammarDecorator {
 	/** {@inheritDoc} */
 	@Override
 	protected boolean lookahead(GrammarContext context) {
-		return decorated.lookahead(context);
-	}
+        boolean result = decorated.lookahead(context);
+
+        while (decorated.lookahead(context)) ;
+
+        return result;
+    }
 
 	/** {@inheritDoc} */
 	@Override

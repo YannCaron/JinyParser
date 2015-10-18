@@ -8,6 +8,7 @@ package fr.cyann.jinyparser.acceptanceTest;
  * ou écrivez à Creative Commons, 444 Castro Street, Suite 900, Mountain View, California, 94041, USA.
  **/
 
+import fr.cyann.jinyparser.exceptions.JinyException;
 import fr.cyann.jinyparser.grammartree.GrammarContext;
 import fr.cyann.jinyparser.grammartree.GrammarElement;
 import fr.cyann.jinyparser.grammartree.GrammarNode;
@@ -82,7 +83,7 @@ public class ParserTest extends TestCase {
         try {
             grammar.parse(source);
             fail("must raise an error !");
-        } finally {
+        } catch (JinyException e) {
             System.out.println("success");
         }
 
@@ -172,8 +173,8 @@ public class ParserTest extends TestCase {
         GrammarElement rightParenthesis = lexem(charIn(")"), LexemType.SYMBOL);
         GrammarElement number = produceNumber(repeat(charIn("0123456789")));
 
-        GrammarElement addSign = create(lexem(charIn("+"), OPERATOR));
-        GrammarElement multiplySign = create(lexem(charIn("*"), OPERATOR));
+        GrammarElement addSign = produce(charIn("+"), OPERATOR);
+        GrammarElement multiplySign = produce(charIn("*"), OPERATOR);
 
         GrammarElement addition;
         GrammarElement multiplication;
