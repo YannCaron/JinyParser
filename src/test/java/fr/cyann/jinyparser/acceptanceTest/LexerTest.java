@@ -10,15 +10,13 @@ package fr.cyann.jinyparser.acceptanceTest;
 
 import fr.cyann.jinyparser.grammartree.GrammarContext;
 import fr.cyann.jinyparser.grammartree.GrammarElement;
-import fr.cyann.jinyparser.lexem.Lexem;
 import fr.cyann.jinyparser.lexem.LexemType;
 import junit.framework.TestCase;
 
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 
 import static fr.cyann.jinyparser.grammartree.GrammarFactory.*;
+import static fr.cyann.jinyparser.testUtils.Utils.lexerToTerms;
 
 /**
  * The DefaultParseContextTest definition.
@@ -26,15 +24,6 @@ import static fr.cyann.jinyparser.grammartree.GrammarFactory.*;
 public class LexerTest extends TestCase {
 
 	private static final LexemType NUMBER = new LexemType("NUMBER");
-
-	private List<String> lexerToTerms(Iterable<Lexem> lexer) {
-		List<String> result = new ArrayList<String>();
-		for (Lexem lexem : lexer) {
-			result.add(lexem.getTerm());
-		}
-
-		return result;
-	}
 
 	public void testTrivialLexer() {
 
