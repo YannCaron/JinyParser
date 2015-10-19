@@ -15,29 +15,27 @@ public final class GrammarFactory {
         throw new RuntimeException("Static class cannot be instanced");
     }
 
-    // region node
+    // region lexer
 
     /**
-     * Create a new sequence grammar element.
-     * @param elements list of children.
+     * Create a new lexer char recognizer grammar element.
+     *
+     * @param terms the list of character to recognize.
      * @return the new grammar element.
      */
-    public static Sequence sequence(GrammarElement... elements) {
-        Sequence sequence = new Sequence();
-        sequence.addAll(elements);
-        return sequence;
+    public static CharIn charIn(String terms) {
+        return new CharIn(terms);
     }
 
+
     /**
-     * Create a new choice grammar element.
+     * Create a new lexer word recognizer grammar element.
      *
-     * @param elements list of children.
+     * @param terms the word to recognize.
      * @return the new grammar element.
      */
-    public static Choice choice(GrammarElement... elements) {
-        Choice choice = new Choice();
-        choice.addAll(elements);
-        return choice;
+    public static Word word(String terms) {
+        return new Word(terms);
     }
 
     // endregion
@@ -46,6 +44,7 @@ public final class GrammarFactory {
 
     /**
      * Create a new repeat grammar element.
+     *
      * @param decorated the grammar element to decorate.
      * @return the new grammar element.
      */
@@ -55,6 +54,7 @@ public final class GrammarFactory {
 
     /**
      * Create a new optional grammar element.
+     *
      * @param decorated the grammar element to decorate.
      * @return the new grammar element.
      */
@@ -63,7 +63,18 @@ public final class GrammarFactory {
     }
 
     /**
+     * Create a new optional grammar element.
+     *
+     * @param decorated the grammar element to decorate.
+     * @return the new grammar element.
+     */
+    public static IgnoreChar ignoreChar(GrammarElement decorated) {
+        return new IgnoreChar(decorated);
+    }
+
+    /**
      * Create a new token producer grammar element.
+     *
      * @param decorated the grammar that decide if lexem will be produced.
      * @param lexemType the token type of the token to produce.
      * @return the new grammar element.
@@ -75,40 +86,44 @@ public final class GrammarFactory {
     /**
      * Grammar element that produce lexem (build token on lexer).<br>
      * Create also a new token producer grammar element that manage separators.
+     *
      * @param decorated the grammar element to decorate.
      * @param lexemType the token type of the token to produce.
      * @return the new grammar element.
      */
-    public static GrammarElement lexem(GrammarElement decorated, LexemType lexemType) {
-        return new SeparatorsManager(new LexemCreator(decorated, lexemType));
+    public static LexemCreator lexem(GrammarElement decorated, LexemType lexemType) {
+        return new LexemCreator(new SeparatorsManager(decorated), lexemType);
     }
 
     /**
      * Grammar element that produce a default terminal create.
+     *
      * @param decorated the grammar that decide if create will be produced.
      * @return the new grammar element.
      */
-    public static GrammarElement create(GrammarElement decorated) {
+    public static ParsemCreator create(LexemCreator decorated) {
         return new ParsemCreator(decorated, DefaultTerminal.class);
     }
 
     /**
      * Grammar element that produce create (build parse tree element in the stack).
+     *
      * @param decorated the grammar that decide if create will be produced.
-     * @param clazz the create element class to create.
+     * @param clazz     the create element class to create.
      * @return the new grammar element.
      */
-    public static GrammarElement create(GrammarElement decorated, Class<? extends ParsemElement> clazz) {
+    public static ParsemCreator create(LexemCreator decorated, Class<? extends ParsemElement> clazz) {
         return new ParsemCreator(decorated, clazz);
     }
 
     /**
      * Grammar element that drop the current parsem to the previous code according a code to aggregate them together.
+     *
      * @param decorated the grammar that decide if create will be produced.
      * @param fieldName the name of the field that will accept the child parsem.
      * @return the new grammar element.
      */
-    public static GrammarElement dropper(GrammarElement decorated, String fieldName) {
+    public static ParsemDropper dropper(GrammarElement decorated, String fieldName) {
         return new ParsemDropper(decorated, fieldName);
     }
 
@@ -119,7 +134,7 @@ public final class GrammarFactory {
      * @param fieldName the name of the field that will accept the child parsem.
      * @return the new grammar element.
      */
-    public static GrammarElement catcher(GrammarElement decorated, String fieldName) {
+    public static ParsemCatcher catcher(GrammarElement decorated, String fieldName) {
         return new ParsemCatcher(decorated, fieldName);
     }
 
@@ -130,7 +145,7 @@ public final class GrammarFactory {
      * @param lexemType the type of the lexem to create.
      * @return the created grammar element.
      */
-    public static GrammarElement produce(GrammarElement decorated, LexemType lexemType) {
+    public static ParsemCreator produce(GrammarElement decorated, LexemType lexemType) {
         return create(lexem(decorated, lexemType), DefaultTerminal.class);
     }
 
@@ -142,7 +157,7 @@ public final class GrammarFactory {
      * @param parsemClass the class of the parsem to create.
      * @return the created grammar element.
      */
-    public static GrammarElement produce(GrammarElement decorated, LexemType lexemType, Class<? extends ParsemElement> parsemClass) {
+    public static ParsemCreator produce(GrammarElement decorated, LexemType lexemType, Class<? extends ParsemElement> parsemClass) {
         return create(lexem(decorated, lexemType), parsemClass);
     }
 
@@ -154,7 +169,7 @@ public final class GrammarFactory {
      * @param fieldName the name of the field that will accept the child parsem.
      * @return the created grammar element.
      */
-    public static GrammarElement produceAndDrop(GrammarElement decorated, LexemType lexemType, String fieldName) {
+    public static ParsemDropper produceAndDrop(GrammarElement decorated, LexemType lexemType, String fieldName) {
         return dropper(produce(decorated, lexemType), fieldName);
     }
 
@@ -165,7 +180,7 @@ public final class GrammarFactory {
      * @param lexemType the type of the lexem to create.
      * @return the created grammar element.
      */
-    public static GrammarElement produceAndDrop(GrammarElement decorated, LexemType lexemType) {
+    public static ParsemDropper produceAndDrop(GrammarElement decorated, LexemType lexemType) {
         return dropper(produce(decorated, lexemType), DefaultNonTerminal.SUB_NODE_IDENTITY);
     }
 
@@ -178,7 +193,7 @@ public final class GrammarFactory {
      * @param fieldName   the name of the field that will accept the child parsem.
      * @return the created grammar element.
      */
-    public static GrammarElement produceAndDrop(GrammarElement decorated, LexemType lexemType, Class<? extends ParsemElement> parsemClass, String fieldName) {
+    public static ParsemDropper produceAndDrop(GrammarElement decorated, LexemType lexemType, Class<? extends ParsemElement> parsemClass, String fieldName) {
         return dropper(produce(decorated, lexemType, parsemClass), fieldName);
     }
 
@@ -189,7 +204,7 @@ public final class GrammarFactory {
      * @param howManyParsem how many previously created parsem.
      * @return the created grammar element.
      */
-    public static GrammarElement createAndCatch(GrammarElement decorated, int howManyParsem) {
+    public static GrammarElement createAndCatch(LexemCreator decorated, int howManyParsem) {
         String[] names = new String[howManyParsem];
         for (int i = 0; i < howManyParsem; i++) {
             names[i] = DefaultNonTerminal.SUB_NODE_IDENTITY;
@@ -198,7 +213,7 @@ public final class GrammarFactory {
     }
 
     // TODO : javadoc
-    public static GrammarElement createAndCatch(GrammarElement decorated, Class<? extends ParsemElement> parsemClass, String... fieldNames) {
+    public static GrammarElement createAndCatch(LexemCreator decorated, Class<? extends ParsemElement> parsemClass, String... fieldNames) {
         GrammarElement grammar = create(decorated, parsemClass);
         for (int i = fieldNames.length - 1; i >= 0; i--) {
             String fieldName = fieldNames[i];
@@ -230,6 +245,7 @@ public final class GrammarFactory {
 
     /**
      * Create a new separator manager grammar element.
+     *
      * @param decorated the grammar element to decorate.
      * @return the new grammar element.
      */
@@ -239,6 +255,7 @@ public final class GrammarFactory {
 
     /**
      * Create a new line incrementer grammar element.
+     *
      * @param decorated the grammar element to decorate.
      * @return the new grammar element.
      */
@@ -248,25 +265,29 @@ public final class GrammarFactory {
 
     // endregion
 
-    // region lexer
+    // region node
 
     /**
-     * Create a new lexer char recognizer grammar element.
-     * @param terms the list of character to recognize.
+     * Create a new sequence grammar element.
+     * @param elements list of children.
      * @return the new grammar element.
      */
-    public static CharIn charIn(String terms) {
-        return new CharIn(terms);
+    public static Sequence sequence(GrammarElement... elements) {
+        Sequence sequence = new Sequence();
+        sequence.addAll(elements);
+        return sequence;
     }
 
-
     /**
-     * Create a new lexer word recognizer grammar element.
-     * @param terms the word to recognize.
+     * Create a new choice grammar element.
+     *
+     * @param elements list of children.
      * @return the new grammar element.
      */
-    public static Word word(String terms) {
-        return new Word(terms);
+    public static Choice choice(GrammarElement... elements) {
+        Choice choice = new Choice();
+        choice.addAll(elements);
+        return choice;
     }
 
     // endregion

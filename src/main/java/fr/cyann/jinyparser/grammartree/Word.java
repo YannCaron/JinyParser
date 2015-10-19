@@ -30,9 +30,9 @@ public class Word extends GrammarLeaf {
             char chr = word.charAt(i);
             if (chr != context.currentChar()) return false;
             if (build) {
-                context.nextCharAndBuild();
+                context.nextCharParser();
             } else {
-                context.nextChar();
+                context.nextCharLookahead();
             }
         }
 

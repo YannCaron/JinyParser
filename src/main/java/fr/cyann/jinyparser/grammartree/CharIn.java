@@ -35,8 +35,8 @@ public class CharIn extends GrammarLeaf {
 	@Override
 	protected boolean lookahead(GrammarContext context) {
 		boolean result = isTerm(context);
-		if (result) context.nextChar();
-		return result;
+        if (result) context.nextCharLookahead();
+        return result;
 	}
 
 	/**
@@ -45,8 +45,8 @@ public class CharIn extends GrammarLeaf {
 	@Override
 	protected boolean parse(GrammarContext context) {
 		boolean result = isTerm(context);
-		if (result) context.nextCharAndBuild();
-		return result;
+        if (result) context.nextCharParser();
+        return result;
 	}
 
 }

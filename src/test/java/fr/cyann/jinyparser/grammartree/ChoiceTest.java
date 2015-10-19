@@ -25,7 +25,7 @@ public class ChoiceTest extends TestCase {
 
         assertTrue(choice.lookahead(context));
         assertTrue(choice.lookahead(context));
-        context.nextChar();
+        context.nextCharLookahead();
         assertFalse(choice.lookahead(context));
 
     }

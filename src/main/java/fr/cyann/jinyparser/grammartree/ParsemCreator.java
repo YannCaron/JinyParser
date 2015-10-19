@@ -29,7 +29,7 @@ public class ParsemCreator extends GrammarDecorator {
      * @param decorated the decorated grammar element.
      * @param clazz the grammar element class to create.
      */
-    public ParsemCreator(GrammarElement decorated, Class<? extends ParsemElement> clazz) {
+    public ParsemCreator(LexemCreator decorated, Class<? extends ParsemElement> clazz) {
         super(decorated);
         this.clazz = clazz;
     }
