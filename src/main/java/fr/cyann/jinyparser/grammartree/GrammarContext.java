@@ -179,8 +179,8 @@ public class GrammarContext implements ParsemBuildable {
 	 * Give the list of lexem (lexer) that resulting from lexing.
 	 * @return the list of lexem
 	 */
-	public Iterable<Lexem> getLexer() {
-		return lexer;
+    public List<Lexem> getLexer() {
+        return lexer;
 	}
 
 	// endregion
