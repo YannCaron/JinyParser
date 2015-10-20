@@ -11,7 +11,7 @@ package fr.cyann.jinyparser.acceptanceTest;
 import fr.cyann.jinyparser.exceptions.JinyException;
 import fr.cyann.jinyparser.grammartree.GrammarContext;
 import fr.cyann.jinyparser.grammartree.GrammarElement;
-import fr.cyann.jinyparser.grammartree.GrammarNode;
+import fr.cyann.jinyparser.grammartree.GrammarRecursive;
 import fr.cyann.jinyparser.lexem.Lexem;
 import fr.cyann.jinyparser.lexem.LexemType;
 import fr.cyann.jinyparser.parsetree.*;
@@ -176,18 +176,18 @@ public class ParserTest extends TestCase {
         GrammarElement addSign = produce(charIn("+"), OPERATOR);
         GrammarElement multiplySign = produce(charIn("*"), OPERATOR);
 
-        GrammarElement addition;
-        GrammarElement multiplication;
-        GrammarNode ident = choice();
-
-        // <multiplication> := <produceNumber> [ { '*' <produceNumber> } ]
-        multiplication = sequence(ident, optional(repeat(sequence(multiplySign, produceBinaryExpression(ident)))));
+	    GrammarRecursive addition = recursive("Addition");
+	    GrammarRecursive multiplication = recursive("Multiplication");
+	    GrammarRecursive term = recursive("Term");
 
         // <addition> := <multiplication> [ { '+' <multiplication> } ]
-        addition = sequence(multiplication, optional(repeat(sequence(addSign, produceBinaryExpression(multiplication)))));
+	    addition.setGrammar(sequence(multiplication, optional(repeat(sequence(addSign, produceBinaryExpression(multiplication))))));
 
-        // <num> := <produceNumber> | '(' <addition> ')'
-        ident.addAll(number, sequence(leftParenthesis, addition, rightParenthesis));
+	    // <multiplication> := <produceNumber> [ { '*' <produceNumber> } ]
+	    multiplication.setGrammar(sequence(term, optional(repeat(sequence(multiplySign, produceBinaryExpression(term))))));
+
+	    // <num> := <number> | '(' <addition> ')'
+	    term.setGrammar(choice(number, sequence(leftParenthesis, addition, rightParenthesis)));
 
         // parser
         GrammarElement grammar = addition;
@@ -237,18 +237,18 @@ public class ParserTest extends TestCase {
         GrammarElement addSign = create(lexem(charIn("+"), OPERATOR));
         GrammarElement multiplySign = create(lexem(charIn("*"), OPERATOR));
 
-        GrammarNode addition = sequence();
-        GrammarNode multiplication = sequence();
-        GrammarNode ident = choice();
+	    GrammarRecursive addition = recursive("Addition");
+	    GrammarRecursive multiplication = recursive("Multiplication");
+	    GrammarRecursive term = recursive("Term");
 
         // <multiplication> := <ident> [ { '*' <ident> } ]
-        multiplication.addAll(ident, optional(repeat(sequence(multiplySign, produceBinaryExpression(ident)))));
+	    multiplication.setGrammar(sequence(term, optional(repeat(sequence(multiplySign, produceBinaryExpression(term))))));
 
         // <addition> := <multiplication> [ { '+' <multiplication> } ]
-        addition.addAll(multiplication, optional(repeat(sequence(addSign, produceBinaryExpression(multiplication)))));
+	    addition.setGrammar(sequence(optional(repeat(sequence(addSign, produceBinaryExpression(multiplication))))));
 
         // <ident> := <produceNumber> | '(' <addition> ')'
-        ident.addAll(number, sequence(leftParenthesis, addition, rightParenthesis));
+	    term.setGrammar(choice(number, sequence(leftParenthesis, addition, rightParenthesis)));
 
         System.out.println(addition);
 

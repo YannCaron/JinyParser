@@ -17,8 +17,8 @@ public class Choice extends GrammarNode {
 	/**
 	 * {@inheritDoc}
 	 */
-	public Choice() {
-		super();
+	public Choice(GrammarElement... grammarElements) {
+		super(grammarElements);
 	}
 
 	/**

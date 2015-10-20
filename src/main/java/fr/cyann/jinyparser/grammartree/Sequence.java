@@ -19,8 +19,8 @@ public class Sequence extends GrammarNode {
 	/**
 	 * {@inheritDoc}
 	 */
-	public Sequence() {
-		super();
+	public Sequence(GrammarElement... elements) {
+		super(elements);
 	}
 
 	/**

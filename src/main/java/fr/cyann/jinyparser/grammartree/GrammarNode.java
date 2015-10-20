@@ -1,6 +1,8 @@
 package fr.cyann.jinyparser.grammartree;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.Iterator;
+import java.util.List;
 
 /**
  * Copyright (C) 07/09/15 Yann Caron aka cyann
@@ -20,14 +22,9 @@ public abstract class GrammarNode extends GrammarElement implements Iterable<Gra
 	private final List<GrammarElement> children;
 
 	/**
-	 * Default and mandatory constructor. Initialize internal resources.
+	 * {@inheritDoc}
 	 */
-	public GrammarNode() {
-		super();
-		this.children = new ArrayList<GrammarElement>();
-	}
-
-	GrammarNode(GrammarElement[] children) {
+	public GrammarNode(GrammarElement[] children) {
 		this.children = Arrays.asList(children);
 	}
 
@@ -35,17 +32,6 @@ public abstract class GrammarNode extends GrammarElement implements Iterable<Gra
 	@Override
 	public Iterator<GrammarElement> iterator() {
 		return children.iterator();
-	}
-
-	/**
-	 * Set all sub grammar elements to the node.
-	 *
-	 * @param elements the elements.
-	 */
-	public GrammarNode addAll(GrammarElement... elements) {
-		Collections.addAll(this.children, elements);
-
-		return this;
 	}
 
 }

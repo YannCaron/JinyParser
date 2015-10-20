@@ -1,4 +1,4 @@
-# WORK IN PROGRESS - PARSER DOES NOT WORKS YET - COMING SOON (I HOPE)
+# WORK IN PROGRESS - DOES NOT WORK YET - COMING SOON (I HOPE)
 
 # JinyParser
 
@@ -13,11 +13,12 @@ Because **JinyParser** is able to compile the grammar into JVM bytecode, definit
 JinyParser is based on a **Combinatoric Framework (CF)** because I observed an evident fact; BNF is a language, and a language, when a computer parse it, create an AST. AST is a tree structure. Why not directly creating the tree structure by hand ? The **Grammar tree** object was born on the top of a dual design patter (GoF **Interpreter** and **Decorator**).
 
 ### Simple
-You know how to build a swing application ? By a combination of visual components and sometime decorators (like slide bars), you will easily be able to create a new **Jiny Grammar** !
+Building a parser has never been easier.
+You know how to build a swing application ? By a combination of visual components and sometime decorators (like scroll bars), you will easily be able to create a new **Jiny Grammar** !
 Grammar tree is a composite (GoF Interpreter to be more precise).
-Non terminal nodes are Sequence and Assumption
-Non terminal decorators are Optional and Repeat
-Terminal nodes are for example Symbol or Word
+	* Nodes are Sequence and Choice
+	* Decorators are Optional and Repeat
+	* Leafs are character recognizers
 
 ### Fast & Safe
 **Combinatoric framework** do not need an "old school" **interpreted** language like BNF, eBNF and so on.
@@ -33,7 +34,7 @@ It is faster and not limited by the stack overflow problem of recursive calling.
 ### .parse() or .toJar()
 **JP** Is able to runs in two ways:
 As a classic parser, that interpret the Source code in a **Recursive Descent** way (**Packrat** optimized).
-Or build a Jar, for several reasons:
+Or by building the parser into a Jar, and that, for several reasons:
   * less footprint in your project
   * parsing execution fastness
   * avoid stack overflow problem of recursive descent parsing way

@@ -61,6 +61,15 @@ public final class GrammarFactory {
 		return new Optional(decorated);
 	}
 
+	/**
+	 * Create a new recursive grammar element.
+	 *
+	 * @return the new grammar element.
+	 */
+	public static GrammarRecursive recursive(String name) {
+		return new GrammarRecursive(name);
+	}
+
 	// endregion
 
 	// region production
@@ -257,9 +266,7 @@ public final class GrammarFactory {
 	 * @return the new grammar element.
 	 */
 	public static Sequence sequence(GrammarElement... elements) {
-		Sequence sequence = new Sequence();
-		sequence.addAll(elements);
-		return sequence;
+		return new Sequence(elements);
 	}
 
 	/**
@@ -269,9 +276,7 @@ public final class GrammarFactory {
 	 * @return the new grammar element.
 	 */
 	public static Choice choice(GrammarElement... elements) {
-		Choice choice = new Choice();
-		choice.addAll(elements);
-		return choice;
+		return new Choice(elements);
 	}
 
 	// endregion
