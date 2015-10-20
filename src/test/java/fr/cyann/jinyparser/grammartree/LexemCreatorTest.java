@@ -3,10 +3,13 @@ package fr.cyann.jinyparser.grammartree;
 import fr.cyann.jinyparser.lexem.LexemType;
 import junit.framework.TestCase;
 
-import static fr.cyann.jinyparser.grammartree.GrammarFactory.produce;
+import java.util.Arrays;
+
+import static fr.cyann.jinyparser.grammartree.GrammarFactory.*;
+import static fr.cyann.jinyparser.testUtils.Utils.lexerToTerms;
 
 /**
- * Copyright (C) 17/10/15 Yann Caron aka cyann
+ * Copyright (C) 18/10/15 Yann Caron aka cyann
  * <p/>
  * Cette œuvre est mise à disposition sous licence Attribution -
  * Pas d’Utilisation Commerciale - Partage dans les Mêmes Conditions 3.0 France.
@@ -18,36 +21,30 @@ public class LexemCreatorTest extends TestCase {
 
     public void testLookahead() throws Exception {
 
-        String source = "abc";
-        GrammarContext context = new GrammarContext(source);
+        String source = " a b c ";
 
-        GrammarElement producer = produce(new Word("abc"), LexemType.SYMBOL);
+        GrammarElement grammar = repeat(lexemRaw(charIn("abc"), LexemType.SYMBOL));
+        assertFalse(grammar.lookahead(new GrammarContext(source)));
 
-        boolean result = producer.lookahead(context);
-
-        assertTrue("'abc' literal should be parsed by grammar !", result);
-        try {
-            assertNull(context.popParsem());
-            fail("parsem stack should be empty !");
-        } finally {
-            System.out.println("success");
-        }
-        assertEquals(true, context.isTerminated());
+        grammar = repeat(lexem(charIn("abc"), LexemType.SYMBOL)); // with separator management
+        assertTrue(grammar.lookahead(new GrammarContext(source)));
 
     }
 
     public void testParse() throws Exception {
 
-        String source = "abc";
-        GrammarContext context = new GrammarContext(source);
+        String source = " a b c ";
 
-        GrammarElement producer = produce(new Word("abc"), LexemType.SYMBOL);
+        GrammarElement grammar = repeat(lexemRaw(charIn("abc"), LexemType.SYMBOL));
+        assertFalse(grammar.parse(new GrammarContext(source)));
 
-        boolean result = producer.parse(context);
+        grammar = repeat(lexem(charIn("abc"), LexemType.SYMBOL)); // with separator management
+        assertTrue(grammar.parse(new GrammarContext(source)));
 
-        assertTrue("'abc' literal should be parsed by grammar !", result);
-        assertEquals("'abc'", context.popParsem().toString());
-        assertEquals(true, context.isTerminated());
+        GrammarContext context = grammar.parse(source);
+
+        // test
+        assertEquals(Arrays.asList("a", "b", "c"), lexerToTerms(context.getLexer()));
 
     }
 }

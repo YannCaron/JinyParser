@@ -14,11 +14,13 @@ package fr.cyann.jinyparser.lexem;/**
  */
 public class LexemType {
 
+
 	/**
      * Default lexem type.
      */
     public static final LexemType NONE = new LexemType("NONE");
-    /**
+	public static final LexemType DEFAULT = NONE;
+	/**
      * Symbol lexem type.
 	 */
 	public static final LexemType SYMBOL = new LexemType("SYMBOL");

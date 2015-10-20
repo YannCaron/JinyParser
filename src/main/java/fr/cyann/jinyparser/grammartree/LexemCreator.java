@@ -1,5 +1,4 @@
-package fr.cyann.jinyparser.grammartree;
-/**
+package fr.cyann.jinyparser.grammartree;/**
  * Copyright (C) 01/10/15 Yann Caron aka cyann
  * <p/>
  * Cette œuvre est mise à disposition sous licence Attribution -
@@ -8,62 +7,56 @@ package fr.cyann.jinyparser.grammartree;
  * ou écrivez à Creative Commons, 444 Castro Street, Suite 900, Mountain View, California, 94041, USA.
  **/
 
-import fr.cyann.jinyparser.lexem.Lexem;
 import fr.cyann.jinyparser.lexem.LexemType;
 
-/**
- * The LexemCreator class. Each time the decorated grammar element is parsed, it produce a Lexem and store it into the context.<br>
- * That represent the lexer production function.
- */
-public class LexemCreator extends GrammarDecorator {
+import static fr.cyann.jinyparser.grammartree.GrammarFactory.*;
 
-	private final LexemType lexemType;
+/**
+ * The LexemCreator class. Grammar element that help to manage the separator characters between two real grammar.
+ */
+@SuppressWarnings("WeakerAccess")
+public class LexemCreator extends LexemCreatorCore {
 
 	/**
-	 * The default and mandatory constructor.
-	 *
-	 * @param decorated the decorated object.
+	 * A default separator grammar.<br>
+	 * <i>' ' | '\t' | '\0' | '\n'(new line)</i>
 	 */
-    LexemCreator(GrammarElement decorated) {
-        super(decorated);
-        this.lexemType = LexemType.NONE;
-    }
+	private static final GrammarElement DEFAULT_SEPARATOR =
+			optional(choice(charIn(" \t\0"), lineIncrementer(charIn("\n"))));
 
-    /**
-     * The default and mandatory constructor.
-     *
-     * @param decorated the decorated object.
-     * @param lexemType the token type to produce.
-     */
-    LexemCreator(GrammarElement decorated, LexemType lexemType) {
-        super(decorated);
-		this.lexemType = lexemType;
+	private final GrammarElement separator;
+
+	/**
+	 * The default constructor with all parameters.
+	 * @param decorated the object to decorate.
+	 * @param lexemType the lexem type to produce.
+	 * @param separator the separator peace of grammar that will be checked (if exists) at the beginning of decorated grammar.
+	 */
+	public LexemCreator(GrammarElement decorated, LexemType lexemType, GrammarElement separator) {
+		super(decorated, lexemType);
+		this.separator = separator;
 	}
 
 	/**
-	 * {@inheritDoc}
+	 * Optional constructor.
+	 *
+	 * @param decorated the object to decorate.
+	 * @param lexemType the lexem type to produce.
 	 */
+	public LexemCreator(GrammarElement decorated, LexemType lexemType) {
+		this(decorated, lexemType, DEFAULT_SEPARATOR);
+	}
+
+	/** {@inheritDoc} */
 	@Override
 	protected boolean lookahead(GrammarContext context) {
-		return decorated.lookahead(context);
+		return separator.lookahead(context) && super.lookahead(context) && separator.lookahead(context);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	/** {@inheritDoc} */
 	@Override
 	protected boolean parse(GrammarContext context) {
-
-		context.resetTerm();
-
-		boolean res = decorated.parse(context);
-
-		if (res) {
-			Lexem lexem = new Lexem(context.getTerm(), lexemType, context.getPos(), context.getLine(), context.getColumn());
-			context.appendLexem(lexem);
-		}
-
-		return res;
+		return separator.parse(context) && super.parse(context) && separator.parse(context);
 	}
 
 }

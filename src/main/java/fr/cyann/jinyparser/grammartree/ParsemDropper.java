@@ -8,7 +8,6 @@ package fr.cyann.jinyparser.grammartree;
  * ou écrivez à Creative Commons, 444 Castro Street, Suite 900, Mountain View, California, 94041, USA.
  **/
 
-
 import fr.cyann.jinyparser.exceptions.JinyException;
 import fr.cyann.jinyparser.parsetree.ParsemElement;
 import fr.cyann.jinyparser.utils.MultilingualMessage;

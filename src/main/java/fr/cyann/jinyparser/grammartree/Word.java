@@ -13,46 +13,53 @@ package fr.cyann.jinyparser.grammartree;/**
 public class Word extends GrammarLeaf {
 
 
-    private final String word;
+	private final String word;
 
-    /**
-     * Default constructor.
-     *
-     * @param word the entire word to test.
-     */
-    public Word(String word) {
-        this.word = word;
-    }
+	/**
+	 * Default constructor.
+	 *
+	 * @param word the entire word to test.
+	 */
+	public Word(String word) {
+		this.word = word;
+	}
 
-    private boolean isTerm(GrammarContext context, boolean build) {
-        for (int i = 0; i < word.length(); i++) {
-            if (context.isTerminated()) return false;
-            char chr = word.charAt(i);
-            if (chr != context.currentChar()) return false;
-            if (build) {
-                context.nextCharParser();
-            } else {
-                context.nextCharLookahead();
-            }
-        }
+	private boolean isTerm(GrammarContext context, boolean build) {
+		for (int i = 0; i < word.length(); i++) {
+			if (context.isTerminated()) return false;
+			char chr = word.charAt(i);
+			if (chr != context.currentChar()) return false;
+			if (build) {
+				context.nextCharParser();
+			} else {
+				context.nextCharLookahead();
+			}
+		}
 
-        return true;
-    }
+		return true;
+	}
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    protected boolean lookahead(GrammarContext context) {
-        return isTerm(context, false);
-    }
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	protected boolean lookahead(GrammarContext context) {
+		return isTerm(context, false);
+	}
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    protected boolean parse(GrammarContext context) {
-        return isTerm(context, true);
-    }
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	protected boolean parse(GrammarContext context) {
+		return isTerm(context, true);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	void buildBnf(BnfContext context) {
+	}
 
 }

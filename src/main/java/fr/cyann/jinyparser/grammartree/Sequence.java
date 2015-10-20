@@ -53,4 +53,10 @@ public class Sequence extends GrammarNode {
 		return true;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	void buildBnf(BnfContext context) {
+	}
 }

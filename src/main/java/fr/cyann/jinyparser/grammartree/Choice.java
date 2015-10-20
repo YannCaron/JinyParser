@@ -61,4 +61,11 @@ public class Choice extends GrammarNode {
 		return false;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	void buildBnf(BnfContext context) {
+	}
+
 }

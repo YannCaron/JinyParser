@@ -76,4 +76,28 @@ public abstract class GrammarElement {
 		return context;
 	}
 
+	abstract void buildBnf(BnfContext context);
+
+	//abstract void buildProductions(BnfContext context); TODO : ????
+
+	/**
+	 * Build the BNF expression of the grammar hierarchy.
+	 *
+	 * @return the string expression.
+	 */
+	@Override
+	public String toString() {
+		BnfContext context = new BnfContext();
+		//buildProductions(context);
+		buildBnf(context);
+		return context.toString();
+	}
+
+	static class BnfContext {
+
+		@Override
+		public String toString() {
+			return "BnfContext{}";
+		}
+	}
 }

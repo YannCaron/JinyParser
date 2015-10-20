@@ -220,7 +220,8 @@ public class ParserTest extends TestCase {
         // parse
         GrammarContext c = grammar.parse(source);
 
-        System.out.println("Parse tree: " + c.getParseTree());
+	    System.out.println("Grammar tree: " + grammar.toString());
+	    System.out.println("Parse tree: " + c.getParseTree());
 
         assertEquals("if (['elseif', 'elseif'] 'else')", c.getParseTree().toString());
 

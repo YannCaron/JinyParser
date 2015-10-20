@@ -28,7 +28,6 @@ public class GrammarContext implements ParsemBuildable {
 	private final StringBuilder term;
 	private final List<Lexem> lexer;
 	private final Stack<ParsemElement> parser;
-    private boolean recordTerm;
 
 	/**
 	 * Default constructor.
@@ -40,20 +39,7 @@ public class GrammarContext implements ParsemBuildable {
 		term = new StringBuilder();
 		lexer = new ArrayList<Lexem>();
 		parser = new Stack<ParsemElement>();
-        recordTerm = true;
     }
-
-    // region term
-
-    public void resumeRecordTerm() {
-        this.recordTerm = true;
-    }
-
-    public void stopRecordTerm() {
-        this.recordTerm = false;
-    }
-
-    // endregion
 
 	//region Char Iterator
 
@@ -97,8 +83,8 @@ public class GrammarContext implements ParsemBuildable {
 	 * Jump to next character in the source code and build current word.
 	 */
     public void nextCharParser() {
-        if (recordTerm) term.append(it.current());
-        it.next();
+	    term.append(it.current());
+	    it.next();
 		pos.increment();
 	}
 

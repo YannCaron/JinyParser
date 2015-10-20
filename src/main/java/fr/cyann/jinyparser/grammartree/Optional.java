@@ -35,4 +35,11 @@ public class Optional extends GrammarDecorator {
 		return true;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	void buildBnf(BnfContext context) {
+	}
+
 }

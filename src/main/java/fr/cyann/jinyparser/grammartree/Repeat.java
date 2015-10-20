@@ -43,4 +43,11 @@ public class Repeat extends GrammarDecorator {
 		return true;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	void buildBnf(BnfContext context) {
+	}
+
 }

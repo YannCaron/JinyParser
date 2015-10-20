@@ -25,4 +25,12 @@ public abstract class GrammarDecorator extends GrammarElement {
 	protected GrammarDecorator(GrammarElement decorated) {
 		this.decorated = decorated;
 	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	void buildBnf(BnfContext context) {
+		decorated.buildBnf(context);
+	}
 }

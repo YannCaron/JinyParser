@@ -49,4 +49,11 @@ public class CharIn extends GrammarLeaf {
         return result;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	void buildBnf(BnfContext context) {
+	}
+
 }
