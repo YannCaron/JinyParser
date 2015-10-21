@@ -16,6 +16,7 @@ import fr.cyann.jinyparser.lexem.Lexem;
 public abstract class ParsemElement {
 
 	private final Lexem lexem;
+	private ParsemVisitor visitor;
 
 	public ParsemElement(Lexem lexem) {
 		this.lexem = lexem;
@@ -23,6 +24,14 @@ public abstract class ParsemElement {
 
 	public Lexem getLexem() {
 		return lexem;
+	}
+
+	public void setVisitor(ParsemVisitor visitor) {
+		this.visitor = visitor;
+	}
+
+	public void visit() {
+		visitor.visit(this);
 	}
 
 	public abstract void aggregate(String fieldName, ParsemElement element);

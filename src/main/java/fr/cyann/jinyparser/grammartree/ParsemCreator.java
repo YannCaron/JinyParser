@@ -12,6 +12,7 @@ package fr.cyann.jinyparser.grammartree;
 import fr.cyann.jinyparser.exceptions.JinyException;
 import fr.cyann.jinyparser.lexem.Lexem;
 import fr.cyann.jinyparser.parsetree.ParsemElement;
+import fr.cyann.jinyparser.parsetree.ParsemVisitor;
 import fr.cyann.jinyparser.utils.MultilingualMessage;
 
 import java.lang.reflect.Constructor;
@@ -22,6 +23,7 @@ import java.lang.reflect.Constructor;
 public class ParsemCreator extends GrammarDecorator {
 
     private final Class<? extends ParsemElement> clazz;
+	private ParsemVisitor<? extends ParsemElement> visitor;
 
     /**
      * Default constructor.
@@ -34,8 +36,20 @@ public class ParsemCreator extends GrammarDecorator {
         this.clazz = clazz;
     }
 
-    /**
-     * {@inheritDoc}
+	/**
+	 * The parsem visitor accessor.<br>
+	 * Define the behaviour of the parsem element when it will be traversed.
+	 *
+	 * @param visitor the visitor to delegate to the parsem.
+	 * @return this.
+	 */
+	public GrammarElement setVisitor(ParsemVisitor<? extends ParsemElement> visitor) {
+		this.visitor = visitor;
+		return this;
+	}
+
+	/**
+	 * {@inheritDoc}
      */
     @Override
     protected boolean lookahead(GrammarContext context) {
@@ -58,7 +72,8 @@ public class ParsemCreator extends GrammarDecorator {
                 Constructor<? extends ParsemElement> constructor = clazz.getConstructor(Lexem.class);
                 constructor.setAccessible(true);
                 ParsemElement parsem = constructor.newInstance(context.getCurrentLexem());
-                context.pushParsem(parsem);
+	            parsem.setVisitor(visitor);
+	            context.pushParsem(parsem);
 
             } catch (Exception e) {
                 throw new JinyException(MultilingualMessage.create(e.toString()));

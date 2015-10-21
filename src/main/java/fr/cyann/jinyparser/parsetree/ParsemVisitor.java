@@ -1,9 +1,6 @@
-package fr.cyann.jinyparser.grammartree;
-
-import junit.framework.TestCase;
-
+package fr.cyann.jinyparser.parsetree;
 /**
- * Copyright (C) 19/10/15 Yann Caron aka cyann
+ * Copyright (C) 21/10/15 Yann Caron aka cyann
  * <p/>
  * Cette œuvre est mise à disposition sous licence Attribution -
  * Pas d’Utilisation Commerciale - Partage dans les Mêmes Conditions 3.0 France.
@@ -11,13 +8,11 @@ import junit.framework.TestCase;
  * ou écrivez à Creative Commons, 444 Castro Street, Suite 900, Mountain View, California, 94041, USA.
  **/
 
-public class ParsemCreatorTest extends TestCase {
+/**
+ * The ParsemVisitor definition.
+ */
+public abstract class ParsemVisitor<P extends ParsemElement> {
 
-    public void testLookahead() throws Exception {
+	public abstract void visit(P parsem);
 
-    }
-
-    public void testParse() throws Exception {
-
-    }
 }

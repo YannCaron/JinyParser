@@ -43,8 +43,21 @@ public class ParserTest extends TestCase {
         GrammarElement sign = charIn("+-*/%");
 
         // lexer
-        GrammarElement number = produceNumber(repeat(digit));
-        GrammarElement numberRight = produceBinaryExpression(number);
+	    GrammarElement number = produce(repeat(digit), NUMBER, AstNumber.class).setVisitor(new ParsemVisitor<AstNumber>() {
+		    @Override
+		    public void visit(AstNumber parsem) {
+			    System.out.println(parsem.value);
+		    }
+	    });
+
+	    GrammarElement numberRight = catcher(catcher(catcher(produce(number, NUMBER, AstBinaryExpression.class).setVisitor(new ParsemVisitor<AstBinaryExpression>() {
+		    @Override
+		    public void visit(AstBinaryExpression parsem) {
+			    parsem.left.visit();
+			    System.out.println(parsem.sign);
+			    parsem.right.visit();
+		    }
+	    }), "right"), "sign"), "left");
 
         GrammarElement operator = produce(sign, OPERATOR);
 
@@ -57,7 +70,10 @@ public class ParserTest extends TestCase {
 
         System.out.println("Parse tree: " + c.getParseTree());
 
-        assertEquals("('+' ('+' 'n7' 'n10') 'n4')", c.getParseTree().toString());
+	    assertEquals("('+' ('+' 'n7' 'n10') 'n4')", c.getParseTree().toString());
+
+	    // visite result
+	    c.getParseTree().visit();
 
     }
 

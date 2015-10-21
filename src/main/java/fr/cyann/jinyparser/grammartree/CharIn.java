@@ -12,7 +12,6 @@ package fr.cyann.jinyparser.grammartree;/**
  */
 public class CharIn extends GrammarLeaf {
 
-
 	private final String characters;
 
 	/**
