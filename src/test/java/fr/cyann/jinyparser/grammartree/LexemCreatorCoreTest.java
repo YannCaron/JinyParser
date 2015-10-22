@@ -3,7 +3,7 @@ package fr.cyann.jinyparser.grammartree;
 import fr.cyann.jinyparser.lexem.LexemType;
 import junit.framework.TestCase;
 
-import static fr.cyann.jinyparser.grammartree.GrammarFactory.produce;
+import static fr.cyann.jinyparser.grammartree.GrammarFactory.produceTerminal;
 
 /**
  * Copyright (C) 17/10/15 Yann Caron aka cyann
@@ -21,7 +21,7 @@ public class LexemCreatorCoreTest extends TestCase {
         String source = "abc";
         GrammarContext context = new GrammarContext(source);
 
-        GrammarElement producer = produce(new Word("abc"), LexemType.SYMBOL);
+        GrammarElement producer = produceTerminal(new Word("abc"), LexemType.SYMBOL);
 
         boolean result = producer.lookahead(context);
 
@@ -41,7 +41,7 @@ public class LexemCreatorCoreTest extends TestCase {
         String source = "abc";
         GrammarContext context = new GrammarContext(source);
 
-        GrammarElement producer = produce(new Word("abc"), LexemType.SYMBOL);
+        GrammarElement producer = produceTerminal(new Word("abc"), LexemType.SYMBOL);
 
         boolean result = producer.parse(context);
 

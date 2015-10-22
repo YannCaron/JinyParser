@@ -19,6 +19,7 @@ import junit.framework.TestCase;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Stack;
 
 import static fr.cyann.jinyparser.grammartree.GrammarFactory.*;
 
@@ -43,23 +44,28 @@ public class ParserTest extends TestCase {
         GrammarElement sign = charIn("+-*/%");
 
         // lexer
-	    GrammarElement number = produce(repeat(digit), NUMBER, AstNumber.class).setVisitor(new ParsemVisitor<AstNumber>() {
-		    @Override
-		    public void visit(AstNumber parsem) {
-			    System.out.println(parsem.value);
-		    }
-	    });
+        GrammarElement number = produce(repeat(digit), NUMBER, AstNumber.class).setVisitor(new ParsemVisitor<AstNumber, ArithmeticContext>() {
+            @Override
+            public void visit(AstNumber parsem, ArithmeticContext context) {
+                context.push(parsem.value);
+            }
+        });
 
-	    GrammarElement numberRight = catcher(catcher(catcher(produce(number, NUMBER, AstBinaryExpression.class).setVisitor(new ParsemVisitor<AstBinaryExpression>() {
-		    @Override
-		    public void visit(AstBinaryExpression parsem) {
-			    parsem.left.visit();
-			    System.out.println(parsem.sign);
-			    parsem.right.visit();
+        GrammarElement numberRight = catcher(catcher(catcher(produce(number, NUMBER, AstBinaryExpression.class).setVisitor(new ParsemVisitor<AstBinaryExpression, ArithmeticContext>() {
+            @Override
+            public void visit(AstBinaryExpression parsem, ArithmeticContext context) {
+                parsem.left.visit(context);
+                parsem.right.visit(context);
+
+                int i1 = context.pop();
+                int i2 = context.pop();
+
+                context.push(i1 + i2);
+
 		    }
 	    }), "right"), "sign"), "left");
 
-        GrammarElement operator = produce(sign, OPERATOR);
+        GrammarElement operator = produceTerminal(sign, OPERATOR);
 
         // parser
         // grammar := <produceNumber> { <operator> <produceNumber>}
@@ -72,8 +78,10 @@ public class ParserTest extends TestCase {
 
 	    assertEquals("('+' ('+' 'n7' 'n10') 'n4')", c.getParseTree().toString());
 
-	    // visite result
-	    c.getParseTree().visit();
+        // visit result
+        ArithmeticContext context = new ArithmeticContext();
+        c.getParseTree().visit(context);
+        assertEquals(21, context.firstElement().intValue());
 
     }
 
@@ -89,7 +97,7 @@ public class ParserTest extends TestCase {
         GrammarElement number = produceNumber(repeat(digit));
         GrammarElement numberRight = produceBinaryExpression(number);
 
-        GrammarElement operator = produce(sign, OPERATOR);
+        GrammarElement operator = produceTerminal(sign, OPERATOR);
 
         // parser
         // grammar := <produceNumber> { '+' <produceNumber>}
@@ -114,12 +122,12 @@ public class ParserTest extends TestCase {
         GrammarElement sign = charIn("+-*%/");
 
         // lexer
-        GrammarElement number = produce(repeat(digit), NUMBER);
+        GrammarElement number = produceTerminal(repeat(digit), NUMBER);
 
-        GrammarElement operator = produce(sign, OPERATOR);
+        GrammarElement operator = produceTerminal(sign, OPERATOR);
 
         // parser
-        GrammarElement grammar = sequence(number, repeat(sequence(operator, produceAndCatch(number, NUMBER, 3))));
+        GrammarElement grammar = sequence(number, repeat(sequence(operator, catcherNonTerminal(createNonTerminal(number), 3))));
 
         // parse
         GrammarContext c = grammar.parse(source);
@@ -137,8 +145,8 @@ public class ParserTest extends TestCase {
         // lexer
         GrammarElement number = produceNumber(repeat(charIn("0123456789")));
 
-        GrammarElement addSign = produce(charIn("+"), OPERATOR);
-        GrammarElement minusSign = produce(charIn("-"), OPERATOR);
+        GrammarElement addSign = produceTerminal(charIn("+"), OPERATOR);
+        GrammarElement minusSign = produceTerminal(charIn("-"), OPERATOR);
 
         GrammarElement addition = sequence(addSign, produceBinaryExpression(number));
         GrammarElement subtraction = sequence(minusSign, produceBinaryExpression(number));
@@ -162,8 +170,8 @@ public class ParserTest extends TestCase {
         // lexer
         GrammarElement number = produceNumber(repeat(charIn("0123456789")));
 
-        GrammarElement addSign = create(lexem(charIn("+"), OPERATOR));
-        GrammarElement multiplySign = create(lexem(charIn("*"), OPERATOR));
+        GrammarElement addSign = produceTerminal(charIn("+"), OPERATOR);
+        GrammarElement multiplySign = produceTerminal(charIn("*"), OPERATOR);
 
         // <multiplication> := <produceNumber> [ { '*' <produceNumber> } ]
         GrammarElement multiplication = sequence(number, optional(repeat(sequence(multiplySign, produceBinaryExpression(number)))));
@@ -189,8 +197,8 @@ public class ParserTest extends TestCase {
         GrammarElement rightParenthesis = lexem(charIn(")"), LexemType.SYMBOL);
         GrammarElement number = produceNumber(repeat(charIn("0123456789")));
 
-        GrammarElement addSign = produce(charIn("+"), OPERATOR);
-        GrammarElement multiplySign = produce(charIn("*"), OPERATOR);
+        GrammarElement addSign = produceTerminal(charIn("+"), OPERATOR);
+        GrammarElement multiplySign = produceTerminal(charIn("*"), OPERATOR);
 
 	    GrammarRecursive addition = recursive("Addition");
 	    GrammarRecursive multiplication = recursive("Multiplication");
@@ -228,8 +236,8 @@ public class ParserTest extends TestCase {
         GrammarElement br = lexem(word("}"), LexemType.SYMBOL);
 
         GrammarElement if_ = sequence(produce(word("if"), KEYWORD, AstIf.class), pl, pr, bl, br);
-        GrammarElement elseif = sequence(produceAndDrop(word("elseif"), KEYWORD, "elseif"), pl, pr, bl, br);
-        GrammarElement else_ = sequence(produceAndDrop(word("else"), KEYWORD, "else"), bl, br);
+        GrammarElement elseif = sequence(dropper(produceTerminal(word("elseif"), KEYWORD), "elseif"), pl, pr, bl, br);
+        GrammarElement else_ = sequence(dropper(produceTerminal(word("else"), KEYWORD), "else"), bl, br);
 
         GrammarElement grammar = sequence(if_, optional(repeat(elseif)), optional(else_));
 
@@ -250,8 +258,8 @@ public class ParserTest extends TestCase {
         GrammarElement rightParenthesis = lexem(charIn(")"), LexemType.SYMBOL);
         GrammarElement number = produceNumber(repeat(charIn("0123456789")));
 
-        GrammarElement addSign = create(lexem(charIn("+"), OPERATOR));
-        GrammarElement multiplySign = create(lexem(charIn("*"), OPERATOR));
+        GrammarElement addSign = produceTerminal(charIn("+"), OPERATOR);
+        GrammarElement multiplySign = produceTerminal(charIn("*"), OPERATOR);
 
 	    GrammarRecursive addition = recursive("Addition");
 	    GrammarRecursive multiplication = recursive("Multiplication");
@@ -277,7 +285,7 @@ public class ParserTest extends TestCase {
     }
 
     private GrammarElement produceBinaryExpression(GrammarElement decorated) {
-        return produceAndCatch(decorated, NUMBER, AstBinaryExpression.class, "left", "sign", "right");
+        return catcher(produce(decorated, NUMBER, AstBinaryExpression.class), "left", "sign", "right");
     }
 
     static class AstNumber extends Terminal {
@@ -334,6 +342,27 @@ public class ParserTest extends TestCase {
             return "if (" + elseifs.toString() + " " + else_ + ")";
         }
 
+    }
+
+    static class ArithmeticContext extends VisitorContext {
+
+        private final Stack<Integer> stack;
+
+        public ArithmeticContext() {
+            stack = new Stack<Integer>();
+        }
+
+        public Integer pop() {
+            return stack.pop();
+        }
+
+        public Integer push(Integer item) {
+            return stack.push(item);
+        }
+
+        public Integer firstElement() {
+            return stack.firstElement();
+        }
     }
 
     // endregion

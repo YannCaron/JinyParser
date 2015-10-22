@@ -11,8 +11,8 @@ package fr.cyann.jinyparser.parsetree;
 /**
  * The ParsemVisitor definition.
  */
-public abstract class ParsemVisitor<P extends ParsemElement> {
+public abstract class ParsemVisitor<P extends ParsemElement, C extends VisitorContext> {
 
-	public abstract void visit(P parsem);
+    public abstract void visit(P parsem, C context);
 
 }

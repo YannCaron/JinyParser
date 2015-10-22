@@ -30,9 +30,9 @@ public abstract class ParsemElement {
 		this.visitor = visitor;
 	}
 
-	public void visit() {
-		visitor.visit(this);
-	}
+    public void visit(VisitorContext context) {
+        visitor.visit(this, context);
+    }
 
 	public abstract void aggregate(String fieldName, ParsemElement element);
 

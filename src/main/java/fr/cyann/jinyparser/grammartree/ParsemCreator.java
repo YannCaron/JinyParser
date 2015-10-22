@@ -13,6 +13,7 @@ import fr.cyann.jinyparser.exceptions.JinyException;
 import fr.cyann.jinyparser.lexem.Lexem;
 import fr.cyann.jinyparser.parsetree.ParsemElement;
 import fr.cyann.jinyparser.parsetree.ParsemVisitor;
+import fr.cyann.jinyparser.parsetree.VisitorContext;
 import fr.cyann.jinyparser.utils.MultilingualMessage;
 
 import java.lang.reflect.Constructor;
@@ -20,10 +21,10 @@ import java.lang.reflect.Constructor;
 /**
  * The ParsemCreator class definition.<br>
  */
-public class ParsemCreator extends GrammarDecorator {
+public class ParsemCreator<P extends ParsemElement, C extends VisitorContext> extends GrammarDecorator {
 
-    private final Class<? extends ParsemElement> clazz;
-	private ParsemVisitor<? extends ParsemElement> visitor;
+    private final Class<P> clazz;
+    private ParsemVisitor<P, C> visitor;
 
     /**
      * Default constructor.
@@ -31,7 +32,7 @@ public class ParsemCreator extends GrammarDecorator {
      * @param decorated the decorated grammar element.
      * @param clazz the grammar element class to create.
      */
-    public ParsemCreator(LexemCreatorCore decorated, Class<? extends ParsemElement> clazz) {
+    public ParsemCreator(GrammarElement decorated, Class<P> clazz) {
         super(decorated);
         this.clazz = clazz;
     }
@@ -43,8 +44,8 @@ public class ParsemCreator extends GrammarDecorator {
 	 * @param visitor the visitor to delegate to the parsem.
 	 * @return this.
 	 */
-	public GrammarElement setVisitor(ParsemVisitor<? extends ParsemElement> visitor) {
-		this.visitor = visitor;
+    public GrammarElement setVisitor(ParsemVisitor<P, C> visitor) {
+        this.visitor = visitor;
 		return this;
 	}
 
@@ -69,7 +70,7 @@ public class ParsemCreator extends GrammarDecorator {
 
             try {
 
-                Constructor<? extends ParsemElement> constructor = clazz.getConstructor(Lexem.class);
+                Constructor<P> constructor = clazz.getConstructor(Lexem.class);
                 constructor.setAccessible(true);
                 ParsemElement parsem = constructor.newInstance(context.getCurrentLexem());
 	            parsem.setVisitor(visitor);
