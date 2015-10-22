@@ -4,7 +4,6 @@ import fr.cyann.jinyparser.lexem.LexemType;
 import fr.cyann.jinyparser.parsetree.DefaultNonTerminal;
 import fr.cyann.jinyparser.parsetree.DefaultTerminal;
 import fr.cyann.jinyparser.parsetree.ParsemElement;
-import fr.cyann.jinyparser.parsetree.VisitorContext;
 
 /**
  * The ${CLASS_NAME} class.
@@ -92,8 +91,8 @@ public final class GrammarFactory {
      * @param decorated the grammar that decide if create will be produced.
      * @return the new grammar element.
      */
-    public static <C extends VisitorContext> ParsemCreator<DefaultTerminal, C> createTerminal(LexemCreator decorated) {
-        return new ParsemCreator<DefaultTerminal, C>(decorated, DefaultTerminal.class);
+    public static ParsemCreator<DefaultTerminal> createTerminal(LexemCreator decorated) {
+        return new ParsemCreator<DefaultTerminal>(decorated, DefaultTerminal.class);
     }
 
     /**
@@ -102,8 +101,8 @@ public final class GrammarFactory {
      * @param decorated the grammar that decide if create will be produced.
      * @return the new grammar element.
      */
-    public static <C extends VisitorContext> ParsemCreator<DefaultNonTerminal, C> createNonTerminal(GrammarElement decorated) {
-        return new ParsemCreator<DefaultNonTerminal, C>(decorated, DefaultNonTerminal.class);
+    public static ParsemCreator<DefaultNonTerminal> createNonTerminal(GrammarElement decorated) {
+        return new ParsemCreator<DefaultNonTerminal>(decorated, DefaultNonTerminal.class);
     }
 
     /**
@@ -113,8 +112,8 @@ public final class GrammarFactory {
      * @param clazz     the create element class to create.
      * @return the new grammar element.
      */
-    public static <P extends ParsemElement, C extends VisitorContext> ParsemCreator<P, C> create(GrammarElement decorated, Class<P> clazz) {
-        return new ParsemCreator<P, C>(decorated, clazz);
+    public static <P extends ParsemElement> ParsemCreator<P> create(GrammarElement decorated, Class<P> clazz) {
+        return new ParsemCreator<P>(decorated, clazz);
     }
 
 
@@ -125,7 +124,7 @@ public final class GrammarFactory {
      * @param lexemType the type of the lexem to create.
      * @return the created grammar element.
      */
-    public static <C extends VisitorContext> ParsemCreator<DefaultTerminal, C> produceTerminal(GrammarElement decorated, LexemType lexemType) {
+    public static ParsemCreator<DefaultTerminal> produceTerminal(GrammarElement decorated, LexemType lexemType) {
         return GrammarFactory.createTerminal(lexem(decorated, lexemType));
     }
 
@@ -136,7 +135,7 @@ public final class GrammarFactory {
      * @param lexemType the type of the lexem to create.
      * @return the created grammar element.
      */
-    public static <C extends VisitorContext> ParsemCreator<DefaultNonTerminal, C> produceNonTerminal(GrammarElement decorated, LexemType lexemType) {
+    public static ParsemCreator<DefaultNonTerminal> produceNonTerminal(GrammarElement decorated, LexemType lexemType) {
         return GrammarFactory.createNonTerminal(lexem(decorated, lexemType));
     }
 
@@ -148,8 +147,8 @@ public final class GrammarFactory {
      * @param parsemClass the class of the parsem to create.
      * @return the created grammar element.
      */
-    public static <P extends ParsemElement, C extends VisitorContext> ParsemCreator produce(GrammarElement decorated, LexemType lexemType, Class<P> parsemClass) {
-        return GrammarFactory.<P, C>create(lexem(decorated, lexemType), parsemClass);
+    public static <P extends ParsemElement> ParsemCreator produce(GrammarElement decorated, LexemType lexemType, Class<P> parsemClass) {
+        return GrammarFactory.create(lexem(decorated, lexemType), parsemClass);
     }
 
     /**
@@ -171,7 +170,8 @@ public final class GrammarFactory {
      */
     public static GrammarElement catcher(GrammarElement decorated, String... fieldNames) {
         GrammarElement grammar = decorated;
-        for (int i = fieldNames.length - 1; i >= 0; i--) {
+        //for (int i = fieldNames.length - 1; i >= 0; i--) {
+        for (int i = 0; i < fieldNames.length; i++) {
             String fieldName = fieldNames[i];
             grammar = new ParsemCatcher(grammar, fieldName);
         }

@@ -21,10 +21,10 @@ import java.lang.reflect.Constructor;
 /**
  * The ParsemCreator class definition.<br>
  */
-public class ParsemCreator<P extends ParsemElement, C extends VisitorContext> extends GrammarDecorator {
+public class ParsemCreator<P extends ParsemElement> extends GrammarDecorator {
 
     private final Class<P> clazz;
-    private ParsemVisitor<P, C> visitor;
+    private ParsemVisitor<P, ? extends VisitorContext> visitor;
 
     /**
      * Default constructor.
@@ -44,7 +44,7 @@ public class ParsemCreator<P extends ParsemElement, C extends VisitorContext> ex
 	 * @param visitor the visitor to delegate to the parsem.
 	 * @return this.
 	 */
-    public GrammarElement setVisitor(ParsemVisitor<P, C> visitor) {
+    public GrammarElement setVisitor(ParsemVisitor<P, ? extends VisitorContext> visitor) {
         this.visitor = visitor;
 		return this;
 	}
