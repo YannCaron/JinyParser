@@ -74,6 +74,17 @@ public final class GrammarFactory {
     }
 
     /**
+     * Grammar element that produce lexem (build token on lexer) of DEFAULT lexemType.<br>
+     * Create also a new token producer grammar element that manage separators.
+     *
+     * @param decorated the grammar element to decorate.
+     * @return the new grammar element.
+     */
+    public static LexemCreator lexem(GrammarElement decorated) {
+        return new LexemCreator(decorated, LexemType.DEFAULT);
+    }
+
+    /**
      * Grammar element that produce lexem (build token on lexer).<br>
      * Create also a new token producer grammar element that manage separators.
      *

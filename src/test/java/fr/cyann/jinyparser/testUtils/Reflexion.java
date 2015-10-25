@@ -1,6 +1,6 @@
 package fr.cyann.jinyparser.testUtils;
 /**
- * Copyright (C) 18/10/15 Yann Caron aka cyann
+ * Copyright (C) 25/10/15 Yann Caron aka cyann
  * <p/>
  * Cette œuvre est mise à disposition sous licence Attribution -
  * Pas d’Utilisation Commerciale - Partage dans les Mêmes Conditions 3.0 France.
@@ -9,28 +9,23 @@ package fr.cyann.jinyparser.testUtils;
  **/
 
 
-import fr.cyann.jinyparser.lexem.Lexem;
-
-import java.util.ArrayList;
-import java.util.List;
+import java.lang.reflect.Field;
 
 /**
- * The Utils class definition.<br>
+ * The Reflexion class definition.<br>
  * -
  */
-public class Utils {
+public class Reflexion {
 
-    private Utils() {
+    private Reflexion() {
         throw new RuntimeException("Cannot instantiate static class !");
     }
 
-    public static final List<String> lexerToTerms(Iterable<Lexem> lexer) {
-        List<String> result = new ArrayList<String>();
-        for (Lexem lexem : lexer) {
-            result.add(lexem.getTerm());
-        }
-
-        return result;
+    public static <T> T getPrivateField(Object o, String fieldName) throws NoSuchFieldException, IllegalAccessException {
+        Field field = o.getClass().getDeclaredField(fieldName);
+        field.setAccessible(true);
+        return (T) field.get(o);
     }
+
 
 }
