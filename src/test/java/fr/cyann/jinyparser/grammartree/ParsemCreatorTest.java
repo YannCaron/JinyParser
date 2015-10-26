@@ -19,30 +19,54 @@ import static fr.cyann.jinyparser.testUtils.Reflexion.getPrivateField;
 
 public class ParsemCreatorTest extends TestCase {
 
-    public void testSetVisitor() throws Exception {
-        String source = "a";
+	public void testSetVisitor() throws Exception {
+		String source = "a";
 
-        ParsemCreator<DefaultTerminal> p = createTerminal(lexem(word("a")));
+		ParsemCreator<DefaultTerminal> p = createTerminal(lexem(word("a")));
 
-        assertNull(getPrivateField(p, "visitor"));
+		assertNull(getPrivateField(p, "visitor"));
 
-        ParsemVisitor<DefaultTerminal, VisitorContext> visitor = new ParsemVisitor<DefaultTerminal, VisitorContext>() {
-            @Override
-            public void visit(DefaultTerminal parsem, VisitorContext context) {
+		ParsemVisitor<DefaultTerminal, VisitorContext> visitor = new ParsemVisitor<DefaultTerminal, VisitorContext>() {
+			@Override
+			public void visit(DefaultTerminal parsem, VisitorContext context) {
+				// do nothing
+			}
+		};
+		p.setVisitor(visitor);
 
-            }
-        };
-        p.setVisitor(visitor);
+		assertEquals(visitor, getPrivateField(p, "visitor"));
 
-        assertEquals(visitor, getPrivateField(p, "visitor"));
+	}
 
-    }
+	public void testLookahead() throws Exception {
+		String source = "a";
 
-    public void testLookahead() throws Exception {
+		ParsemCreator<DefaultTerminal> p = createTerminal(lexem(word("a")));
 
-    }
+		GrammarContext context = new GrammarContext(source);
 
-    public void testParse() throws Exception {
+		assertNull(context.getParseTree());
 
-    }
+		p.lookahead(context);
+
+		assertNull(context.getParseTree());
+	}
+
+	public void testParse() throws Exception {
+
+		String source = "a";
+
+		ParsemCreator<DefaultTerminal> p = createTerminal(lexem(word("a")));
+
+		GrammarContext context = new GrammarContext(source);
+
+		assertNull(context.getParseTree());
+
+		p.parse(context);
+
+		assertNotNull(context.getParseTree());
+		assertEquals("a", context.getParseTree().getLexem().getTerm());
+		assertTrue(context.getParseTree() instanceof DefaultTerminal);
+
+	}
 }
