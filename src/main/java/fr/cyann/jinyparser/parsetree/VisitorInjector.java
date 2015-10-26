@@ -1,6 +1,5 @@
-package fr.cyann.jinyparser.parsetree;
-/**
- * Copyright (C) 03/10/15 Yann Caron aka cyann
+package fr.cyann.jinyparser.parsetree;/**
+ * Copyright (C) 26/10/15 Yann Caron aka cyann
  * <p/>
  * Cette œuvre est mise à disposition sous licence Attribution -
  * Pas d’Utilisation Commerciale - Partage dans les Mêmes Conditions 3.0 France.
@@ -8,21 +7,11 @@ package fr.cyann.jinyparser.parsetree;
  * ou écrivez à Creative Commons, 444 Castro Street, Suite 900, Mountain View, California, 94041, USA.
  **/
 
-
-import fr.cyann.jinyparser.lexem.Lexem;
-
 /**
- * The DefaultTerminal class definition.<br>
- * -
+ * The VisitorInjector definition.
  */
-public class DefaultTerminal extends Terminal {
+public abstract class VisitorInjector<C extends VisitorContext> {
 
-	public DefaultTerminal(Lexem lexem) {
-		super(lexem);
-	}
+	public abstract <P extends ParsemElement> ParsemVisitor<P, C> getVisitorFor(P parsem);
 
-	@Override
-	public String toString() {
-		return "'" + getLexem().getTerm() + "'";
-	}
 }

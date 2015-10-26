@@ -21,6 +21,11 @@ public abstract class Terminal extends ParsemElement {
 		super(lexem);
 	}
 
+	@Override
+	public void injectVisitor(VisitorInjector injector) {
+		setVisitor(injector.getVisitorFor(this));
+	}
+
 	public void aggregate(String fieldName, ParsemElement element) {
         throw new JinyException(MultilingualMessage.create("Illegal function call ! Cannot aggregate element [%s] into terminal [%s] !").setArgs(element, this));
     }

@@ -30,8 +30,33 @@ public abstract class NonTerminal extends ParsemElement {
         return lexemEnd;
     }
 
-    @Override
-    public void aggregate(String fieldName, ParsemElement element) {
+
+	@Override
+	public void injectVisitor(VisitorInjector injector) {
+		setVisitor(injector.getVisitorFor(this));
+
+		try {
+			for (Field field : this.getClass().getDeclaredFields()) {
+				field.setAccessible(true);
+
+				if (ParsemElement.class.isAssignableFrom(field.getType())) {
+					ParsemElement element = (ParsemElement) field.get(this);
+					element.injectVisitor(injector);
+				} else if (List.class.isAssignableFrom(field.getType())) {
+					List<ParsemElement> list = ((List<ParsemElement>) field.get(this));
+
+					for (ParsemElement child : list) {
+						child.injectVisitor(injector);
+					}
+				}
+			}
+		} catch (Exception e) {
+			throw new JinyException(MultilingualMessage.create(e.toString()));
+		}
+	}
+
+	@Override
+	public void aggregate(String fieldName, ParsemElement element) {
         boolean found = false;
         List<String> names = new ArrayList<String>();
 
