@@ -27,11 +27,14 @@ public class Choice extends GrammarNode {
 	@Override
 	protected boolean lookahead(GrammarContext context) {
 
+		int itPos = context.currentPosition();
+
 		for (GrammarElement child : this) {
 
 			context.markChar();
 			if (child.lookahead(context)) {
 				context.resumeChar();
+				context.storeToPackrat(itPos, child);
 				return true;
 			}
 			context.rollbackChar();
@@ -47,18 +50,23 @@ public class Choice extends GrammarNode {
 	 */
 	@Override
 	protected boolean parse(GrammarContext context) {
-		for (GrammarElement child : this) {
+		GrammarElement cache = context.retrieveFromPackrat(context.currentPosition());
 
-			boolean lookaheadResult = launchLookahead(context, child);
+		if (cache != null) {
+			return cache.parse(context);
+		} else {
+			for (GrammarElement child : this) {
 
-			if (lookaheadResult) {
-				child.parse(context);
-				return true;
+				boolean lookaheadResult = launchLookahead(context, child);
+				if (lookaheadResult) {
+					child.parse(context);
+					return true;
+				}
+
 			}
 
+			return false;
 		}
-
-		return false;
 	}
 
 	/**

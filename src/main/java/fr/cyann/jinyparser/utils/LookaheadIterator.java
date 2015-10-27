@@ -22,6 +22,13 @@ public interface LookaheadIterator<T> {
 	T current();
 
 	/**
+	 * Get the current position.
+	 *
+	 * @return the current position.
+	 */
+	int getCurrentPosition();
+
+	/**
 	 * Jump to the next element.
 	 */
 	void next();

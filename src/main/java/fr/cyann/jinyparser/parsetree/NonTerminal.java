@@ -12,6 +12,7 @@ import fr.cyann.jinyparser.lexem.Lexem;
 import fr.cyann.jinyparser.utils.MultilingualMessage;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.ParameterizedType;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,10 +27,23 @@ public abstract class NonTerminal extends ParsemElement {
         super(lexem);
     }
 
+	private static boolean isListOfParsemElement(Field field) {
+		if (List.class.isAssignableFrom(field.getType())) {
+			ParameterizedType type = ((ParameterizedType) field.getGenericType());
+			if (type.getActualTypeArguments().length > 0) {
+				Class<?> typeParameter = (Class<?>) type.getActualTypeArguments()[0];
+				if (ParsemElement.class.isAssignableFrom(typeParameter)) {
+					return true;
+				}
+			}
+		}
+
+		return false;
+	}
+
     public Lexem getLexemEnd() {
         return lexemEnd;
     }
-
 
 	@Override
 	public void injectVisitor(VisitorInjector injector) {
@@ -42,7 +56,7 @@ public abstract class NonTerminal extends ParsemElement {
 				if (ParsemElement.class.isAssignableFrom(field.getType())) {
 					ParsemElement element = (ParsemElement) field.get(this);
 					element.injectVisitor(injector);
-				} else if (List.class.isAssignableFrom(field.getType())) {
+				} else if (isListOfParsemElement(field)) {
 					List<ParsemElement> list = ((List<ParsemElement>) field.get(this));
 
 					for (ParsemElement child : list) {
@@ -74,9 +88,9 @@ public abstract class NonTerminal extends ParsemElement {
 
                 if (annotation != null && (name.equals(fieldName))) {
 
-                    if (List.class.isAssignableFrom(field.getType())) {
-                        ((List<ParsemElement>) field.get(this)).add(0, element);
-                        found = true;
+	                if (isListOfParsemElement(field)) {
+		                ((List<ParsemElement>) field.get(this)).add(0, element);
+		                found = true;
                     } else {
                         field.set(this, element);
                         found = true;

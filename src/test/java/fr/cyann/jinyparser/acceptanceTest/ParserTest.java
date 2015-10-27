@@ -34,6 +34,7 @@ public class ParserTest extends TestCase {
 			context.push(parsem.value);
 		}
 	};
+
 	static final ParsemVisitor<AstBinaryExpression, ArithmeticContext> VISIT_ADDITION = new ParsemVisitor<AstBinaryExpression, ArithmeticContext>() {
 		@Override
 		public void visit(AstBinaryExpression parsem, ArithmeticContext context) {
@@ -46,6 +47,7 @@ public class ParserTest extends TestCase {
 			context.push(i1 + i2);
 		}
 	};
+
 	static final ParsemVisitor<AstBinaryExpression, ArithmeticContext> VISIT_MULTIPLICATION = new ParsemVisitor<AstBinaryExpression, ArithmeticContext>() {
 		@Override
 		public void visit(AstBinaryExpression parsem, ArithmeticContext context) {
@@ -58,6 +60,7 @@ public class ParserTest extends TestCase {
 			context.push(i1 * i2);
 		}
 	};
+
 	private static final LexemType NUMBER = new LexemType("produceNumber");
 	private static final LexemType OPERATOR = new LexemType("operator");
 	private static final LexemType KEYWORD = new LexemType("keyword");
@@ -244,9 +247,9 @@ public class ParserTest extends TestCase {
 		assertEquals("('+' 'n7' ('*' 'n10' ('+' 'n4' 'n7')))", c.getParseTree().toString());
 
 		// visit and test result
-		/*ArithmeticContext context = new ArithmeticContext();
+		ArithmeticContext context = new ArithmeticContext();
 		c.getParseTree().visit(context);
-		assertEquals(117, context.firstElement().intValue());*/
+		assertEquals(117, context.firstElement().intValue());
 
 		// inject visitor
 		c.getParseTree().injectVisitor(new VisitorInjectorClassMap<ToStringContext>() {
@@ -262,7 +265,7 @@ public class ParserTest extends TestCase {
 				this.addVisitor(AstBinaryExpression.class, new ParsemVisitor<AstBinaryExpression, ToStringContext>() {
 					@Override
 					public void visit(AstBinaryExpression parsem, ToStringContext context) {
-						context.append("(+ ");
+						context.append("(op ");
 						parsem.left.visit(context);
 						context.append(" ");
 						parsem.right.visit(context);
@@ -275,7 +278,7 @@ public class ParserTest extends TestCase {
 		ToStringContext toStringContext = new ToStringContext();
 		c.getParseTree().visit(toStringContext);
 		System.out.println(toStringContext.toString());
-		assertEquals("(+ n7 (+ n10 (+ n4 n7)))", toStringContext.toString());
+		assertEquals("(op n7 (op n10 (op n4 n7)))", toStringContext.toString());
 	}
 
 	public void testIfParser() {

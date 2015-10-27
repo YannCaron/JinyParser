@@ -13,9 +13,7 @@ import fr.cyann.jinyparser.parsetree.ParsemBuildable;
 import fr.cyann.jinyparser.parsetree.ParsemElement;
 import fr.cyann.jinyparser.utils.StringLookaheadIterator;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Stack;
+import java.util.*;
 
 /**
  * The GrammarContext class. A context pass through parser tree that contains all intermediates states of lexing / parsing.<br>
@@ -23,23 +21,25 @@ import java.util.Stack;
  */
 public class GrammarContext implements ParsemBuildable {
 
-	private final StringLookaheadIterator it;
-	private final SourcePosition pos;
+	private final StringLookaheadIterator iterator;
+	private final SourcePosition positionManager;
 	private final StringBuilder term;
 	private final List<Lexem> lexer;
 	private final Stack<ParsemElement> parser;
+	private final Map<Integer, GrammarElement> packrat;
 
 	/**
 	 * Default constructor.
 	 * @param source the source code to parse.
 	 */
 	public GrammarContext(String source) {
-		it = new StringLookaheadIterator(source);
-		pos = new SourcePosition(1, 1);
+		iterator = new StringLookaheadIterator(source);
+		positionManager = new SourcePosition(1, 1);
 		term = new StringBuilder();
 		lexer = new ArrayList<Lexem>();
 		parser = new Stack<ParsemElement>();
-    }
+		packrat = new HashMap<Integer, GrammarElement>();
+	}
 
 	//region Char Iterator
 
@@ -47,21 +47,21 @@ public class GrammarContext implements ParsemBuildable {
 	 * Mark current character to give ability to backtrack to this position.
 	 */
 	public void markChar() {
-		it.mark();
+		iterator.mark();
 	}
 
 	/**
 	 * Restore (pop) the stored position to the actual one.
 	 */
 	public void rollbackChar() {
-		it.rollback();
+		iterator.rollback();
 	}
 
 	/**
 	 * Garbage (pop) the stored position.
 	 */
 	public void resumeChar() {
-		it.resume();
+		iterator.resume();
 	}
 
 	/**
@@ -69,23 +69,30 @@ public class GrammarContext implements ParsemBuildable {
 	 * @return the current character.
 	 */
 	public Character currentChar() {
-		return it.current();
+		return iterator.current();
+	}
+
+	/**
+	 * Get the iterator current position.
+	 */
+	public int currentPosition() {
+		return iterator.getCurrentPosition();
 	}
 
 	/**
 	 * Jump to next character in the source code.
 	 */
     public void nextCharLookahead() {
-        it.next();
+	    iterator.next();
 	}
 
 	/**
 	 * Jump to next character in the source code and build current word.
 	 */
     public void nextCharParser() {
-	    term.append(it.current());
-	    it.next();
-		pos.increment();
+	    term.append(iterator.current());
+	    iterator.next();
+	    positionManager.increment();
 	}
 
 	/**
@@ -94,7 +101,7 @@ public class GrammarContext implements ParsemBuildable {
 	 * @return true if iteration is terminated.
 	 */
 	public boolean isTerminated() {
-		return it.isTerminated();
+		return iterator.isTerminated();
 	}
 
 	//endregion
@@ -120,15 +127,15 @@ public class GrammarContext implements ParsemBuildable {
 	 * Jump to next line.
 	 */
 	public void newLine() {
-		pos.newLine();
+		positionManager.newLine();
 	}
 
 	/**
 	 * Get the current position.
 	 * @return the current position.
 	 */
-	public int getPos() {
-		return pos.getPos();
+	public int getPositionManager() {
+		return positionManager.getPos();
 	}
 
 	/**
@@ -136,7 +143,7 @@ public class GrammarContext implements ParsemBuildable {
 	 * @return the current line number.
 	 */
 	public int getLine() {
-		return pos.getLine();
+		return positionManager.getLine();
 	}
 
 	/**
@@ -144,7 +151,7 @@ public class GrammarContext implements ParsemBuildable {
 	 * @return the current column number.
 	 */
 	public int getColumn() {
-		return pos.getColumn();
+		return positionManager.getColumn();
 	}
 
 	/** {@inheritDoc} */
@@ -201,10 +208,19 @@ public class GrammarContext implements ParsemBuildable {
 	}
 	//endregion
 
+	// region packrat
+	public void storeToPackrat(int pos, GrammarElement grammar) {
+		packrat.put(pos, grammar);
+	}
+
+	public GrammarElement retrieveFromPackrat(int pos) {
+		return packrat.get(pos);
+	}
+
 	// endregion
 
 	public String getPositionToString() {
-		return pos.toString();
+		return positionManager.toString();
 	}
 
 	/**
@@ -213,6 +229,6 @@ public class GrammarContext implements ParsemBuildable {
 	 */
 	@Override
 	public String toString() {
-		return "ParseContext:\n" + it + "\nAST: " + getParseTree();
+		return "ParseContext:\n" + iterator + "\nAST: " + getParseTree();
 	}
 }

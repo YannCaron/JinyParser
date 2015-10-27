@@ -49,7 +49,7 @@ public class LexemCreatorCore extends GrammarDecorator {
 		boolean res = decorated.parse(context);
 
 		if (res) {
-			Lexem lexem = new Lexem(context.getTerm(), lexemType, context.getPos(), context.getLine(), context.getColumn());
+			Lexem lexem = new Lexem(context.getTerm(), lexemType, context.getPositionManager(), context.getLine(), context.getColumn());
 			context.appendLexem(lexem);
 		}
 

@@ -32,6 +32,14 @@ public class StringLookaheadIterator implements LookaheadIterator<Character> {
 
 	/** {@inheritDoc} */
 	@Override
+	public int getCurrentPosition() {
+		return position;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
 	public boolean hasNext() {
 		return position + 1 < string.length();
 	}
