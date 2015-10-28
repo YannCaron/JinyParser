@@ -8,12 +8,9 @@ package fr.cyann.jinyparser.grammartree;
  * ou écrivez à Creative Commons, 444 Castro Street, Suite 900, Mountain View, California, 94041, USA.
  **/
 
-
 import fr.cyann.jinyparser.exceptions.JinyException;
 import fr.cyann.jinyparser.lexem.Lexem;
-import fr.cyann.jinyparser.parsetree.ParsemElement;
-import fr.cyann.jinyparser.parsetree.ParsemVisitor;
-import fr.cyann.jinyparser.parsetree.VisitorContext;
+import fr.cyann.jinyparser.parsetree.*;
 import fr.cyann.jinyparser.utils.MultilingualMessage;
 
 import java.lang.reflect.Constructor;
@@ -84,4 +81,16 @@ public class ParsemCreator<P extends ParsemElement> extends GrammarDecorator {
 
         return res;
     }
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	void buildBnf(BnfContext context) {
+		if (Terminal.class.isAssignableFrom(clazz) && clazz != DefaultTerminal.class) {
+			context.newProduction(clazz.getSimpleName(), decorated);
+		} else {
+			super.buildBnf(context);
+		}
+	}
 }

@@ -124,16 +124,13 @@ public abstract class GrammarElement {
 		protected void newProduction(String name, GrammarElement grammar) {
 
 			if (productions.containsKey(name)) {
-				sb.append("<");
 				sb.append(name);
-				sb.append(">");
 			} else {
 				productions.put(name, "");
 				int begin = sb.length();
 
-				sb.append("<");
 				sb.append(name);
-				sb.append("> ::= ");
+				sb.append("::=");
 
 				if (grammar != null) grammar.buildBnf(this);
 
@@ -141,9 +138,7 @@ public abstract class GrammarElement {
 
 				sb.delete(begin, sb.length());
 
-				sb.append("<");
 				sb.append(name);
-				sb.append(">");
 
 			}
 		}
@@ -152,9 +147,8 @@ public abstract class GrammarElement {
 		public String toString() {
 
 			if (sb.length() != 0) {
-				sb.insert(0, "> ::= ");
+				sb.insert(0, "::=");
 				sb.insert(0, ROOT_NAME);
-				sb.insert(0, "<");
 				addProduction(ROOT_NAME, sb.toString());
 				clear();
 			}

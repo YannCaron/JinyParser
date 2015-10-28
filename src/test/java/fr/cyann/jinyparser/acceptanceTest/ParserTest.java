@@ -15,6 +15,7 @@ import fr.cyann.jinyparser.grammartree.GrammarRecursive;
 import fr.cyann.jinyparser.lexem.Lexem;
 import fr.cyann.jinyparser.lexem.LexemType;
 import fr.cyann.jinyparser.parsetree.*;
+import fr.cyann.jinyparser.utils.RailroadDiagram;
 import junit.framework.TestCase;
 
 import java.util.ArrayList;
@@ -282,6 +283,9 @@ public class ParserTest extends TestCase {
 
 		// to BNF
 		System.out.println("Grammar tree:\n" + grammar.toString());
+
+		RailroadDiagram.Browse(grammar);
+
 
 	}
 
