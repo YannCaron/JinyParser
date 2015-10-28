@@ -60,6 +60,9 @@ public class Word extends GrammarLeaf {
 	 */
 	@Override
 	void buildBnf(BnfContext context) {
+		context.append("'");
+		context.append(word);
+		context.append("'");
 	}
 
 }

@@ -58,5 +58,11 @@ public class Sequence extends GrammarNode {
 	 */
 	@Override
 	void buildBnf(BnfContext context) {
+		boolean first = true;
+		for (GrammarElement child : this) {
+			if (!first) context.append(" ");
+			first = false;
+			child.buildBnf(context);
+		}
 	}
 }

@@ -48,6 +48,9 @@ public class Repeat extends GrammarDecorator {
 	 */
 	@Override
 	void buildBnf(BnfContext context) {
+		context.append("(");
+		decorated.buildBnf(context);
+		context.append(")+");
 	}
 
 }

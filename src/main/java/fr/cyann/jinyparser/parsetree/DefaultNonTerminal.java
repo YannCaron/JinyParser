@@ -35,8 +35,8 @@ public class DefaultNonTerminal extends NonTerminal {
         return children.size();
     }
 
-    ParsemElement getItem(int index) {
-        return children.get(index);
+	public ParsemElement getItem(int index) {
+		return children.get(index);
     }
 
     @Override

@@ -39,7 +39,16 @@ public class Optional extends GrammarDecorator {
 	 * {@inheritDoc}
 	 */
 	@Override
-	void buildBnf(BnfContext context) {
+	protected void buildBnf(BnfContext context) {
+		if (decorated instanceof Repeat) {
+			context.append("(");
+			((Repeat) decorated).decorated.buildBnf(context);
+			context.append(")*");
+		} else {
+			context.append("(");
+			decorated.buildBnf(context);
+			context.append(")?");
+		}
 	}
 
 }

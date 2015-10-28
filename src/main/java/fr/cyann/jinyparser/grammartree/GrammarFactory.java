@@ -163,7 +163,7 @@ public final class GrammarFactory {
     }
 
     /**
-     * Grammar element that drop the current parsem to the previous code according a code to aggregate them together.
+     * Grammar element that drop the current parsem to the previous one according a code to aggregate them together.
      *
      * @param decorated the grammar that decide if create will be produced.
      * @param fieldName the name of the field that will accept the child parsem.
@@ -173,8 +173,18 @@ public final class GrammarFactory {
         return new ParsemDropper(decorated, fieldName);
     }
 
-    /**
-     * Grammar element that catch the previous parsem to aggregate with the current one.
+	/**
+	 * Grammar element that drop the current parsem to the previous DefaultNonTerminal parsem to aggregate them together.
+	 *
+	 * @param decorated the grammar that decide if create will be produced.
+	 * @return the new grammar element.
+	 */
+	public static ParsemDropper dropperDefault(GrammarElement decorated) {
+		return new ParsemDropper(decorated, DefaultNonTerminal.SUB_NODE_IDENTITY);
+	}
+
+	/**
+	 * Grammar element that catch the previous parsem to aggregate with the current one.
      *
      * @param decorated the grammar that decide if create will be produced.
      * @return the new grammar element.
@@ -197,7 +207,7 @@ public final class GrammarFactory {
      * @param howManyParsem how many previous parsem to aggregate with.
      * @return the new grammar element.
      */
-    public static GrammarElement catcherNonTerminal(GrammarElement decorated, int howManyParsem) {
+    public static GrammarElement catcherDefault(GrammarElement decorated, int howManyParsem) {
         String[] names = new String[howManyParsem];
         for (int i = 0; i < howManyParsem; i++) {
             names[i] = DefaultNonTerminal.SUB_NODE_IDENTITY;

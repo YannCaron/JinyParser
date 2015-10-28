@@ -66,8 +66,6 @@ public class GrammarRecursive extends GrammarElement {
 	 */
 	@Override
 	void buildBnf(BnfContext context) {
-		if (grammar != null) {
-			grammar.buildBnf(context);
-		}
+		context.newProduction(name, grammar);
 	}
 }

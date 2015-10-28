@@ -53,6 +53,17 @@ public class CharIn extends GrammarLeaf {
 	 */
 	@Override
 	void buildBnf(BnfContext context) {
+		if (characters.length() <= 1) {
+			context.append("'");
+			context.append(characters);
+			context.append("'");
+		} else {
+			context.append("[");
+			for (char chr : characters.toCharArray()) {
+				context.append(String.valueOf(chr));
+			}
+			context.append("]");
+		}
 	}
 
 }

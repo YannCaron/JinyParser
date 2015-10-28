@@ -140,7 +140,7 @@ public class ParserTest extends TestCase {
 		GrammarElement operator = produceTerminal(sign, OPERATOR);
 
 		// parser
-		GrammarElement grammar = sequence(number, repeat(sequence(operator, catcherNonTerminal(createNonTerminal(number), 3))));
+		GrammarElement grammar = sequence(number, repeat(sequence(operator, catcherDefault(createNonTerminal(number), 3))));
 
 		// parse
 		GrammarContext c = grammar.parse(source);
@@ -279,6 +279,10 @@ public class ParserTest extends TestCase {
 		c.getParseTree().visit(toStringContext);
 		System.out.println(toStringContext.toString());
 		assertEquals("(op n7 (op n10 (op n4 n7)))", toStringContext.toString());
+
+		// to BNF
+		System.out.println("Grammar tree:\n" + grammar.toString());
+
 	}
 
 	public void testIfParser() {

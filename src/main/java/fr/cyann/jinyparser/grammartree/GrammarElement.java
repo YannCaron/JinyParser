@@ -12,7 +12,7 @@ package fr.cyann.jinyparser.grammartree;
 import fr.cyann.jinyparser.exceptions.JinyException;
 import fr.cyann.jinyparser.utils.MultilingualMessage;
 
-import java.util.Locale;
+import java.util.*;
 
 /**
  * The GrammarElement class. Then top abstract class of all grammar elements.<br>
@@ -93,11 +93,80 @@ public abstract class GrammarElement {
 		return context.toString();
 	}
 
-	static class BnfContext {
+	protected static class BnfContext {
+
+		public static final String ROOT_NAME = "grammar";
+		private final Map<String, String> productions;
+		private final List<String> productionNames;
+
+
+		private final StringBuilder sb;
+
+		protected BnfContext() {
+			productions = new HashMap<String, String>();
+			sb = new StringBuilder();
+			productionNames = new ArrayList<String>();
+		}
+
+		protected void append(String string) {
+			sb.append(string);
+		}
+
+		private void clear() {
+			sb.delete(0, sb.length());
+		}
+
+		private void addProduction(String name, String bnf) {
+			productionNames.add(0, name);
+			productions.put(name, bnf);
+		}
+
+		protected void newProduction(String name, GrammarElement grammar) {
+
+			if (productions.containsKey(name)) {
+				sb.append("<");
+				sb.append(name);
+				sb.append(">");
+			} else {
+				productions.put(name, "");
+				int begin = sb.length();
+
+				sb.append("<");
+				sb.append(name);
+				sb.append("> ::= ");
+
+				if (grammar != null) grammar.buildBnf(this);
+
+				addProduction(name, sb.substring(begin));
+
+				sb.delete(begin, sb.length());
+
+				sb.append("<");
+				sb.append(name);
+				sb.append(">");
+
+			}
+		}
 
 		@Override
 		public String toString() {
-			return "BnfContext{}";
+
+			if (sb.length() != 0) {
+				sb.insert(0, "> ::= ");
+				sb.insert(0, ROOT_NAME);
+				sb.insert(0, "<");
+				addProduction(ROOT_NAME, sb.toString());
+				clear();
+			}
+
+			boolean first = true;
+			for (String key : productionNames) {
+				if (!first) sb.append("\n");
+				first = false;
+				sb.append(productions.get(key));
+			}
+
+			return sb.toString();
 		}
 	}
 }
