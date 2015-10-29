@@ -59,8 +59,8 @@ public abstract class GrammarElement {
 	 * @param source the source code to parse.
 	 * @return the grammar context.
 	 */
-	public GrammarContext parse(String source) {
-		GrammarContext context = new GrammarContext(source);
+/*	public GrammarContext parse(String source) {
+        GrammarContext context = new GrammarContext(source);
 		parse(context);
 
 		// check error
@@ -75,23 +75,60 @@ public abstract class GrammarElement {
 
 		return context;
 	}
+*/
+    public BuiltGrammar build() {
+        return new BuiltGrammar(this);
+    }
 
 	abstract void buildBnf(BnfContext context);
 
+    /**
+     * Build the BNF expression of the grammar hierarchy.
+     *
+     * @return the string expression.
+     */
+    @Override
+    public String toString() {
+        BnfContext context = new BnfContext();
+        //buildProductions(context);
+        buildBnf(context);
+        return context.toString();
+    }
+
 	//abstract void buildProductions(BnfContext context); TODO : ????
 
-	/**
-	 * Build the BNF expression of the grammar hierarchy.
-	 *
-	 * @return the string expression.
-	 */
-	@Override
-	public String toString() {
-		BnfContext context = new BnfContext();
-		//buildProductions(context);
-		buildBnf(context);
-		return context.toString();
-	}
+    public static class BuiltGrammar {
+
+        private final GrammarElement root;
+
+        private BuiltGrammar(GrammarElement root) {
+            this.root = root;
+        }
+
+        /**
+         * The parsing entry method.
+         *
+         * @param source the source code to parse.
+         * @return the grammar context.
+         */
+        public GrammarContext parse(String source) {
+            GrammarContext context = new GrammarContext(source);
+            root.parse(context);
+
+            // check error
+            if (!context.isTerminated()) {
+                System.out.println(context.toString());
+                System.out.println("ERROR");
+                throw new JinyException(
+                        MultilingualMessage.create("Error at position [%s], unknown symbol \"%s\"!")
+                                .translate(Locale.FRENCH, "Erreur à la position [%s], symbol \"%s\" inconnu!")
+                                .setArgs(context.getPositionToString(), context.currentChar()));
+            }
+
+            return context;
+        }
+
+    }
 
 	protected static class BnfContext {
 

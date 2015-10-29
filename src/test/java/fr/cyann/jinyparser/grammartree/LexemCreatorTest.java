@@ -41,7 +41,7 @@ public class LexemCreatorTest extends TestCase {
         grammar = repeat(lexem(charIn("abc"), LexemType.SYMBOL)); // with separator management
         assertTrue(grammar.parse(new GrammarContext(source)));
 
-        GrammarContext context = grammar.parse(source);
+        GrammarContext context = grammar.build().parse(source);
 
         // test
         assertEquals(Arrays.asList("a", "b", "c"), lexerToTerms(context.getLexer()));

@@ -9,11 +9,7 @@ package fr.cyann.jinyparser.utils;/**
 
 import fr.cyann.jinyparser.grammartree.GrammarElement;
 
-import java.awt.*;
-import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.net.URLEncoder;
 
 /**
@@ -21,38 +17,22 @@ import java.net.URLEncoder;
  */
 public class RailroadDiagram {
 
-	private RailroadDiagram() {
-		throw new RuntimeException("Cannot instantiate static class");
-	}
+    public static final String BOTTLE_CAPS_URL_FORMAT = "http://bottlecaps.de/rr/ui?ebnf=%s";
 
-	public static void Browse(GrammarElement root) {
-		String urlFormat = "http://bottlecaps.de/rr/ui?ebnf=%s";
-		String url = null;
-		try {
-			url = String.format(urlFormat, URLEncoder.encode(root.toString(), "UTF-8"));
+    private RailroadDiagram() {
+        throw new RuntimeException("Cannot instantiate static class");
+    }
 
-			if (Desktop.isDesktopSupported()) {
-				Desktop desktop = Desktop.getDesktop();
-				try {
-					desktop.browse(new URI(url));
-				} catch (IOException e) {
-					// TODO : Exception
-					e.printStackTrace();
-				} catch (URISyntaxException e) {
-					e.printStackTrace();
-				}
-			} else {
-				Runtime runtime = Runtime.getRuntime();
-				try {
-					runtime.exec("xdg-open " + url);
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			}
-		} catch (UnsupportedEncodingException e) {
-			e.printStackTrace();
-		}
-	}
+    public static void Browse(GrammarElement root) {
+        String urlFormat = BOTTLE_CAPS_URL_FORMAT;
+        String url = null;
+        try {
+            url = String.format(urlFormat, URLEncoder.encode(root.toString(), "UTF-8"));
+            Internet.Browse(url);
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+
+    }
 
 }

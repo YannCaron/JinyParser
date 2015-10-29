@@ -86,7 +86,7 @@ public class ParserTest extends TestCase {
 		GrammarElement grammar = sequence(number, repeat(sequence(operator, operation)));
 
 		// parse
-		GrammarContext c = grammar.parse(source);
+        GrammarContext c = grammar.build().parse(source);
 
 		System.out.println("Parse tree: " + c.getParseTree());
 
@@ -119,8 +119,8 @@ public class ParserTest extends TestCase {
 
 		// parse
 		try {
-			grammar.parse(source);
-			fail("must raise an error !");
+            grammar.build().parse(source);
+            fail("must raise an error !");
 		} catch (JinyException e) {
 			System.out.println("success");
 		}
@@ -144,7 +144,7 @@ public class ParserTest extends TestCase {
 		GrammarElement grammar = sequence(number, repeat(sequence(operator, catcherDefault(createNonTerminal(number), 3))));
 
 		// parse
-		GrammarContext c = grammar.parse(source);
+        GrammarContext c = grammar.build().parse(source);
 
 		System.out.println("Parse tree: " + c.getParseTree());
 
@@ -169,7 +169,7 @@ public class ParserTest extends TestCase {
 		GrammarElement grammar = sequence(number, repeat(choice(addition, subtraction)));
 
 		// parse
-		GrammarContext c = grammar.parse(source);
+        GrammarContext c = grammar.build().parse(source);
 
 		System.out.println("Parse tree: " + c.getParseTree());
 
@@ -196,7 +196,7 @@ public class ParserTest extends TestCase {
 		GrammarElement addition = sequence(multiplication, optional(repeat(sequence(addSign, addOperation))));
 
 		// parse
-		GrammarContext c = addition.parse(source);
+        GrammarContext c = addition.build().parse(source);
 
 		System.out.println("Parse tree: " + c.getParseTree());
 
@@ -241,7 +241,7 @@ public class ParserTest extends TestCase {
 		GrammarElement grammar = addition;
 
 		// parse
-		GrammarContext c = grammar.parse(source);
+        GrammarContext c = grammar.build().parse(source);
 
 		System.out.println("Parse tree: " + c.getParseTree());
 
@@ -306,7 +306,7 @@ public class ParserTest extends TestCase {
 		GrammarElement grammar = sequence(if_, optional(repeat(elseif)), optional(else_));
 
 		// parse
-		GrammarContext c = grammar.parse(source);
+        GrammarContext c = grammar.build().parse(source);
 
 		System.out.println("Grammar tree: " + grammar.toString());
 		System.out.println("Parse tree: " + c.getParseTree());

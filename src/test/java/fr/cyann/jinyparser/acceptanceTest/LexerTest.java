@@ -39,7 +39,7 @@ public class LexerTest extends TestCase {
 		GrammarElement grammar = sequence(number, number, number, number);
 
 		// parse
-		GrammarContext c = grammar.parse(source);
+        GrammarContext c = grammar.build().parse(source);
 
 		// test
 		assertEquals(Arrays.asList("12", "345", "8"), lexerToTerms(c.getLexer()));
@@ -63,7 +63,7 @@ public class LexerTest extends TestCase {
 		GrammarElement grammar = sequence(number, repeat(sequence(operator, number)));
 
 		// parse
-		GrammarContext c = grammar.parse(source);
+        GrammarContext c = grammar.build().parse(source);
 
 		// test
 		assertEquals(Arrays.asList("7", "+", "10", "-", "5", "+", "4"), lexerToTerms(c.getLexer()));
