@@ -85,7 +85,7 @@ public final class GrammarFactory {
     }
 
     /**
-     * Grammar element that produce lexem (build token on lexer) of DEFAULT lexemType.<br>
+     * Grammar element that produce lexem (process token on lexer) of DEFAULT lexemType.<br>
      * Create also a new token producer grammar element that manage separators.
      *
      * @param decorated the grammar element to decorate.
@@ -96,7 +96,7 @@ public final class GrammarFactory {
     }
 
     /**
-     * Grammar element that produce lexem (build token on lexer).<br>
+     * Grammar element that produce lexem (process token on lexer).<br>
      * Create also a new token producer grammar element that manage separators.
      *
      * @param decorated the grammar element to decorate.
@@ -128,7 +128,7 @@ public final class GrammarFactory {
     }
 
     /**
-     * Grammar element that produce create (build parse tree element in the stack).
+     * Grammar element that produce create (process parse tree element in the stack).
      *
      * @param decorated the grammar that decide if create will be produced.
      * @param clazz     the create element class to create.

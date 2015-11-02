@@ -30,6 +30,16 @@ public abstract class GrammarDecorator extends GrammarElement {
 	 * {@inheritDoc}
 	 */
 	@Override
+	protected void visit(Visitor visitor) {
+		visitor.visitDecoratorBefore(this);
+		decorated.visit(visitor);
+		visitor.visitDecoratorAfter(this);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
 	void buildBnf(BnfContext context) {
 		decorated.buildBnf(context);
 	}

@@ -22,6 +22,35 @@ import java.util.*;
 @SuppressWarnings("WeakerAccess")
 public abstract class GrammarElement {
 
+	private GrammarElement parent;
+
+	/**
+	 * The parent getter.
+	 *
+	 * @return the parent of the node.
+	 */
+	public GrammarElement getParent() {
+		return parent;
+	}
+
+	/**
+	 * the parent setter.
+	 *
+	 * @param parent the parent of the node.
+	 */
+	public void setParent(GrammarElement parent) {
+		this.parent = parent;
+	}
+
+	/**
+	 * Get if element has parent.
+	 *
+	 * @return true if element has parent.
+	 */
+	public boolean hasParent() {
+		return (parent != null);
+	}
+
 	/**
 	 * The lookahead searching method. Used to find if following term / grammar is valid without consuming the lexemes.
 	 *
@@ -53,98 +82,140 @@ public abstract class GrammarElement {
 		return lookaheadResult;
 	}
 
-	/**
-	 * The parsing entry method.
-	 *
-	 * @param source the source code to parse.
-	 * @return the grammar context.
-	 */
-/*	public GrammarContext parse(String source) {
-        GrammarContext context = new GrammarContext(source);
-		parse(context);
+	private void determineName() {
+		final Map<GrammarElement, List<String>> names = new HashMap<GrammarElement, List<String>>();
 
-		// check error
-		if (!context.isTerminated()) {
-			System.out.println(context.toString());
-			System.out.println("ERROR");
-			throw new JinyException(
-					MultilingualMessage.create("Error at position [%s], unknown symbol \"%s\"!")
-							.translate(Locale.FRENCH, "Erreur à la position [%s], symbol \"%s\" inconnu!")
-							.setArgs(context.getPositionToString(), context.currentChar()));
-		}
-
-		return context;
 	}
-*/
-    public BuiltGrammar build() {
-        return new BuiltGrammar(this);
-    }
 
+	/**
+	 * Process the grammar to prepare parsing.<br>
+	 * Make analysis for :<br>
+	 * - Determine top level productions (for bnf expression).<br>
+	 * - Verify semantics like production consistency.
+	 *
+	 * @return the processed grammar object.
+	 */
+	public ProcessedGrammar process() {
+		determineName();
+		return new ProcessedGrammar(this);
+	}
+
+	/**
+	 * Build the bnf expression of the grammar.
+	 *
+	 * @param context the bnf context to build on.
+	 */
 	abstract void buildBnf(BnfContext context);
 
-    /**
-     * Build the BNF expression of the grammar hierarchy.
-     *
-     * @return the string expression.
-     */
-    @Override
-    public String toString() {
-        BnfContext context = new BnfContext();
-        //buildProductions(context);
-        buildBnf(context);
-        return context.toString();
-    }
+	/**
+	 * Build the BNF expression of the grammar hierarchy.
+	 *
+	 * @return the string expression.
+	 */
+	@Override
+	public String toString() {
+		BnfContext context = new BnfContext();
+		//buildProductions(context);
+		buildBnf(context);
+		return context.toString();
+	}
 
 	//abstract void buildProductions(BnfContext context); TODO : ????
 
-    public static class BuiltGrammar {
+	protected abstract void visit(Visitor visitor);
 
-        private final GrammarElement root;
+	protected void ascendingChain(SimpleVisitor visitor) {
+		visitor.visitBefore(this);
+		if (hasParent()) {
+			getParent().ascendingChain(visitor);
+		}
+		visitor.visitAfter(this);
+	}
 
-        private BuiltGrammar(GrammarElement root) {
-            this.root = root;
-        }
+	// TODO javadoc
+	protected interface SimpleVisitor {
+		void visitBefore(GrammarElement grammar);
 
-        /**
-         * The parsing entry method.
-         *
-         * @param source the source code to parse.
-         * @return the grammar context.
-         */
-        public GrammarContext parse(String source) {
-            GrammarContext context = new GrammarContext(source);
-            root.parse(context);
+		void visitAfter(GrammarElement grammar);
+	}
 
-            // check error
-            if (!context.isTerminated()) {
-                System.out.println(context.toString());
-                System.out.println("ERROR");
-                throw new JinyException(
-                        MultilingualMessage.create("Error at position [%s], unknown symbol \"%s\"!")
-                                .translate(Locale.FRENCH, "Erreur à la position [%s], symbol \"%s\" inconnu!")
-                                .setArgs(context.getPositionToString(), context.currentChar()));
-            }
+	protected interface Visitor {
+		void visitLeaf(GrammarLeaf grammar);
 
-            return context;
-        }
+		void visitRecursiveBefore(GrammarRecursive grammar);
 
-    }
+		void visitRecursiveAfter(GrammarRecursive grammar);
 
+		void visitDecoratorBefore(GrammarDecorator grammar);
+
+		void visitDecoratorAfter(GrammarDecorator grammar);
+
+		void visitNodeBefore(GrammarNode grammar);
+
+		void visitNodeAfter(GrammarNode grammar);
+	}
+
+	public static class ProcessedGrammar {
+
+		private final GrammarElement root;
+
+		private ProcessedGrammar(GrammarElement root) {
+			this.root = root;
+		}
+
+		/**
+		 * The parsing entry method.
+		 *
+		 * @param source the source code to parse.
+		 * @return the grammar context.
+		 */
+		public GrammarContext parse(String source) {
+			GrammarContext context = new GrammarContext(source);
+			root.parse(context);
+
+			// check error
+			if (!context.isTerminated()) {
+				System.out.println(context.toString());
+				System.out.println("ERROR");
+				throw new JinyException(
+						MultilingualMessage.create("Error at position [%s], unknown symbol \"%s\"!")
+								.translate(Locale.FRENCH, "Erreur à la position [%s], symbol \"%s\" inconnu!")
+								.setArgs(context.getPositionToString(), context.currentChar()));
+			}
+
+			return context;
+		}
+
+	}
+
+	/**
+	 * The BNF context useful to build BNF.
+	 */
 	protected static class BnfContext {
 
+		/**
+		 * The name of default root grammar node.
+		 */
 		public static final String ROOT_NAME = "grammar";
 		private final Map<String, String> productions;
 		private final List<String> productionNames;
 
-
 		private final StringBuilder sb;
 
+		/**
+		 * Default constructor.
+		 */
 		protected BnfContext() {
 			productions = new HashMap<String, String>();
 			sb = new StringBuilder();
 			productionNames = new ArrayList<String>();
 		}
 
+		/**
+		 * Append string to the current stringbuilder.
+		 *
+		 * @param string the string to append.
+		 */
 		protected void append(String string) {
 			sb.append(string);
 		}
@@ -158,6 +229,12 @@ public abstract class GrammarElement {
 			productions.put(name, bnf);
 		}
 
+		/**
+		 * Create a new production and consume the current grammar built.
+		 *
+		 * @param name    the grammar name.
+		 * @param grammar the grammar element.
+		 */
 		protected void newProduction(String name, GrammarElement grammar) {
 
 			if (productions.containsKey(name)) {

@@ -87,7 +87,7 @@ public class GrammarContext implements ParsemBuildable {
 	}
 
 	/**
-	 * Jump to next character in the source code and build current word.
+	 * Jump to next character in the source code and process current word.
 	 */
     public void nextCharParser() {
 	    term.append(iterator.current());

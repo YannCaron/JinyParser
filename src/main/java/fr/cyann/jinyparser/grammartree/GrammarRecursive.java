@@ -65,6 +65,16 @@ public class GrammarRecursive extends GrammarElement {
 	 * {@inheritDoc}
 	 */
 	@Override
+	protected void visit(Visitor visitor) {
+		visitor.visitRecursiveBefore(this);
+		grammar.visit(visitor);
+		visitor.visitRecursiveAfter(this);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
 	void buildBnf(BnfContext context) {
 		context.newProduction(name, grammar);
 	}

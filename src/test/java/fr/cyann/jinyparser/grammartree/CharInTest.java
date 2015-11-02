@@ -20,26 +20,26 @@ public class CharInTest extends TestCase {
 		CharIn cin1 = charIn('a', 'z');
 		GrammarElement grammar = repeat(cin1);
 
-		grammar.build().parse("abcde");
+		grammar.process().parse("abcde");
 
 		try {
-			grammar.build().parse("abcdeABCDE");
+			grammar.process().parse("abcdeABCDE");
 			fail("Should not be parsed !");
 		} catch (Exception e) {
 		}
 
 		cin1.add('A', 'Z');
 
-		grammar.build().parse("abcdeABCDE");
+		grammar.process().parse("abcdeABCDE");
 
 		try {
-			grammar.build().parse("abcdeABCDE!+");
+			grammar.process().parse("abcdeABCDE!+");
 			fail("Should not be parsed !");
 		} catch (Exception e) {
 		}
 
 		cin1.add("!+/*-");
-		grammar.build().parse("abcdeABCDE!+");
+		grammar.process().parse("abcdeABCDE!+");
 
 	}
 

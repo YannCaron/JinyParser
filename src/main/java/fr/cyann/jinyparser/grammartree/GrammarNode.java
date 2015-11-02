@@ -26,6 +26,10 @@ public abstract class GrammarNode extends GrammarElement implements Iterable<Gra
 	 */
 	public GrammarNode(GrammarElement[] children) {
 		this.children = Arrays.asList(children);
+
+		for (GrammarElement child : children) {
+			child.setParent(this);
+		}
 	}
 
 	/** {@inheritDoc} */
@@ -34,4 +38,18 @@ public abstract class GrammarNode extends GrammarElement implements Iterable<Gra
 		return children.iterator();
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	protected void visit(Visitor visitor) {
+		visitor.visitNodeBefore(this);
+
+		for (GrammarElement child : children) {
+			child.visit(visitor);
+		}
+
+		visitor.visitNodeAfter(this);
+
+	}
 }

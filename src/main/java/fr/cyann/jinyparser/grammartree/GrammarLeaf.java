@@ -11,4 +11,13 @@ package fr.cyann.jinyparser.grammartree;/**
  * The GrammarLeaf definition.
  */
 abstract class GrammarLeaf extends GrammarElement {
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	protected void visit(Visitor visitor) {
+		visitor.visitLeaf(this);
+	}
+
 }
