@@ -3,6 +3,7 @@ package fr.cyann.jinyparser.grammartree;
 import junit.framework.TestCase;
 
 import static fr.cyann.jinyparser.grammartree.GrammarFactory.charIn;
+import static fr.cyann.jinyparser.grammartree.GrammarFactory.repeat;
 
 /**
  * Copyright (C) 17/10/15 Yann Caron aka cyann
@@ -15,8 +16,35 @@ import static fr.cyann.jinyparser.grammartree.GrammarFactory.charIn;
 
 public class CharInTest extends TestCase {
 
-    public void testLookahead() throws Exception {
-        String source = "abd";
+	public void testAdd() throws Exception {
+		CharIn cin1 = charIn('a', 'z');
+		GrammarElement grammar = repeat(cin1);
+
+		grammar.build().parse("abcde");
+
+		try {
+			grammar.build().parse("abcdeABCDE");
+			fail("Should not be parsed !");
+		} catch (Exception e) {
+		}
+
+		cin1.add('A', 'Z');
+
+		grammar.build().parse("abcdeABCDE");
+
+		try {
+			grammar.build().parse("abcdeABCDE!+");
+			fail("Should not be parsed !");
+		} catch (Exception e) {
+		}
+
+		cin1.add("!+/*-");
+		grammar.build().parse("abcdeABCDE!+");
+
+	}
+
+	public void testLookahead() throws Exception {
+		String source = "abd";
         GrammarContext context = new GrammarContext(source);
 
         GrammarElement charIn = charIn("abc");

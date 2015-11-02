@@ -27,9 +27,20 @@ public final class GrammarFactory {
         return new CharIn(terms);
     }
 
+	/**
+	 * Create a new lexer char recognizer grammar element.
+	 *
+	 * @param start the first character of the range.
+	 * @param end   the last character (included) of the range.
+	 * @return the new grammar element.
+	 */
+	public static CharIn charIn(char start, char end) {
+		return new CharIn(start, end);
+	}
 
-    /**
-     * Create a new lexer word recognizer grammar element.
+
+	/**
+	 * Create a new lexer word recognizer grammar element.
      *
      * @param terms the word to recognize.
      * @return the new grammar element.

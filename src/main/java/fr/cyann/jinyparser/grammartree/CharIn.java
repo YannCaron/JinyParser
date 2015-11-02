@@ -12,7 +12,14 @@ package fr.cyann.jinyparser.grammartree;/**
  */
 public class CharIn extends GrammarLeaf {
 
-	private final String characters;
+	private StringBuilder characters;
+
+	/**
+	 * Default constructor.
+	 */
+	private CharIn() {
+		characters = new StringBuilder();
+	}
 
 	/**
 	 * Default constructor.
@@ -20,12 +27,52 @@ public class CharIn extends GrammarLeaf {
 	 * @param characters the list of character to test.
 	 */
     public CharIn(String characters) {
-        this.characters = characters;
+	    this();
+	    add(characters);
+    }
+
+	/**
+	 * Constructor with character range e.g. [0-1], [a-z], [A-Z].<br>
+	 * Follow the ascii table.
+	 *
+	 * @param start the first character of the range.
+	 * @param end   the last character (included) of the range.
+	 */
+	public CharIn(char start, char end) {
+		this();
+		add(start, end);
+	}
+
+	/**
+	 * Append characters to the existing character set.
+	 *
+	 * @param characters the characters to add.
+	 * @return this.
+	 */
+	public CharIn add(String characters) {
+		this.characters.append(characters);
+
+		return this;
+	}
+
+	/**
+	 * Append character range to the existing character set.
+	 *
+	 * @param start the first character of the range.
+	 * @param end   the last character (included) of the range.
+	 * @return this.
+	 */
+	public CharIn add(char start, char end) {
+		for (char c = start; c <= end; c++) {
+			characters.append(c);
+		}
+
+		return this;
 	}
 
 	private boolean isTerm(GrammarContext context) {
 		char current = context.currentChar();
-		return characters.indexOf(current) != -1;
+		return characters.toString().indexOf(current) != -1;
 	}
 
 	/**
@@ -55,11 +102,11 @@ public class CharIn extends GrammarLeaf {
 	void buildBnf(BnfContext context) {
 		if (characters.length() <= 1) {
 			context.append("'");
-			context.append(characters);
+			context.append(characters.toString());
 			context.append("'");
 		} else {
 			context.append("[");
-			for (char chr : characters.toCharArray()) {
+			for (char chr : characters.toString().toCharArray()) {
 				context.append(String.valueOf(chr));
 			}
 			context.append("]");
