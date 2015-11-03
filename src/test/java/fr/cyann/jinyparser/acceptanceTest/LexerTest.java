@@ -36,7 +36,7 @@ public class LexerTest extends TestCase {
         GrammarElement number = lexem(repeat(digit), NUMBER);
 
 		// parser
-		GrammarElement grammar = sequence(number, number, number, number);
+		GrammarElement grammar = sequence("Numbers", number, number, number, number);
 
 		// parse
 		GrammarContext c = grammar.process().parse(source);
@@ -60,7 +60,7 @@ public class LexerTest extends TestCase {
         GrammarElement operator = lexem(sign, LexemType.SYMBOL);
 
 		// parser
-		GrammarElement grammar = sequence(number, repeat(sequence(operator, number)));
+		GrammarElement grammar = sequence("Operation", number, repeat(sequence("subOperation", operator, number)));
 
 		// parse
 		GrammarContext c = grammar.process().parse(source);

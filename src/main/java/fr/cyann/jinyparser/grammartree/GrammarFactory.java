@@ -246,9 +246,9 @@ public final class GrammarFactory {
      * @param elements list of children.
      * @return the new grammar element.
      */
-    public static Sequence sequence(GrammarElement... elements) {
-        Sequence sequence = new Sequence(elements);
-        return sequence;
+    public static Sequence sequence(String name, GrammarElement... elements) {
+	    Sequence sequence = new Sequence(name, elements);
+	    return sequence;
     }
 
     /**
@@ -262,9 +262,9 @@ public final class GrammarFactory {
         return choice;
     }
 
-    public static GrammarRecursive recursive(String name) {
-        return new GrammarRecursive(name);
-    }
+	public static Recursive recursive(String name) {
+		return new Recursive(name);
+	}
 
     // endregion
 

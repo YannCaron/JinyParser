@@ -16,11 +16,14 @@ package fr.cyann.jinyparser.grammartree;
  */
 public class Sequence extends GrammarNode {
 
+	private final String name;
+
 	/**
 	 * {@inheritDoc}
 	 */
-	public Sequence(GrammarElement... elements) {
+	public Sequence(String name, GrammarElement... elements) {
 		super(elements);
+		this.name = name;
 	}
 
 	/**
@@ -58,11 +61,14 @@ public class Sequence extends GrammarNode {
 	 */
 	@Override
 	void buildBnf(BnfContext context) {
+		context.newProduction(name, this);
+
 		boolean first = true;
 		for (GrammarElement child : this) {
 			if (!first) context.append(" ");
 			first = false;
 			child.buildBnf(context);
 		}
+
 	}
 }

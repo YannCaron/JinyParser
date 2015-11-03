@@ -35,6 +35,15 @@ public class ParsemCreator<P extends ParsemElement> extends GrammarDecorator {
     }
 
 	/**
+	 * Get the parsem class to produce.
+	 *
+	 * @return the parsem class to produce.
+	 */
+	public Class<P> getParsemClass() {
+		return clazz;
+	}
+
+	/**
 	 * The parsem visitor accessor.<br>
 	 * Define the behaviour of the parsem element when it will be traversed.
 	 *

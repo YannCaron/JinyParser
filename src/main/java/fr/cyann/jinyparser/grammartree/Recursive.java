@@ -12,10 +12,10 @@ import fr.cyann.jinyparser.exceptions.JinyException;
 import fr.cyann.jinyparser.utils.MultilingualMessage;
 
 /**
- * The GrammarRecursive grammar element definition.<br>
+ * The Recursive grammar element definition.<br>
  * Give the ability to loop grammars togathers (and manage cycles).
  */
-public class GrammarRecursive extends GrammarElement {
+public class Recursive extends GrammarElement {
 
 	private final String name;
 	private GrammarElement grammar;
@@ -25,7 +25,7 @@ public class GrammarRecursive extends GrammarElement {
 	 *
 	 * @param name the bnf name.
 	 */
-	public GrammarRecursive(String name) {
+	public Recursive(String name) {
 		this.name = name;
 	}
 
@@ -47,7 +47,7 @@ public class GrammarRecursive extends GrammarElement {
 		if (grammar != null) {
 			return grammar.lookahead(context);
 		}
-		throw new JinyException(MultilingualMessage.create("GrammarRecursive grammar must have a grammar to delegate it the lookahead parsing! Please use the GrammarRecursive.setGrammar() method before parsing."));
+		throw new JinyException(MultilingualMessage.create("Recursive grammar must have a grammar to delegate it the lookahead parsing! Please use the Recursive.setGrammar() method before parsing."));
 	}
 
 	/**
@@ -58,7 +58,7 @@ public class GrammarRecursive extends GrammarElement {
 		if (grammar != null) {
 			return grammar.parse(context);
 		}
-		throw new JinyException(MultilingualMessage.create("GrammarRecursive grammar must have a grammar to delegate it the parsing! Please use the GrammarRecursive.setGrammar() method before parsing."));
+		throw new JinyException(MultilingualMessage.create("Recursive grammar must have a grammar to delegate it the parsing! Please use the Recursive.setGrammar() method before parsing."));
 	}
 
 	/**

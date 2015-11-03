@@ -82,11 +82,6 @@ public abstract class GrammarElement {
 		return lookaheadResult;
 	}
 
-	private void determineName() {
-		final Map<GrammarElement, List<String>> names = new HashMap<GrammarElement, List<String>>();
-
-	}
-
 	/**
 	 * Process the grammar to prepare parsing.<br>
 	 * Make analysis for :<br>
@@ -96,7 +91,6 @@ public abstract class GrammarElement {
 	 * @return the processed grammar object.
 	 */
 	public ProcessedGrammar process() {
-		determineName();
 		return new ProcessedGrammar(this);
 	}
 
@@ -142,9 +136,9 @@ public abstract class GrammarElement {
 	protected interface Visitor {
 		void visitLeaf(GrammarLeaf grammar);
 
-		void visitRecursiveBefore(GrammarRecursive grammar);
+		void visitRecursiveBefore(Recursive grammar);
 
-		void visitRecursiveAfter(GrammarRecursive grammar);
+		void visitRecursiveAfter(Recursive grammar);
 
 		void visitDecoratorBefore(GrammarDecorator grammar);
 
@@ -275,6 +269,54 @@ public abstract class GrammarElement {
 			}
 
 			return sb.toString();
+		}
+	}
+
+	protected abstract class AbstractSimpleVisitor implements SimpleVisitor {
+		@Override
+		public void visitBefore(GrammarElement grammar) {
+
+		}
+
+		@Override
+		public void visitAfter(GrammarElement grammar) {
+
+		}
+	}
+
+	protected abstract class AbstractVisitor implements Visitor {
+		@Override
+		public void visitLeaf(GrammarLeaf grammar) {
+		}
+
+		@Override
+		public void visitRecursiveBefore(Recursive grammar) {
+
+		}
+
+		@Override
+		public void visitRecursiveAfter(Recursive grammar) {
+
+		}
+
+		@Override
+		public void visitDecoratorBefore(GrammarDecorator grammar) {
+
+		}
+
+		@Override
+		public void visitDecoratorAfter(GrammarDecorator grammar) {
+
+		}
+
+		@Override
+		public void visitNodeBefore(GrammarNode grammar) {
+
+		}
+
+		@Override
+		public void visitNodeAfter(GrammarNode grammar) {
+
 		}
 	}
 }

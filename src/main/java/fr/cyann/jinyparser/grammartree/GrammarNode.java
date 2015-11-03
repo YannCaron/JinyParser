@@ -52,4 +52,5 @@ public abstract class GrammarNode extends GrammarElement implements Iterable<Gra
 		visitor.visitNodeAfter(this);
 
 	}
+
 }

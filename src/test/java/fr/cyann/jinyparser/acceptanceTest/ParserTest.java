@@ -11,11 +11,10 @@ package fr.cyann.jinyparser.acceptanceTest;
 import fr.cyann.jinyparser.exceptions.JinyException;
 import fr.cyann.jinyparser.grammartree.GrammarContext;
 import fr.cyann.jinyparser.grammartree.GrammarElement;
-import fr.cyann.jinyparser.grammartree.GrammarRecursive;
+import fr.cyann.jinyparser.grammartree.Recursive;
 import fr.cyann.jinyparser.lexem.Lexem;
 import fr.cyann.jinyparser.lexem.LexemType;
 import fr.cyann.jinyparser.parsetree.*;
-import fr.cyann.jinyparser.utils.RailroadDiagram;
 import junit.framework.TestCase;
 
 import java.util.ArrayList;
@@ -83,7 +82,7 @@ public class ParserTest extends TestCase {
 
 		// parser
 		// grammar := <produceNumber> { <operator> <produceNumber>}
-		GrammarElement grammar = sequence(number, repeat(sequence(operator, operation)));
+		GrammarElement grammar = sequence("Addition", number, repeat(sequence("SubAddition", operator, operation)));
 
 		// parse
 		GrammarContext c = grammar.process().parse(source);
@@ -115,7 +114,7 @@ public class ParserTest extends TestCase {
 
 		// parser
 		// grammar := <produceNumber> { '+' <produceNumber>}
-		GrammarElement grammar = sequence(number, repeat(sequence(operator, numberRight)));
+		GrammarElement grammar = sequence("Operation", number, repeat(sequence("subOperation", operator, numberRight)));
 
 		// parse
 		try {
@@ -141,7 +140,7 @@ public class ParserTest extends TestCase {
 		GrammarElement operator = produceTerminal(sign, OPERATOR);
 
 		// parser
-		GrammarElement grammar = sequence(number, repeat(sequence(operator, catcherDefault(createNonTerminal(number), 3))));
+		GrammarElement grammar = sequence("Operation", number, repeat(sequence("subOperation", operator, catcherDefault(createNonTerminal(number), 3))));
 
 		// parse
 		GrammarContext c = grammar.process().parse(source);
@@ -162,11 +161,11 @@ public class ParserTest extends TestCase {
 		GrammarElement addSign = produceTerminal(charIn("+"), OPERATOR);
 		GrammarElement minusSign = produceTerminal(charIn("-"), OPERATOR);
 
-		GrammarElement addition = sequence(addSign, produceBinaryExpression(number));
-		GrammarElement subtraction = sequence(minusSign, produceBinaryExpression(number));
+		GrammarElement addition = sequence("Addition", addSign, produceBinaryExpression(number));
+		GrammarElement subtraction = sequence("Subtraction", minusSign, produceBinaryExpression(number));
 
 		// parser
-		GrammarElement grammar = sequence(number, repeat(choice(addition, subtraction)));
+		GrammarElement grammar = sequence("Operation", number, repeat(choice(addition, subtraction)));
 
 		// parse
 		GrammarContext c = grammar.process().parse(source);
@@ -189,11 +188,11 @@ public class ParserTest extends TestCase {
 
 		// <multiplication> := <produceNumber> [ { '*' <produceNumber> } ]
 		GrammarElement multiplyOperation = catcher(produce(number, NUMBER, AstBinaryExpression.class).setVisitor(VISIT_MULTIPLICATION), "right", "sign", "left");
-		GrammarElement multiplication = sequence(number, optional(repeat(sequence(multiplySign, multiplyOperation))));
+		GrammarElement multiplication = sequence("Multiplication", number, optional(repeat(sequence("subMultilication", multiplySign, multiplyOperation))));
 
 		// <addition> := <multiplication> [ { '+' <multiplication> } ]
 		GrammarElement addOperation = catcher(produce(multiplication, NUMBER, AstBinaryExpression.class).setVisitor(VISIT_ADDITION), "right", "sign", "left");
-		GrammarElement addition = sequence(multiplication, optional(repeat(sequence(addSign, addOperation))));
+		GrammarElement addition = sequence("Addition", multiplication, optional(repeat(sequence("subAddition", addSign, addOperation))));
 
 		// parse
 		GrammarContext c = addition.process().parse(source);
@@ -208,8 +207,6 @@ public class ParserTest extends TestCase {
 		assertEquals(54, context.firstElement().intValue());
 	}
 
-	//region tools
-
 	public void testOperatorLevelWithParenthesisParser() {
 
 		String source = "7 + 10 * (4 + 7)";
@@ -222,20 +219,18 @@ public class ParserTest extends TestCase {
 		GrammarElement addSign = produceTerminal(charIn("+"), OPERATOR);
 		GrammarElement multiplySign = produceTerminal(charIn("*"), OPERATOR);
 
-		GrammarRecursive addition = recursive("Addition");
-		GrammarRecursive multiplication = recursive("Multiplication");
-		GrammarRecursive term = recursive("Term");
-
-		// <addition> := <multiplication> [ { '+' <multiplication> } ]
-		GrammarElement addOperation = catcher(produce(multiplication, NUMBER, AstBinaryExpression.class).setVisitor(VISIT_ADDITION), "right", "sign", "left");
-		addition.setGrammar(sequence(multiplication, optional(repeat(sequence(addSign, addOperation)))));
+		Recursive term = recursive("Term");
 
 		// <multiplication> := <produceNumber> [ { '*' <produceNumber> } ]
 		GrammarElement multiplyOperation = catcher(produce(term, NUMBER, AstBinaryExpression.class).setVisitor(VISIT_MULTIPLICATION), "right", "sign", "left");
-		multiplication.setGrammar(sequence(term, optional(repeat(sequence(multiplySign, multiplyOperation)))));
+		GrammarElement multiplication = sequence("Multiplication", term, optional(repeat(sequence("subMultilication", multiplySign, multiplyOperation))));
+
+		// <addition> := <multiplication> [ { '+' <multiplication> } ]
+		GrammarElement addOperation = catcher(produce(multiplication, NUMBER, AstBinaryExpression.class).setVisitor(VISIT_ADDITION), "right", "sign", "left");
+		GrammarElement addition = sequence("Addition", multiplication, optional(repeat(sequence("subAddition", addSign, addOperation))));
 
 		// <num> := <number> | '(' <addition> ')'
-		term.setGrammar(choice(number, sequence(leftParenthesis, addition, rightParenthesis)));
+		term.setGrammar(choice(number, sequence("subTerm", leftParenthesis, addition, rightParenthesis)));
 
 		// parser
 		GrammarElement grammar = addition;
@@ -284,7 +279,7 @@ public class ParserTest extends TestCase {
 		// to BNF
 		System.out.println("Grammar tree:\n" + grammar.toString());
 
-		RailroadDiagram.Browse(grammar);
+		//RailroadDiagram.Browse(grammar);
 
 
 	}
@@ -299,11 +294,11 @@ public class ParserTest extends TestCase {
 		GrammarElement bl = lexem(word("{"), LexemType.SYMBOL);
 		GrammarElement br = lexem(word("}"), LexemType.SYMBOL);
 
-		GrammarElement if_ = sequence(produce(word("if"), KEYWORD, AstIf.class), pl, pr, bl, br);
-		GrammarElement elseif = sequence(dropper(produceTerminal(word("elseif"), KEYWORD), "elseif"), pl, pr, bl, br);
-		GrammarElement else_ = sequence(dropper(produceTerminal(word("else"), KEYWORD), "else"), bl, br);
+		GrammarElement if_ = sequence("If", produce(word("if"), KEYWORD, AstIf.class), pl, pr, bl, br);
+		GrammarElement elseif = sequence("ElseIf", dropper(produceTerminal(word("elseif"), KEYWORD), "elseif"), pl, pr, bl, br);
+		GrammarElement else_ = sequence("Else", dropper(produceTerminal(word("else"), KEYWORD), "else"), bl, br);
 
-		GrammarElement grammar = sequence(if_, optional(repeat(elseif)), optional(else_));
+		GrammarElement grammar = sequence("IfThenElse", if_, optional(repeat(elseif)), optional(else_));
 
 		// parse
 		GrammarContext c = grammar.process().parse(source);
@@ -325,22 +320,24 @@ public class ParserTest extends TestCase {
 		GrammarElement addSign = produceTerminal(charIn("+"), OPERATOR);
 		GrammarElement multiplySign = produceTerminal(charIn("*"), OPERATOR);
 
-		GrammarRecursive addition = recursive("Addition");
-		GrammarRecursive multiplication = recursive("Multiplication");
-		GrammarRecursive term = recursive("Term");
+		Recursive addition = recursive("Addition");
+		Recursive multiplication = recursive("Multiplication");
+		Recursive term = recursive("Term");
 
 		// <multiplication> := <ident> [ { '*' <ident> } ]
-		multiplication.setGrammar(sequence(term, optional(repeat(sequence(multiplySign, produceBinaryExpression(term))))));
+		multiplication.setGrammar(sequence("Multiplication", term, optional(repeat(sequence("subMultilication", multiplySign, produceBinaryExpression(term))))));
 
 		// <addition> := <multiplication> [ { '+' <multiplication> } ]
-		addition.setGrammar(sequence(optional(repeat(sequence(addSign, produceBinaryExpression(multiplication))))));
+		addition.setGrammar(sequence("Addition", optional(repeat(sequence("subAddition", addSign, produceBinaryExpression(multiplication))))));
 
 		// <ident> := <produceNumber> | '(' <addition> ')'
-		term.setGrammar(choice(number, sequence(leftParenthesis, addition, rightParenthesis)));
+		term.setGrammar(choice(number, sequence("subTerm", leftParenthesis, addition, rightParenthesis)));
 
 		System.out.println(addition);
 
 	}
+
+	//region tools
 
 	private GrammarElement produceNumber(GrammarElement decorated) {
 		return produce(decorated, NUMBER, AstNumber.class);
