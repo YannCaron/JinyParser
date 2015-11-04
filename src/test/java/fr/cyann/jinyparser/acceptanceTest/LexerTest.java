@@ -11,7 +11,6 @@ package fr.cyann.jinyparser.acceptanceTest;
 import fr.cyann.jinyparser.grammartree.GrammarContext;
 import fr.cyann.jinyparser.grammartree.GrammarElement;
 import fr.cyann.jinyparser.lexem.LexemType;
-import fr.cyann.jinyparser.utils.RailroadDiagram;
 import junit.framework.TestCase;
 
 import java.util.Arrays;
@@ -52,7 +51,7 @@ public class LexerTest extends TestCase {
 		String source = "0xff00aa";
 
 		// term
-		GrammarElement hexDigit = production("hexDigit").setGrammar(charIn('0', '9').add('a', 'f').add('A', 'F'));
+		GrammarElement hexDigit = charIn('0', '9').add('a', 'f').add('A', 'F');
 
 		// lexer
 		GrammarElement grammar = lexem(sequence(word("0x"), asMany(hexDigit, 6)), NUMBER);
@@ -74,8 +73,6 @@ public class LexerTest extends TestCase {
 			fail("Should not works!");
 		} catch (Exception e) {
 		}
-
-		RailroadDiagram.Browse(grammar);
 
 	}
 
