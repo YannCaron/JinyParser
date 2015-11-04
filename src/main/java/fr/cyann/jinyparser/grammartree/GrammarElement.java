@@ -250,10 +250,10 @@ public abstract class GrammarElement {
 		 */
 		public GrammarContext parse(String source) {
 			GrammarContext context = new GrammarContext(source);
-			root.parse(context);
+			boolean result = root.parse(context);
 
 			// check error
-			if (!context.isTerminated()) {
+			if (!context.isTerminated() || !result) {
 				System.out.println(context.toString());
 				System.out.println("ERROR");
 				throw new JinyException(

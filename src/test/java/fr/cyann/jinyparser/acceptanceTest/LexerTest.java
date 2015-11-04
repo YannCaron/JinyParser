@@ -11,6 +11,7 @@ package fr.cyann.jinyparser.acceptanceTest;
 import fr.cyann.jinyparser.grammartree.GrammarContext;
 import fr.cyann.jinyparser.grammartree.GrammarElement;
 import fr.cyann.jinyparser.lexem.LexemType;
+import fr.cyann.jinyparser.utils.RailroadDiagram;
 import junit.framework.TestCase;
 
 import java.util.Arrays;
@@ -36,13 +37,45 @@ public class LexerTest extends TestCase {
 		GrammarElement number = lexem(oneOrMore(digit), NUMBER);
 
 		// parser
-		GrammarElement grammar = sequence(number, number, number, number);
+		GrammarElement grammar = asMany(number, 3);
 
 		// parse
 		GrammarContext c = grammar.process().parse(source);
 
 		// test
 		assertEquals(Arrays.asList("12", "345", "8"), lexerToTerms(c.getLexer()));
+
+	}
+
+	public void testHexadecimal() {
+
+		String source = "0xff00aa";
+
+		// term
+		GrammarElement hexDigit = production("hexDigit").setGrammar(charIn('0', '9').add('a', 'f').add('A', 'F'));
+
+		// lexer
+		GrammarElement grammar = lexem(sequence(word("0x"), asMany(hexDigit, 6)), NUMBER);
+
+		// parse
+		GrammarContext c = grammar.process().parse(source);
+
+		// test
+		assertEquals(Arrays.asList("0xff00aa"), lexerToTerms(c.getLexer()));
+
+		try {
+			grammar.process().parse("0xff00aaaa");
+			fail("Should not works!");
+		} catch (Exception e) {
+		}
+
+		try {
+			grammar.process().parse("0xff00a");
+			fail("Should not works!");
+		} catch (Exception e) {
+		}
+
+		RailroadDiagram.Browse(grammar);
 
 	}
 

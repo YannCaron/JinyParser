@@ -7,8 +7,6 @@ package fr.cyann.jinyparser.grammartree;/**
  * ou écrivez à Creative Commons, 444 Castro Street, Suite 900, Mountain View, California, 94041, USA.
  **/
 
-import fr.cyann.jinyparser.utils.StringLookaheadIterator;
-
 /**
  * The CharIn definition.
  */
@@ -34,7 +32,7 @@ public class CharNotIn extends CharIn {
 	@Override
 	protected boolean isTerm(GrammarContext context) {
 		char current = context.currentChar();
-		return characters.toString().indexOf(current) == -1 && current != StringLookaheadIterator.EOS;
+		return characters.toString().indexOf(current) == -1 && !context.isTerminated();
 	}
 
 	/**

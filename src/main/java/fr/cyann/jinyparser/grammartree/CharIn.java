@@ -12,8 +12,8 @@ package fr.cyann.jinyparser.grammartree;/**
  */
 public class CharIn extends GrammarLeaf {
 
-	protected static StringBuilder characters;
-	protected static StringBuilder bnf;
+	protected final StringBuilder characters;
+	protected final StringBuilder bnf;
 
 	/**
 	 * Default constructor.
@@ -52,7 +52,7 @@ public class CharIn extends GrammarLeaf {
 	 * @return this.
 	 */
 	public CharIn add(String characters) {
-		CharIn.characters.append(characters);
+		this.characters.append(characters);
 		bnf.append(characters);
 
 		return this;
@@ -67,7 +67,7 @@ public class CharIn extends GrammarLeaf {
 	 */
 	public CharIn add(char start, char end) {
 		for (char c = start; c <= end; c++) {
-			characters.append(c);
+			this.characters.append(c);
 		}
 		bnf.append(start);
 		bnf.append("-");

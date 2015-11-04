@@ -1,4 +1,4 @@
-# WORK IN PROGRESS - DOES NOT WORK YET - COMING SOON (I HOPE)
+# WORK IN PROGRESS - LEXER, PARSER and Railroad representation works now. TO BE CONTINUED.
 
 # JinyParser
 

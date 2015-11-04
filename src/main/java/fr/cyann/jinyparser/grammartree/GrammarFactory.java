@@ -280,8 +280,22 @@ public final class GrammarFactory {
 	    return sequence;
     }
 
-    /**
-     * Create a new choice grammar element.
+	/**
+	 * Create a wrapper where grammar element must be repeated a number of time (equivalent to sequence(g, g, g, ...)).
+	 *
+	 * @param element the grammar element to decorate.
+	 * @param count   how many time, the element must be repeated.
+	 * @return the new grammar element.
+	 */
+	public static Sequence asMany(GrammarElement element, int count) {
+		GrammarElement[] elements = new GrammarElement[count];
+		for (int i = 0; i < count; i++)
+			elements[i] = element;
+		return new Sequence(elements);
+	}
+
+	/**
+	 * Create a new choice grammar element.
      *
      * @param elements list of children.
      * @return the new grammar element.
