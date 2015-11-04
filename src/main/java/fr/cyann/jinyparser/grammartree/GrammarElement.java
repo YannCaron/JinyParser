@@ -12,7 +12,9 @@ package fr.cyann.jinyparser.grammartree;
 import fr.cyann.jinyparser.exceptions.JinyException;
 import fr.cyann.jinyparser.utils.MultilingualMessage;
 
-import java.util.*;
+import java.util.LinkedHashMap;
+import java.util.Locale;
+import java.util.Map;
 
 /**
  * The GrammarElement class. Then top abstract class of all grammar elements.<br>
@@ -114,8 +116,7 @@ public abstract class GrammarElement {
 		return context.toString();
 	}
 
-	//abstract void buildProductions(BnfContext context); TODO : ????
-
+	// TODO a voir
 	protected abstract void visit(Visitor visitor);
 
 	protected void ascendingChain(SimpleVisitor visitor) {
@@ -136,9 +137,9 @@ public abstract class GrammarElement {
 	protected interface Visitor {
 		void visitLeaf(GrammarLeaf grammar);
 
-		void visitRecursiveBefore(Recursive grammar);
+		void visitRecursiveBefore(ParsemProduction grammar);
 
-		void visitRecursiveAfter(Recursive grammar);
+		void visitRecursiveAfter(ParsemProduction grammar);
 
 		void visitDecoratorBefore(GrammarDecorator grammar);
 
@@ -147,6 +148,90 @@ public abstract class GrammarElement {
 		void visitNodeBefore(GrammarNode grammar);
 
 		void visitNodeAfter(GrammarNode grammar);
+	}
+
+	/**
+	 * The BNF context useful to build BNF.
+	 */
+	protected static class BnfContext {
+
+		/**
+		 * The name of default root grammar node.
+		 */
+		public static final String ROOT_NAME = "Grammar";
+		public static final String PRODUCTION_SYMBOL = " ::= ";
+		private final Map<String, String> productions;
+
+		private final StringBuilder sb;
+
+		/**
+		 * Default constructor.
+		 */
+		protected BnfContext() {
+			productions = new LinkedHashMap<String, String>();
+			sb = new StringBuilder();
+		}
+
+		/**
+		 * Append string to the current stringbuilder.
+		 *
+		 * @param string the string to append.
+		 */
+		protected void append(String string) {
+			sb.append(string);
+		}
+
+		private void clear() {
+			sb.delete(0, sb.length());
+		}
+
+		/**
+		 * Create a new production and consume the current grammar built.
+		 *
+		 * @param name    the grammar name.
+		 * @param grammar the grammar element.
+		 */
+		protected void newProduction(String name, GrammarElement grammar) {
+
+			if (productions.containsKey(name)) {
+				sb.append(name);
+			} else {
+				productions.put(name, "");
+				int begin = sb.length();
+
+				sb.append(name);
+				sb.append(PRODUCTION_SYMBOL);
+
+				if (grammar != null) grammar.buildBnf(this);
+
+				productions.put(name, sb.substring(begin));
+
+				sb.delete(begin, sb.length());
+
+				sb.append(name);
+
+			}
+		}
+
+		@Override
+		public String toString() {
+
+			if (sb.length() != 0) {
+				sb.insert(0, PRODUCTION_SYMBOL);
+				sb.insert(0, ROOT_NAME);
+				productions.put(ROOT_NAME, sb.toString());
+				clear();
+			}
+
+			boolean first = true;
+			for (String production : productions.values()) {
+				if (!first) sb.append("\n");
+				first = false;
+				sb.append(production);
+			}
+
+			return sb.toString();
+		}
 	}
 
 	public static class ProcessedGrammar {
@@ -182,96 +267,6 @@ public abstract class GrammarElement {
 
 	}
 
-	/**
-	 * The BNF context useful to build BNF.
-	 */
-	protected static class BnfContext {
-
-		/**
-		 * The name of default root grammar node.
-		 */
-		public static final String ROOT_NAME = "grammar";
-		private final Map<String, String> productions;
-		private final List<String> productionNames;
-
-		private final StringBuilder sb;
-
-		/**
-		 * Default constructor.
-		 */
-		protected BnfContext() {
-			productions = new HashMap<String, String>();
-			sb = new StringBuilder();
-			productionNames = new ArrayList<String>();
-		}
-
-		/**
-		 * Append string to the current stringbuilder.
-		 *
-		 * @param string the string to append.
-		 */
-		protected void append(String string) {
-			sb.append(string);
-		}
-
-		private void clear() {
-			sb.delete(0, sb.length());
-		}
-
-		private void addProduction(String name, String bnf) {
-			productionNames.add(0, name);
-			productions.put(name, bnf);
-		}
-
-		/**
-		 * Create a new production and consume the current grammar built.
-		 *
-		 * @param name    the grammar name.
-		 * @param grammar the grammar element.
-		 */
-		protected void newProduction(String name, GrammarElement grammar) {
-
-			if (productions.containsKey(name)) {
-				sb.append(name);
-			} else {
-				productions.put(name, "");
-				int begin = sb.length();
-
-				sb.append(name);
-				sb.append("::=");
-
-				if (grammar != null) grammar.buildBnf(this);
-
-				addProduction(name, sb.substring(begin));
-
-				sb.delete(begin, sb.length());
-
-				sb.append(name);
-
-			}
-		}
-
-		@Override
-		public String toString() {
-
-			if (sb.length() != 0) {
-				sb.insert(0, "::=");
-				sb.insert(0, ROOT_NAME);
-				addProduction(ROOT_NAME, sb.toString());
-				clear();
-			}
-
-			boolean first = true;
-			for (String key : productionNames) {
-				if (!first) sb.append("\n");
-				first = false;
-				sb.append(productions.get(key));
-			}
-
-			return sb.toString();
-		}
-	}
-
 	protected abstract class AbstractSimpleVisitor implements SimpleVisitor {
 		@Override
 		public void visitBefore(GrammarElement grammar) {
@@ -290,12 +285,12 @@ public abstract class GrammarElement {
 		}
 
 		@Override
-		public void visitRecursiveBefore(Recursive grammar) {
+		public void visitRecursiveBefore(ParsemProduction grammar) {
 
 		}
 
 		@Override
-		public void visitRecursiveAfter(Recursive grammar) {
+		public void visitRecursiveAfter(ParsemProduction grammar) {
 
 		}
 

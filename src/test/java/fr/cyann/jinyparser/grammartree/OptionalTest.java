@@ -19,8 +19,8 @@ public class OptionalTest extends TestCase {
 
         String source = "a";
 
-	    assertFalse(sequence("", word("a"), word("b")).lookahead(new GrammarContext(source)));
-	    assertTrue(sequence("", word("a"), optional(word("b"))).lookahead(new GrammarContext(source)));
+	    assertFalse(sequence(word("a"), word("b")).lookahead(new GrammarContext(source)));
+	    assertTrue(sequence(word("a"), zeroOrOne(word("b"))).lookahead(new GrammarContext(source)));
 
     }
 
@@ -28,8 +28,8 @@ public class OptionalTest extends TestCase {
 
         String source = "a";
 
-	    assertFalse(sequence("", word("a"), word("b")).parse(new GrammarContext(source)));
-	    assertTrue(sequence("", word("a"), optional(word("b"))).parse(new GrammarContext(source)));
+	    assertFalse(sequence(word("a"), word("b")).parse(new GrammarContext(source)));
+	    assertTrue(sequence(word("a"), zeroOrOne(word("b"))).parse(new GrammarContext(source)));
 
     }
 }

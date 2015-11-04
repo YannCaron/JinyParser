@@ -38,6 +38,26 @@ public final class GrammarFactory {
 		return new CharIn(start, end);
 	}
 
+	/**
+	 * Create a new lexer exclude char recognizer grammar element.
+	 *
+	 * @param terms the list of character to recognize.
+	 * @return the new grammar element.
+	 */
+	public static CharNotIn charNotIn(String terms) {
+		return new CharNotIn(terms);
+	}
+
+	/**
+	 * Create a new lexer exclude char recognizer grammar element.
+	 *
+	 * @param start the first character of the range.
+	 * @param end   the last character (included) of the range.
+	 * @return the new grammar element.
+	 */
+	public static CharNotIn charNotIn(char start, char end) {
+		return new CharNotIn(start, end);
+	}
 
 	/**
 	 * Create a new lexer word recognizer grammar element.
@@ -49,33 +69,43 @@ public final class GrammarFactory {
         return new Word(terms);
     }
 
-    // endregion
+	// endregion
 
-    // region decorator
+	// region decorator
 
-    /**
-     * Create a new repeat grammar element.
-     *
-     * @param decorated the grammar element to decorate.
+	/**
+	 * Create a wrapper where grammar element can be repeated zero or one time (equivalent to optional(g)).
+	 *
+	 * @param decorated the grammar element to decorate.
      * @return the new grammar element.
-     */
-    public static Repeat repeat(GrammarElement decorated) {
-        return new Repeat(decorated);
-    }
+	 */
+	public static Optional zeroOrOne(GrammarElement decorated) {
+		return new Optional(decorated);
+	}
 
-    /**
-     * Create a new optional grammar element.
-     *
-     * @param decorated the grammar element to decorate.
-     * @return the new grammar element.
-     */
-    public static Optional optional(GrammarElement decorated) {
-        return new Optional(decorated);
-    }
+	/**
+	 * Create a wrapper where grammar element can be repeated any time (equivalent to zeroOrOne(oneOrMore(g))).
+	 *
+	 * @param decorated the grammar element to decorate.
+	 * @return the new grammar element.
+	 */
+	public static Optional zeroOrMore(GrammarElement decorated) {
+		return new Optional(new Repeat(decorated));
+	}
 
-    /**
-     * Create a new token producer grammar element.
-     *
+	/**
+	 * Create a wrapper where grammar element can be repeated any time (equivalent to repeat(g)).
+	 *
+	 * @param decorated the grammar element to decorate.
+	 * @return the new grammar element.
+	 */
+	public static Repeat oneOrMore(GrammarElement decorated) {
+		return new Repeat(decorated);
+	}
+
+	/**
+	 * Create a new token producer grammar element.
+	 *
      * @param decorated the grammar that decide if lexem will be produced.
      * @param lexemType the token type of the token to produce.
      * @return the new grammar element.
@@ -137,7 +167,6 @@ public final class GrammarFactory {
     public static <P extends ParsemElement> ParsemCreator<P> create(GrammarElement decorated, Class<P> clazz) {
         return new ParsemCreator<P>(decorated, clazz);
     }
-
 
     /**
      * Create a lexem that manage spaces and then a terminal parsem.
@@ -246,8 +275,8 @@ public final class GrammarFactory {
      * @param elements list of children.
      * @return the new grammar element.
      */
-    public static Sequence sequence(String name, GrammarElement... elements) {
-	    Sequence sequence = new Sequence(name, elements);
+    public static Sequence sequence(GrammarElement... elements) {
+	    Sequence sequence = new Sequence(elements);
 	    return sequence;
     }
 
@@ -258,12 +287,12 @@ public final class GrammarFactory {
      * @return the new grammar element.
      */
     public static Choice choice(GrammarElement... elements) {
-        Choice choice = new Choice(elements);
-        return choice;
+	    Choice choice = new Choice(elements);
+	    return choice;
     }
 
-	public static Recursive recursive(String name) {
-		return new Recursive(name);
+	public static ParsemProduction production(String name) {
+		return new ParsemProduction(name);
 	}
 
     // endregion

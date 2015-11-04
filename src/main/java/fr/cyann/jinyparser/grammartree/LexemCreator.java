@@ -22,7 +22,7 @@ public class LexemCreator extends LexemCreatorCore {
 	 * <i>' ' | '\ProcessedGrammar' | '\0' | '\n'(new line)</i>
 	 */
 	private static final GrammarElement DEFAULT_SEPARATOR =
-			optional(choice(charIn(" \t\0"), lineIncrementer(charIn("\n"))));
+			zeroOrOne(choice(charIn(" \t\0"), lineIncrementer(charIn("\n"))));
 
 	private final GrammarElement separator;
 

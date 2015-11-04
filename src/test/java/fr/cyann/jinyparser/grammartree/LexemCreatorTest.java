@@ -23,11 +23,11 @@ public class LexemCreatorTest extends TestCase {
 
         String source = " a b c ";
 
-        GrammarElement grammar = repeat(lexemCore(charIn("abc"), LexemType.SYMBOL));
-        assertFalse(grammar.lookahead(new GrammarContext(source)));
+	    GrammarElement grammar = oneOrMore(lexemCore(charIn("abc"), LexemType.SYMBOL));
+	    assertFalse(grammar.lookahead(new GrammarContext(source)));
 
-        grammar = repeat(lexem(charIn("abc"), LexemType.SYMBOL)); // with separator management
-        assertTrue(grammar.lookahead(new GrammarContext(source)));
+	    grammar = oneOrMore(lexem(charIn("abc"), LexemType.SYMBOL)); // with separator management
+	    assertTrue(grammar.lookahead(new GrammarContext(source)));
 
     }
 
@@ -35,11 +35,11 @@ public class LexemCreatorTest extends TestCase {
 
         String source = " a b c ";
 
-        GrammarElement grammar = repeat(lexemCore(charIn("abc"), LexemType.SYMBOL));
-        assertFalse(grammar.parse(new GrammarContext(source)));
+	    GrammarElement grammar = oneOrMore(lexemCore(charIn("abc"), LexemType.SYMBOL));
+	    assertFalse(grammar.parse(new GrammarContext(source)));
 
-        grammar = repeat(lexem(charIn("abc"), LexemType.SYMBOL)); // with separator management
-        assertTrue(grammar.parse(new GrammarContext(source)));
+	    grammar = oneOrMore(lexem(charIn("abc"), LexemType.SYMBOL)); // with separator management
+	    assertTrue(grammar.parse(new GrammarContext(source)));
 
 	    GrammarContext context = grammar.process().parse(source);
 

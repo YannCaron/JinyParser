@@ -12,10 +12,10 @@ import fr.cyann.jinyparser.exceptions.JinyException;
 import fr.cyann.jinyparser.utils.MultilingualMessage;
 
 /**
- * The Recursive grammar element definition.<br>
+ * The ParsemProduction grammar element definition.<br>
  * Give the ability to loop grammars togathers (and manage cycles).
  */
-public class Recursive extends GrammarElement {
+public class ParsemProduction extends GrammarElement {
 
 	private final String name;
 	private GrammarElement grammar;
@@ -25,7 +25,7 @@ public class Recursive extends GrammarElement {
 	 *
 	 * @param name the bnf name.
 	 */
-	public Recursive(String name) {
+	public ParsemProduction(String name) {
 		this.name = name;
 	}
 
@@ -35,8 +35,9 @@ public class Recursive extends GrammarElement {
 	 *
 	 * @param grammar the grammar to delegate to.
 	 */
-	public void setGrammar(GrammarElement grammar) {
+	public ParsemProduction setGrammar(GrammarElement grammar) {
 		this.grammar = grammar;
+		return this;
 	}
 
 	/**
@@ -47,7 +48,7 @@ public class Recursive extends GrammarElement {
 		if (grammar != null) {
 			return grammar.lookahead(context);
 		}
-		throw new JinyException(MultilingualMessage.create("Recursive grammar must have a grammar to delegate it the lookahead parsing! Please use the Recursive.setGrammar() method before parsing."));
+		throw new JinyException(MultilingualMessage.create("ParsemProduction grammar must have a grammar to delegate it the lookahead parsing! Please use the ParsemProduction.setGrammar() method before parsing."));
 	}
 
 	/**
@@ -58,7 +59,7 @@ public class Recursive extends GrammarElement {
 		if (grammar != null) {
 			return grammar.parse(context);
 		}
-		throw new JinyException(MultilingualMessage.create("Recursive grammar must have a grammar to delegate it the parsing! Please use the Recursive.setGrammar() method before parsing."));
+		throw new JinyException(MultilingualMessage.create("ParsemProduction grammar must have a grammar to delegate it the parsing! Please use the ParsemProduction.setGrammar() method before parsing."));
 	}
 
 	/**

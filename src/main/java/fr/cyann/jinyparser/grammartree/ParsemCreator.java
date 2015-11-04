@@ -10,7 +10,9 @@ package fr.cyann.jinyparser.grammartree;
 
 import fr.cyann.jinyparser.exceptions.JinyException;
 import fr.cyann.jinyparser.lexem.Lexem;
-import fr.cyann.jinyparser.parsetree.*;
+import fr.cyann.jinyparser.parsetree.ParsemElement;
+import fr.cyann.jinyparser.parsetree.ParsemVisitor;
+import fr.cyann.jinyparser.parsetree.VisitorContext;
 import fr.cyann.jinyparser.utils.MultilingualMessage;
 
 import java.lang.reflect.Constructor;
@@ -20,19 +22,19 @@ import java.lang.reflect.Constructor;
  */
 public class ParsemCreator<P extends ParsemElement> extends GrammarDecorator {
 
-    private final Class<P> clazz;
-    private ParsemVisitor<P, ? extends VisitorContext> visitor;
+	private final Class<P> clazz;
+	private ParsemVisitor<P, ? extends VisitorContext> visitor;
 
-    /**
-     * Default constructor.
-     *
-     * @param decorated the decorated grammar element.
-     * @param clazz the grammar element class to create.
-     */
-    public ParsemCreator(GrammarElement decorated, Class<P> clazz) {
-        super(decorated);
-        this.clazz = clazz;
-    }
+	/**
+	 * Default constructor.
+	 *
+	 * @param decorated the decorated grammar element.
+	 * @param clazz     the grammar element class to create.
+	 */
+	public ParsemCreator(GrammarElement decorated, Class<P> clazz) {
+		super(decorated);
+		this.clazz = clazz;
+	}
 
 	/**
 	 * Get the parsem class to produce.
@@ -50,56 +52,52 @@ public class ParsemCreator<P extends ParsemElement> extends GrammarDecorator {
 	 * @param visitor the visitor to delegate to the parsem.
 	 * @return this.
 	 */
-    public GrammarElement setVisitor(ParsemVisitor<P, ? extends VisitorContext> visitor) {
-        this.visitor = visitor;
+	public GrammarElement setVisitor(ParsemVisitor<P, ? extends VisitorContext> visitor) {
+		this.visitor = visitor;
 		return this;
 	}
 
 	/**
 	 * {@inheritDoc}
-     */
-    @Override
-    protected boolean lookahead(GrammarContext context) {
-        return decorated.lookahead(context);
-    }
+	 */
+	@Override
+	protected boolean lookahead(GrammarContext context) {
+		return decorated.lookahead(context);
+	}
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    protected boolean parse(GrammarContext context) {
-        context.resetTerm();
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	protected boolean parse(GrammarContext context) {
+		context.resetTerm();
 
-        boolean res = decorated.parse(context);
+		boolean res = decorated.parse(context);
 
-        if (res) {
+		if (res) {
 
-            try {
+			try {
 
-                Constructor<P> constructor = clazz.getConstructor(Lexem.class);
-                constructor.setAccessible(true);
-                ParsemElement parsem = constructor.newInstance(context.getCurrentLexem());
-	            parsem.setVisitor(visitor);
-	            context.pushParsem(parsem);
+				Constructor<P> constructor = clazz.getConstructor(Lexem.class);
+				constructor.setAccessible(true);
+				ParsemElement parsem = constructor.newInstance(context.getCurrentLexem());
+				parsem.setVisitor(visitor);
+				context.pushParsem(parsem);
 
-            } catch (Exception e) {
-                throw new JinyException(MultilingualMessage.create(e.toString()));
-            }
+			} catch (Exception e) {
+				throw new JinyException(MultilingualMessage.create(e.toString()));
+			}
 
-        }
+		}
 
-        return res;
-    }
+		return res;
+	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
 	void buildBnf(BnfContext context) {
-		if (Terminal.class.isAssignableFrom(clazz) && clazz != DefaultTerminal.class) {
-			context.newProduction(clazz.getSimpleName(), decorated);
-		} else {
-			super.buildBnf(context);
-		}
+		super.buildBnf(context);
 	}
 }

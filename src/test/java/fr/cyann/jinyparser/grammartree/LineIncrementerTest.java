@@ -19,7 +19,7 @@ public class LineIncrementerTest extends TestCase {
         String source = "a\na\na";
         GrammarContext context = new GrammarContext(source);
 
-        GrammarElement grammar = repeat(choice(word("a"), lineIncrementer(word("\n"))));
+	    GrammarElement grammar = oneOrMore(choice(word("a"), lineIncrementer(word("\n"))));
 
         assertTrue(grammar.lookahead(context));
         assertEquals(1, context.getLine());
@@ -29,7 +29,7 @@ public class LineIncrementerTest extends TestCase {
         String source = "a\na\na";
         GrammarContext context = new GrammarContext(source);
 
-        GrammarElement grammar = repeat(choice(word("a"), lineIncrementer(word("\n"))));
+	    GrammarElement grammar = oneOrMore(choice(word("a"), lineIncrementer(word("\n"))));
 
         assertTrue(grammar.parse(context));
         assertEquals(3, context.getLine());

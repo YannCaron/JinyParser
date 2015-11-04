@@ -18,7 +18,7 @@ public class SequenceTest extends TestCase {
 
     public void testLookahead() throws Exception {
 
-	    GrammarElement sequence = sequence("", word("a"), word("b"));
+	    GrammarElement sequence = sequence(word("a"), word("b"));
 
         assertTrue(sequence.lookahead(new GrammarContext("ab")));
         assertTrue(sequence.lookahead(new GrammarContext("abc")));
@@ -28,7 +28,7 @@ public class SequenceTest extends TestCase {
 
     public void testParse() throws Exception {
 
-	    GrammarElement sequence = sequence("", word("a"), word("b"));
+	    GrammarElement sequence = sequence(word("a"), word("b"));
 
         assertTrue(sequence.parse(new GrammarContext("ab")));
         assertTrue(sequence.parse(new GrammarContext("abc")));

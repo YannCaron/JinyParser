@@ -18,14 +18,14 @@ public class RepeatTest extends TestCase {
     public void testLookahead() throws Exception {
         String source = "abbbbc";
 
-	    assertFalse(sequence("", word("a"), word("b"), word("c")).lookahead(new GrammarContext(source)));
-	    assertTrue(sequence("", word("a"), repeat(word("b")), word("c")).lookahead(new GrammarContext(source)));
+	    assertFalse(sequence(word("a"), word("b"), word("c")).lookahead(new GrammarContext(source)));
+	    assertTrue(sequence(word("a"), oneOrMore(word("b")), word("c")).lookahead(new GrammarContext(source)));
     }
 
     public void testParse() throws Exception {
         String source = "abbbbc";
 
-	    assertFalse(sequence("", word("a"), word("b"), word("c")).parse(new GrammarContext(source)));
-	    assertTrue(sequence("", word("a"), repeat(word("b")), word("c")).parse(new GrammarContext(source)));
+	    assertFalse(sequence(word("a"), word("b"), word("c")).parse(new GrammarContext(source)));
+	    assertTrue(sequence(word("a"), oneOrMore(word("b")), word("c")).parse(new GrammarContext(source)));
     }
 }

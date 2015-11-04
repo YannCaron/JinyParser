@@ -19,7 +19,7 @@ public class ParsemDropperTest extends TestCase {
 
 		String source = "ab";
 
-		GrammarElement g = sequence("", createNonTerminal(lexem(word("a"))), dropperDefault(createTerminal(lexem(word("b")))));
+		GrammarElement g = sequence(createNonTerminal(lexem(word("a"))), dropperDefault(createTerminal(lexem(word("b")))));
 
 		GrammarContext context = new GrammarContext(source);
 
@@ -35,7 +35,7 @@ public class ParsemDropperTest extends TestCase {
 
 		String source = "ab";
 
-		GrammarElement g = sequence("", createNonTerminal(lexem(word("a"))), dropperDefault(createTerminal(lexem(word("b")))));
+		GrammarElement g = sequence(createNonTerminal(lexem(word("a"))), dropperDefault(createTerminal(lexem(word("b")))));
 
 		GrammarContext context = new GrammarContext(source);
 

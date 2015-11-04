@@ -3,7 +3,7 @@ package fr.cyann.jinyparser.grammartree;
 import junit.framework.TestCase;
 
 import static fr.cyann.jinyparser.grammartree.GrammarFactory.charIn;
-import static fr.cyann.jinyparser.grammartree.GrammarFactory.repeat;
+import static fr.cyann.jinyparser.grammartree.GrammarFactory.oneOrMore;
 
 /**
  * Copyright (C) 17/10/15 Yann Caron aka cyann
@@ -17,8 +17,8 @@ import static fr.cyann.jinyparser.grammartree.GrammarFactory.repeat;
 public class CharInTest extends TestCase {
 
 	public void testAdd() throws Exception {
-		CharIn cin1 = charIn('a', 'z');
-		GrammarElement grammar = repeat(cin1);
+		CharIn charIn = charIn('a', 'z');
+		GrammarElement grammar = oneOrMore(charIn);
 
 		grammar.process().parse("abcde");
 
@@ -28,7 +28,7 @@ public class CharInTest extends TestCase {
 		} catch (Exception e) {
 		}
 
-		cin1.add('A', 'Z');
+		charIn.add('A', 'Z');
 
 		grammar.process().parse("abcdeABCDE");
 
@@ -38,7 +38,7 @@ public class CharInTest extends TestCase {
 		} catch (Exception e) {
 		}
 
-		cin1.add("!+/*-");
+		charIn.add("!+-*/");
 		grammar.process().parse("abcdeABCDE!+");
 
 	}

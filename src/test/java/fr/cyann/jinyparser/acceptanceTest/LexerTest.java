@@ -33,10 +33,10 @@ public class LexerTest extends TestCase {
         GrammarElement digit = charIn("0123456789");
 
 		// lexer
-        GrammarElement number = lexem(repeat(digit), NUMBER);
+		GrammarElement number = lexem(oneOrMore(digit), NUMBER);
 
 		// parser
-		GrammarElement grammar = sequence("Numbers", number, number, number, number);
+		GrammarElement grammar = sequence(number, number, number, number);
 
 		// parse
 		GrammarContext c = grammar.process().parse(source);
@@ -55,12 +55,12 @@ public class LexerTest extends TestCase {
         GrammarElement sign = charIn("+-*/%");
 
 		// lexer
-        GrammarElement number = lexem(repeat(digit), NUMBER);
+		GrammarElement number = lexem(oneOrMore(digit), NUMBER);
 
         GrammarElement operator = lexem(sign, LexemType.SYMBOL);
 
 		// parser
-		GrammarElement grammar = sequence("Operation", number, repeat(sequence("subOperation", operator, number)));
+		GrammarElement grammar = sequence(number, oneOrMore(sequence(operator, number)));
 
 		// parse
 		GrammarContext c = grammar.process().parse(source);

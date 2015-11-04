@@ -8,7 +8,7 @@ package fr.cyann.jinyparser.grammartree;/**
  **/
 
 /**
- * The Optional class. Used to indicate an optional part of the grammar. The part if evaluated if necessary but parsing is always successful even if grammar does not exists.
+ * The Optional class. Used to indicate an zeroOrOne part of the grammar. The part if evaluated if necessary but parsing is always successful even if grammar does not exists.
  */
 public class Optional extends GrammarDecorator {
 

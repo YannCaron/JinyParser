@@ -15,7 +15,7 @@ import java.util.Stack;
  */
 public class StringLookaheadIterator implements LookaheadIterator<Character> {
 
-	private static final char EOS = Character.MIN_VALUE;
+	public static final char EOS = Character.MIN_VALUE;
 	private final String string;
 	private final Stack<Integer> positions;
 	private int position;

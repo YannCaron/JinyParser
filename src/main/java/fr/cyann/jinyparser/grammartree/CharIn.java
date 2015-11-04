@@ -12,13 +12,15 @@ package fr.cyann.jinyparser.grammartree;/**
  */
 public class CharIn extends GrammarLeaf {
 
-	private StringBuilder characters;
+	protected static StringBuilder characters;
+	protected static StringBuilder bnf;
 
 	/**
 	 * Default constructor.
 	 */
 	private CharIn() {
 		characters = new StringBuilder();
+		bnf = new StringBuilder();
 	}
 
 	/**
@@ -50,7 +52,8 @@ public class CharIn extends GrammarLeaf {
 	 * @return this.
 	 */
 	public CharIn add(String characters) {
-		this.characters.append(characters);
+		CharIn.characters.append(characters);
+		bnf.append(characters);
 
 		return this;
 	}
@@ -66,11 +69,20 @@ public class CharIn extends GrammarLeaf {
 		for (char c = start; c <= end; c++) {
 			characters.append(c);
 		}
+		bnf.append(start);
+		bnf.append("-");
+		bnf.append(end);
 
 		return this;
 	}
 
-	private boolean isTerm(GrammarContext context) {
+	/**
+	 * Check if character feet the criteria.
+	 *
+	 * @param context the grammar context
+	 * @return true if the character feet the criteria.
+	 */
+	protected boolean isTerm(GrammarContext context) {
 		char current = context.currentChar();
 		return characters.toString().indexOf(current) != -1;
 	}
@@ -102,11 +114,11 @@ public class CharIn extends GrammarLeaf {
 	void buildBnf(BnfContext context) {
 		if (characters.length() <= 1) {
 			context.append("'");
-			context.append(characters.toString());
+			context.append(bnf.toString());
 			context.append("'");
 		} else {
 			context.append("[");
-			for (char chr : characters.toString().toCharArray()) {
+			for (char chr : bnf.toString().toCharArray()) {
 				context.append(String.valueOf(chr));
 			}
 			context.append("]");
