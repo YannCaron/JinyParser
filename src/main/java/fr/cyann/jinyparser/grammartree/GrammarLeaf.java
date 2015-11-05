@@ -16,7 +16,15 @@ abstract class GrammarLeaf extends GrammarElement {
 	 * {@inheritDoc}
 	 */
 	@Override
-	protected void visit(Visitor visitor) {
+	public boolean replace(GrammarElement element, GrammarElement by) {
+		return false;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	protected void visit(AbstractVisitor visitor) {
 		visitor.visitLeaf(this);
 	}
 

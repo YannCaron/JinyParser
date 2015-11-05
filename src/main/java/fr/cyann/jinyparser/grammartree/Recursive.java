@@ -12,20 +12,20 @@ import fr.cyann.jinyparser.exceptions.JinyException;
 import fr.cyann.jinyparser.utils.MultilingualMessage;
 
 /**
- * The ParsemProduction grammar element definition.<br>
+ * The Recursive grammar element definition.<br>
  * Give the ability to loop grammars togathers (and manage cycles).
  */
-public class ParsemProduction extends GrammarElement {
+public class Recursive extends GrammarElement {
 
 	private final String name;
-	private GrammarElement grammar;
+	GrammarElement grammar;
 
 	/**
 	 * Default and mandatory constructor.
 	 *
 	 * @param name the bnf name.
 	 */
-	public ParsemProduction(String name) {
+	public Recursive(String name) {
 		this.name = name;
 	}
 
@@ -35,7 +35,7 @@ public class ParsemProduction extends GrammarElement {
 	 *
 	 * @param grammar the grammar to delegate to.
 	 */
-	public ParsemProduction setGrammar(GrammarElement grammar) {
+	public Recursive setGrammar(GrammarElement grammar) {
 		this.grammar = grammar;
 		return this;
 	}
@@ -48,7 +48,7 @@ public class ParsemProduction extends GrammarElement {
 		if (grammar != null) {
 			return grammar.lookahead(context);
 		}
-		throw new JinyException(MultilingualMessage.create("ParsemProduction grammar must have a grammar to delegate it the lookahead parsing! Please use the ParsemProduction.setGrammar() method before parsing."));
+		throw new JinyException(MultilingualMessage.create("Recursive grammar must have a grammar to delegate it the lookahead parsing! Please use the Recursive.setGrammar() method before parsing."));
 	}
 
 	/**
@@ -59,17 +59,25 @@ public class ParsemProduction extends GrammarElement {
 		if (grammar != null) {
 			return grammar.parse(context);
 		}
-		throw new JinyException(MultilingualMessage.create("ParsemProduction grammar must have a grammar to delegate it the parsing! Please use the ParsemProduction.setGrammar() method before parsing."));
+		throw new JinyException(MultilingualMessage.create("Recursive grammar must have a grammar to delegate it the parsing! Please use the Recursive.setGrammar() method before parsing."));
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
-	protected void visit(Visitor visitor) {
-		visitor.visitRecursiveBefore(this);
-		grammar.visit(visitor);
-		visitor.visitRecursiveAfter(this);
+	public boolean replace(GrammarElement element, GrammarElement by) {
+		if (!grammar.equals(element)) return false;
+		grammar = by;
+		return true;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	protected void visit(AbstractVisitor visitor) {
+		visitor.visitRecursive(this);
 	}
 
 	/**
@@ -78,5 +86,12 @@ public class ParsemProduction extends GrammarElement {
 	@Override
 	void buildBnf(BnfContext context) {
 		context.newProduction(name, grammar);
+	}
+
+	@Override
+	public String toString() {
+		return "Recursive {" +
+				"name='" + name + '\'' +
+				'}';
 	}
 }

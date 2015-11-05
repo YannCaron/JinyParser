@@ -11,7 +11,7 @@ package fr.cyann.jinyparser.acceptanceTest;
 import fr.cyann.jinyparser.exceptions.JinyException;
 import fr.cyann.jinyparser.grammartree.GrammarContext;
 import fr.cyann.jinyparser.grammartree.GrammarElement;
-import fr.cyann.jinyparser.grammartree.ParsemProduction;
+import fr.cyann.jinyparser.grammartree.Recursive;
 import fr.cyann.jinyparser.lexem.Lexem;
 import fr.cyann.jinyparser.lexem.LexemType;
 import fr.cyann.jinyparser.parsetree.AggregateField;
@@ -179,9 +179,9 @@ public class ParserTest extends TestCase {
 		GrammarElement addSign = produceTerminal(charIn("+"), OPERATOR);
 		GrammarElement multiplySign = produceTerminal(charIn("*"), OPERATOR);
 
-		ParsemProduction multiplication = production("Multiplication");
-		ParsemProduction addition = production("Addition");
-		ParsemProduction term = production("Term");
+		Recursive multiplication = production("Multiplication");
+		Recursive addition = production("Addition");
+		Recursive term = production("Term");
 
 		// <Multiplication> := <produceNumber> [ { '*' <produceNumber> } ]
 		GrammarElement multiplyOperation = catcher(produce(term, NUMBER, AstBinaryExpression.class), "right", "sign", "left");
@@ -242,9 +242,9 @@ public class ParserTest extends TestCase {
 		GrammarElement addSign = produceTerminal(charIn("+"), OPERATOR);
 		GrammarElement multiplySign = produceTerminal(charIn("*"), OPERATOR);
 
-		ParsemProduction addition = production("Addition");
-		ParsemProduction multiplication = production("Multiplication");
-		ParsemProduction term = production("Term");
+		Recursive addition = production("Addition");
+		Recursive multiplication = production("Multiplication");
+		Recursive term = production("Term");
 
 		// <multiplication> := <ident> [ { '*' <ident> } ]
 		multiplication.setGrammar(sequence(term, zeroOrOne(oneOrMore(sequence(multiplySign, produceBinaryExpression(term))))));

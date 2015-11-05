@@ -19,7 +19,7 @@ import java.util.List;
 @SuppressWarnings("WeakerAccess")
 public abstract class GrammarNode extends GrammarElement implements Iterable<GrammarElement> {
 
-	private final List<GrammarElement> children;
+	final List<GrammarElement> children;
 
 	/**
 	 * {@inheritDoc}
@@ -42,15 +42,29 @@ public abstract class GrammarNode extends GrammarElement implements Iterable<Gra
 	 * {@inheritDoc}
 	 */
 	@Override
-	protected void visit(Visitor visitor) {
-		visitor.visitNodeBefore(this);
-
-		for (GrammarElement child : children) {
-			child.visit(visitor);
+	public boolean replace(GrammarElement element, GrammarElement by) {
+		boolean result = false;
+		for (int i = 0; i < children.size(); i++) {
+			if (children.get(i).equals(element)) {
+				children.set(i, by);
+				result = true;
+			}
 		}
-
-		visitor.visitNodeAfter(this);
-
+		return result;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	protected void visit(AbstractVisitor visitor) {
+		visitor.visitNode(this);
+	}
+
+	@Override
+	public String toString() {
+		return this.getClass().getSimpleName() + " {" +
+				"childrenCount=" + children.size() +
+				"}";
+	}
 }

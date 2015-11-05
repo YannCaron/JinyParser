@@ -29,7 +29,7 @@ public class LexemCreatorCoreTest extends TestCase {
         try {
             assertNull(context.popParsem());
             fail("parsem stack should be empty !");
-        } finally {
+        } catch (Exception e) {
             System.out.println("success");
         }
         assertEquals(true, context.isTerminated());

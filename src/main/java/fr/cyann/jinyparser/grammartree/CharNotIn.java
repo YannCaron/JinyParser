@@ -44,4 +44,11 @@ public class CharNotIn extends CharIn {
 		context.append(bnf.toString());
 		context.append("]");
 	}
+
+	@Override
+	public String toString() {
+		return "CharNotIn {" +
+				"bnf='" + bnf +
+				"'}";
+	}
 }

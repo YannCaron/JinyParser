@@ -16,10 +16,11 @@ public abstract class GrammarDecorator extends GrammarElement {
 	/**
 	 * The decorated object.
 	 */
-    protected final GrammarElement decorated;
+	GrammarElement decorated;
 
 	/**
 	 * Default and mandatory constructor. Decorated object if final.
+	 *
 	 * @param decorated the decorated object.
 	 */
 	protected GrammarDecorator(GrammarElement decorated) {
@@ -30,10 +31,18 @@ public abstract class GrammarDecorator extends GrammarElement {
 	 * {@inheritDoc}
 	 */
 	@Override
-	protected void visit(Visitor visitor) {
-		visitor.visitDecoratorBefore(this);
-		decorated.visit(visitor);
-		visitor.visitDecoratorAfter(this);
+	public boolean replace(GrammarElement element, GrammarElement by) {
+		if (!decorated.equals(element)) return false;
+		decorated = by;
+		return true;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	protected void visit(AbstractVisitor visitor) {
+		visitor.visitDecorator(this);
 	}
 
 	/**
@@ -43,4 +52,12 @@ public abstract class GrammarDecorator extends GrammarElement {
 	void buildBnf(BnfContext context) {
 		decorated.buildBnf(context);
 	}
+
+	@Override
+	public String toString() {
+		return this.getClass().getSimpleName() + " {" +
+				"decorated=" + decorated.getClass().getSimpleName() +
+				"}";
+	}
+
 }

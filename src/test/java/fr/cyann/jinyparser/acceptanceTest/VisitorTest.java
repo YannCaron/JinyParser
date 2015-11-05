@@ -9,7 +9,7 @@ package fr.cyann.jinyparser.acceptanceTest;/**
 
 import fr.cyann.jinyparser.grammartree.GrammarContext;
 import fr.cyann.jinyparser.grammartree.GrammarElement;
-import fr.cyann.jinyparser.grammartree.ParsemProduction;
+import fr.cyann.jinyparser.grammartree.Recursive;
 import fr.cyann.jinyparser.lexem.Lexem;
 import fr.cyann.jinyparser.lexem.LexemType;
 import fr.cyann.jinyparser.parsetree.*;
@@ -136,7 +136,7 @@ public class VisitorTest extends TestCase {
 		GrammarElement addSign = produceTerminal(charIn("+"), OPERATOR);
 		GrammarElement multiplySign = produceTerminal(charIn("*"), OPERATOR);
 
-		ParsemProduction term = production("Term");
+		Recursive term = production("Term");
 
 		// <multiplication> := <produceNumber> [ { '*' <produceNumber> } ]
 		GrammarElement multiplyOperation = catcher(produce(term, NUMBER, AstBinaryExpression.class).setVisitor(VISIT_MULTIPLICATION), "right", "sign", "left");

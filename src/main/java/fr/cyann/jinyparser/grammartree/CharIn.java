@@ -125,4 +125,10 @@ public class CharIn extends GrammarLeaf {
 		}
 	}
 
+	@Override
+	public String toString() {
+		return "CharIn {" +
+				"bnf='" + bnf +
+				"'}";
+	}
 }

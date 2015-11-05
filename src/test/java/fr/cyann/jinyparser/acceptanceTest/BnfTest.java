@@ -8,14 +8,13 @@ package fr.cyann.jinyparser.acceptanceTest;/**
  **/
 
 import fr.cyann.jinyparser.grammartree.GrammarElement;
-import fr.cyann.jinyparser.grammartree.ParsemProduction;
+import fr.cyann.jinyparser.grammartree.Recursive;
 import fr.cyann.jinyparser.lexem.Lexem;
 import fr.cyann.jinyparser.lexem.LexemType;
 import fr.cyann.jinyparser.parsetree.AggregateField;
 import fr.cyann.jinyparser.parsetree.NonTerminal;
 import fr.cyann.jinyparser.parsetree.ParsemElement;
 import fr.cyann.jinyparser.parsetree.Terminal;
-import fr.cyann.jinyparser.utils.RailroadDiagram;
 import junit.framework.TestCase;
 
 import java.util.ArrayList;
@@ -37,34 +36,34 @@ public class BnfTest extends TestCase {
 		// lexer
 		GrammarElement leftParenthesis = lexem(charIn("("), LexemType.SYMBOL);
 		GrammarElement rightParenthesis = lexem(charIn(")"), LexemType.SYMBOL);
-		GrammarElement number = production("Number").setGrammar(produce(oneOrMore(charIn("0123456789")), NUMBER, AstNumber.class));
+		GrammarElement number = produce(oneOrMore(charIn("0123456789")), NUMBER, AstNumber.class);
 
 		GrammarElement addSign = produceTerminal(charIn("+"), OPERATOR);
 		GrammarElement multiplySign = produceTerminal(charIn("*"), OPERATOR);
 
-		ParsemProduction addition = production("Addition");
-		ParsemProduction multiplication = production("Multiplication");
-		ParsemProduction term = production("Term");
+		//Recursive addition = production("Addition");
+		//Recursive multiplication = production("Multiplication");
+		Recursive term = production("Term");
 
 		// <multiplication> := <produceNumber> [ { '*' <produceNumber> } ]
 		GrammarElement multiplyOperation = catcher(produce(term, NUMBER, AstBinaryExpression.class), "right", "sign", "left");
-		multiplication.setGrammar(sequence(term, zeroOrMore(sequence(multiplySign, multiplyOperation))));
+		GrammarElement multiplication = sequence(term, zeroOrMore(sequence(multiplySign, multiplyOperation)));
 
 		// <addition> := <multiplication> [ { '+' <multiplication> } ]
 		GrammarElement addOperation = catcher(produce(multiplication, NUMBER, AstBinaryExpression.class), "right", "sign", "left");
-		addition.setGrammar(sequence(multiplication, zeroOrMore(sequence(addSign, addOperation))));
+		GrammarElement addition = sequence(multiplication, zeroOrMore(sequence(addSign, addOperation)));
 
 		// <num> := <number> | '(' <addition> ')'
 		term.setGrammar(choice(number, sequence(leftParenthesis, addition, rightParenthesis)));
 
 		// parser
-		GrammarElement grammar = addition;
+		GrammarElement.ProcessedGrammar grammar = addition.process();
 
 		// to BNF
-		System.out.println("Grammar tree:\n" + grammar.toString());
+		System.out.println("Grammar tree:\n" + grammar.toBnf());
 		System.out.println();
 
-		RailroadDiagram.Browse(grammar);
+		//RailroadDiagram.Browse(grammar);
 
 	}
 
@@ -76,17 +75,18 @@ public class BnfTest extends TestCase {
 		GrammarElement bl = lexem(word("{"), LexemType.SYMBOL);
 		GrammarElement br = lexem(word("}"), LexemType.SYMBOL);
 
-		GrammarElement if_ = production("subIf").setGrammar(sequence(produce(word("if"), KEYWORD, AstIf.class), pl, pr, bl, br));
-		GrammarElement elseif = production("subElseIf").setGrammar(sequence(dropper(produceTerminal(word("elseif"), KEYWORD), "elseif"), pl, pr, bl, br));
-		GrammarElement else_ = production("subElse").setGrammar(sequence(dropper(produceTerminal(word("else"), KEYWORD), "else"), bl, br));
+		GrammarElement if_ = sequence(produce(word("if"), KEYWORD, AstIf.class), pl, pr, bl, br);
+		GrammarElement elseif = sequence(dropper(produceTerminal(word("elseif"), KEYWORD), "elseif"), pl, pr, bl, br);
+		GrammarElement else_ = sequence(dropper(produceTerminal(word("else"), KEYWORD), "else"), bl, br);
 
-		GrammarElement grammar = production("If").setGrammar(sequence(if_, zeroOrOne(oneOrMore(elseif)), zeroOrOne(else_)));
+		GrammarElement ifProd = sequence(if_, zeroOrOne(oneOrMore(elseif)), zeroOrOne(else_));
+		GrammarElement.ProcessedGrammar grammar = ifProd.process();
 
 		// to BNF
-		System.out.println("Grammar tree:\n" + grammar.toString());
+		System.out.println("Grammar tree:\n" + grammar.toBnf());
 		System.out.println();
 
-		RailroadDiagram.Browse(grammar);
+		//RailroadDiagram.Browse(grammar);
 
 	}
 

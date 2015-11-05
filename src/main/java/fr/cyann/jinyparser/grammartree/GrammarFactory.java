@@ -305,8 +305,8 @@ public final class GrammarFactory {
 	    return choice;
     }
 
-	public static ParsemProduction production(String name) {
-		return new ParsemProduction(name);
+	public static Recursive production(String name) {
+		return new Recursive(name);
 	}
 
     // endregion

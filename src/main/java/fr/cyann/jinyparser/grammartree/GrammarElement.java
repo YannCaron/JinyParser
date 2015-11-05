@@ -12,9 +12,7 @@ package fr.cyann.jinyparser.grammartree;
 import fr.cyann.jinyparser.exceptions.JinyException;
 import fr.cyann.jinyparser.utils.MultilingualMessage;
 
-import java.util.LinkedHashMap;
-import java.util.Locale;
-import java.util.Map;
+import java.util.*;
 
 /**
  * The GrammarElement class. Then top abstract class of all grammar elements.<br>
@@ -70,6 +68,14 @@ public abstract class GrammarElement {
 	protected abstract boolean parse(GrammarContext context);
 
 	/**
+	 * Replace the child element by another.
+	 *
+	 * @param element the element to be replaced in the list.
+	 * @param by      the element to replace with.
+	 */
+	public abstract boolean replace(GrammarElement element, GrammarElement by);
+
+	/**
 	 * Launch the lookahead search from a parsing method.
 	 *
 	 * @param context the parsing context that contains all necessary resources to the parsing (iterators, flags and so on).
@@ -93,7 +99,8 @@ public abstract class GrammarElement {
 	 * @return the processed grammar object.
 	 */
 	public ProcessedGrammar process() {
-		return new ProcessedGrammar(this);
+		GrammarElement root = Analysis.findUsage(this);
+		return new ProcessedGrammar(root);
 	}
 
 	/**
@@ -104,22 +111,14 @@ public abstract class GrammarElement {
 	abstract void buildBnf(BnfContext context);
 
 	/**
-	 * Build the BNF expression of the grammar hierarchy.
+	 * Visit the tree in depth first order.
 	 *
-	 * @return the string expression.
+	 * @param visitor the visitor where methods are invoked during the traversal.
 	 */
-	@Override
-	public String toString() {
-		BnfContext context = new BnfContext();
-		//buildProductions(context);
-		buildBnf(context);
-		return context.toString();
-	}
+	abstract void visit(AbstractVisitor visitor);
 
 	// TODO a voir
-	protected abstract void visit(Visitor visitor);
-
-	protected void ascendingChain(SimpleVisitor visitor) {
+	void ascendingChain(SimpleVisitor visitor) {
 		visitor.visitBefore(this);
 		if (hasParent()) {
 			getParent().ascendingChain(visitor);
@@ -128,26 +127,56 @@ public abstract class GrammarElement {
 	}
 
 	// TODO javadoc
-	protected interface SimpleVisitor {
+	interface SimpleVisitor {
 		void visitBefore(GrammarElement grammar);
 
 		void visitAfter(GrammarElement grammar);
 	}
 
-	protected interface Visitor {
-		void visitLeaf(GrammarLeaf grammar);
+	/**
+	 * Represent a processed grammar. e.g an analysed grammar.
+	 */
+	public static class ProcessedGrammar {
 
-		void visitRecursiveBefore(ParsemProduction grammar);
+		private final GrammarElement root;
 
-		void visitRecursiveAfter(ParsemProduction grammar);
+		private ProcessedGrammar(GrammarElement root) {
+			this.root = root;
+		}
 
-		void visitDecoratorBefore(GrammarDecorator grammar);
+		/**
+		 * The parsing entry method.
+		 *
+		 * @param source the source code to parse.
+		 * @return the grammar context.
+		 */
+		public GrammarContext parse(String source) {
+			GrammarContext context = new GrammarContext(source);
+			boolean result = root.parse(context);
 
-		void visitDecoratorAfter(GrammarDecorator grammar);
+			// check error
+			if (!context.isTerminated() || !result) {
+				System.out.println(context.toString());
+				System.out.println("ERROR");
+				throw new JinyException(
+						MultilingualMessage.create("Error at position [%s], unknown symbol \"%s\"!")
+								.translate(Locale.FRENCH, "Erreur à la position [%s], symbol \"%s\" inconnu!")
+								.setArgs(context.getPositionToString(), context.currentChar()));
+			}
 
-		void visitNodeBefore(GrammarNode grammar);
+			return context;
+		}
 
-		void visitNodeAfter(GrammarNode grammar);
+		/**
+		 * Express the grammar to bnf form.
+		 *
+		 * @return the bnf representation of the grammar.
+		 */
+		public String toBnf() {
+			BnfContext context = new BnfContext();
+			root.buildBnf(context);
+			return context.toString();
+		}
 	}
 
 	/**
@@ -158,7 +187,6 @@ public abstract class GrammarElement {
 		/**
 		 * The name of default root grammar node.
 		 */
-		public static final String ROOT_NAME = "Grammar";
 		public static final String PRODUCTION_SYMBOL = " ::= ";
 		private final Map<String, String> productions;
 
@@ -213,15 +241,16 @@ public abstract class GrammarElement {
 			}
 		}
 
+
+		/**
+		 * Gives the string representation of the object.
+		 *
+		 * @return the string representation.
+		 */
 		@Override
 		public String toString() {
 
-			if (sb.length() != 0) {
-				sb.insert(0, PRODUCTION_SYMBOL);
-				sb.insert(0, ROOT_NAME);
-				productions.put(ROOT_NAME, sb.toString());
-				clear();
-			}
+			clear();
 
 			boolean first = true;
 			for (String production : productions.values()) {
@@ -234,40 +263,36 @@ public abstract class GrammarElement {
 		}
 	}
 
-	public static class ProcessedGrammar {
+	/**
+	 * The visitor class. Revisited (it is not a joke) from the original GoF visitor pattern.<br>
+	 * This visitor is able to
+	 */
+	static abstract class AbstractVisitor {
+		final Set<Recursive> visitedRecursive = new HashSet<Recursive>();
 
-		private final GrammarElement root;
-
-		private ProcessedGrammar(GrammarElement root) {
-			this.root = root;
+		public void visitLeaf(GrammarLeaf grammar) {
 		}
 
-		/**
-		 * The parsing entry method.
-		 *
-		 * @param source the source code to parse.
-		 * @return the grammar context.
-		 */
-		public GrammarContext parse(String source) {
-			GrammarContext context = new GrammarContext(source);
-			boolean result = root.parse(context);
+		public void visitRecursive(Recursive grammar) {
+			if (visitedRecursive.contains(grammar)) return;
+			visitedRecursive.add(grammar);
 
-			// check error
-			if (!context.isTerminated() || !result) {
-				System.out.println(context.toString());
-				System.out.println("ERROR");
-				throw new JinyException(
-						MultilingualMessage.create("Error at position [%s], unknown symbol \"%s\"!")
-								.translate(Locale.FRENCH, "Erreur à la position [%s], symbol \"%s\" inconnu!")
-								.setArgs(context.getPositionToString(), context.currentChar()));
+			grammar.grammar.visit(this);
+		}
+
+		public void visitDecorator(GrammarDecorator grammar) {
+			grammar.decorated.visit(this);
+		}
+
+		public void visitNode(GrammarNode grammar) {
+			for (GrammarElement child : grammar.children) {
+				child.visit(this);
 			}
-
-			return context;
 		}
 
 	}
 
-	protected abstract class AbstractSimpleVisitor implements SimpleVisitor {
+	static abstract class AbstractSimpleVisitor implements SimpleVisitor {
 		@Override
 		public void visitBefore(GrammarElement grammar) {
 
@@ -279,39 +304,4 @@ public abstract class GrammarElement {
 		}
 	}
 
-	protected abstract class AbstractVisitor implements Visitor {
-		@Override
-		public void visitLeaf(GrammarLeaf grammar) {
-		}
-
-		@Override
-		public void visitRecursiveBefore(ParsemProduction grammar) {
-
-		}
-
-		@Override
-		public void visitRecursiveAfter(ParsemProduction grammar) {
-
-		}
-
-		@Override
-		public void visitDecoratorBefore(GrammarDecorator grammar) {
-
-		}
-
-		@Override
-		public void visitDecoratorAfter(GrammarDecorator grammar) {
-
-		}
-
-		@Override
-		public void visitNodeBefore(GrammarNode grammar) {
-
-		}
-
-		@Override
-		public void visitNodeAfter(GrammarNode grammar) {
-
-		}
-	}
 }

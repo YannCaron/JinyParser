@@ -7,10 +7,10 @@ package fr.cyann.jinyparser.utils;/**
  * ou écrivez à Creative Commons, 444 Castro Street, Suite 900, Mountain View, California, 94041, USA.
  **/
 
-import fr.cyann.jinyparser.grammartree.GrammarElement;
-
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+
+import static fr.cyann.jinyparser.grammartree.GrammarElement.ProcessedGrammar;
 
 /**
  * The RailroadDiagram definition.
@@ -23,12 +23,12 @@ public class RailroadDiagram {
         throw new RuntimeException("Cannot instantiate static class");
     }
 
-    public static void Browse(GrammarElement root) {
-        String urlFormat = BOTTLE_CAPS_URL_FORMAT;
+	public static void Browse(ProcessedGrammar root) {
+		String urlFormat = BOTTLE_CAPS_URL_FORMAT;
         String url = null;
         try {
-            url = String.format(urlFormat, URLEncoder.encode(root.toString(), "UTF-8"));
-            Internet.Browse(url);
+	        url = String.format(urlFormat, URLEncoder.encode(root.toBnf(), "UTF-8"));
+	        Internet.Browse(url);
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         }
