@@ -17,8 +17,8 @@ import fr.cyann.jinyparser.utils.MultilingualMessage;
  */
 public class Recursive extends GrammarElement {
 
-	private final String name;
-	GrammarElement grammar;
+    protected final String name;
+    protected GrammarElement grammar;
 
 	/**
 	 * Default and mandatory constructor.

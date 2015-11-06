@@ -19,92 +19,120 @@ import static fr.cyann.jinyparser.grammartree.GrammarElement.AbstractVisitor;
  */
 class Analysis {
 
-	private Analysis() {
-		throw new RuntimeException("Static class cannot be instantiated.");
-	}
+    private Analysis() {
+        throw new RuntimeException("Static class cannot be instantiated.");
+    }
 
-	static GrammarElement findUsage(GrammarElement root) {
+    static GrammarElement findUsage(GrammarElement root) {
 
-		final Map<GrammarElement, Integer> usage = new HashMap<GrammarElement, Integer>();
-		final Set<GrammarNode> repeatedNode = new HashSet<GrammarNode>();
+        final Map<GrammarElement, Integer> usage = new HashMap<GrammarElement, Integer>();
+        final Set<GrammarNode> repeatedNode = new HashSet<GrammarNode>();
 
-		// evaluate usage
-		root.visit(new AbstractVisitor() {
-			@Override
-			public void visitLeaf(GrammarLeaf grammar) {
-				super.visitLeaf(grammar);
-			}
+        // evaluate usage
+        root.visit(new AbstractVisitor() {
+            @Override
+            public void visitLeaf(GrammarLeaf grammar) {
+                super.visitLeaf(grammar);
+            }
 
-			@Override
-			public void visitRecursive(Recursive grammar) {
-				appendToUsage(grammar);
-				super.visitRecursive(grammar);
-			}
+            @Override
+            public void visitRecursive(Recursive grammar) {
+                appendToUsage(grammar);
+                super.visitRecursive(grammar);
+            }
 
-			@Override
-			public void visitDecorator(GrammarDecorator grammar) {
-				super.visitDecorator(grammar);
-			}
+            @Override
+            public void visitDecorator(GrammarDecorator grammar) {
+                super.visitDecorator(grammar);
+            }
 
-			@Override
-			public void visitNode(GrammarNode grammar) {
-				boolean found = usage.get(grammar) != null;
-				appendToUsage(grammar);
+            @Override
+            public void visitNode(GrammarNode grammar) {
+                boolean found = usage.get(grammar) != null;
+                appendToUsage(grammar);
 
-				if (!found)
-					super.visitNode(grammar);
-				else
-					repeatedNode.add(grammar);
-			}
+                if (!found)
+                    super.visitNode(grammar);
+                else
+                    repeatedNode.add(grammar);
+            }
 
-			public void appendToUsage(GrammarElement element) {
-				Integer used = usage.get(element);
-				if (used == null) used = 0;
-				usage.put(element, used + 1);
-			}
-		});
+            public void appendToUsage(GrammarElement element) {
+                Integer used = usage.get(element);
+                if (used == null) used = 0;
+                usage.put(element, used + 1);
+            }
+        });
 
-		// interpose recursive to node used multi time.
-		int num = 0;
-		for (final GrammarNode node : repeatedNode) {
-			//node.getParent().replace(node, new Recursive("G" + num++).setGrammar(node));
+        // interpose recursive to node used multi time.
+        int num = 0;
+        for (final GrammarNode node : repeatedNode) {
+            //node.getParent().replace(node, new Recursive("G" + num++).setGrammar(node));
 
-			final GrammarElement newNode = new Recursive("G" + num++).setGrammar(node);
+            final GrammarElement newNode = new GrammarName(node, "G" + num++);
 
-			root.visit(new AbstractVisitor() {
-				@Override
-				public void visitLeaf(GrammarLeaf grammar) {
-					super.visitLeaf(grammar);
-				}
+            root.visit(new AbstractVisitor() {
+                @Override
+                public void visitLeaf(GrammarLeaf grammar) {
+                    super.visitLeaf(grammar);
+                }
 
-				@Override
-				public void visitRecursive(Recursive grammar) {
-					super.visitRecursive(grammar);
-				}
+                @Override
+                public void visitRecursive(Recursive grammar) {
+                    super.visitRecursive(grammar);
+                }
 
-				@Override
-				public void visitDecorator(GrammarDecorator grammar) {
-					super.visitDecorator(grammar);
-					try {
-						grammar.replace(node, newNode);
-					} catch (Exception e) {
-					}
-				}
+                @Override
+                public void visitDecorator(GrammarDecorator grammar) {
+                    super.visitDecorator(grammar);
+                    grammar.replace(node, newNode);
+                }
 
-				@Override
-				public void visitNode(GrammarNode grammar) {
-					super.visitNode(grammar);
-					grammar.replace(node, newNode);
-				}
-			});
-		}
+                @Override
+                public void visitNode(GrammarNode grammar) {
+                    super.visitNode(grammar);
+                    grammar.replace(node, newNode);
+                }
+            });
 
-		//
-		if (root instanceof Recursive) {
-			return root;
-		}
-		return new Recursive("Grammar").setGrammar(root);
+            if (root == node) root = newNode;
+        }
 
-	}
+        // naming of the root node
+        if (root.getClass().isAssignableFrom(Recursive.class)) {
+            return root;
+        }
+        return new GrammarName(root, "Grammar");
+
+    }
+
+    // region inner class
+
+    static class GrammarName extends Recursive {
+
+        public GrammarName(GrammarElement decorated, String name) {
+            super(name);
+            super.grammar = decorated;
+        }
+
+        @Override
+        protected boolean lookahead(GrammarContext context) {
+            return super.grammar.lookahead(context);
+        }
+
+        @Override
+        protected boolean parse(GrammarContext context) {
+            return super.grammar.parse(context);
+        }
+
+        @Override
+        public String toString() {
+            return "GrammarName {" +
+                    "name='" + name + '\'' +
+                    '}';
+        }
+    }
+
+    // end region
 
 }
