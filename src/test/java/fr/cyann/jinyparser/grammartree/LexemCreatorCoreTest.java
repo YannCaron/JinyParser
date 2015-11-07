@@ -21,7 +21,7 @@ public class LexemCreatorCoreTest extends TestCase {
         String source = "abc";
         GrammarContext context = new GrammarContext(source);
 
-        GrammarElement producer = produceTerminal(new Word("abc"), LexemType.SYMBOL);
+        GrammarElement producer = produceTerminal("TODO:NAME", new Word("abc"), LexemType.SYMBOL);
 
         boolean result = producer.lookahead(context);
 
@@ -41,7 +41,7 @@ public class LexemCreatorCoreTest extends TestCase {
         String source = "abc";
         GrammarContext context = new GrammarContext(source);
 
-        GrammarElement producer = produceTerminal(new Word("abc"), LexemType.SYMBOL);
+        GrammarElement producer = produceTerminal("TODO:NAME", new Word("abc"), LexemType.SYMBOL);
 
         boolean result = producer.parse(context);
 

@@ -19,12 +19,12 @@ public class Sequence extends GrammarNode {
 	/**
 	 * {@inheritDoc}
 	 */
-	public Sequence(GrammarElement... elements) {
-		super(elements);
-	}
+    public Sequence(GrammarElement[] children) {
+        super(children);
+    }
 
-	/**
-	 * {@inheritDoc}
+    /**
+     * {@inheritDoc}
 	 */
 	@Override
 	protected boolean lookahead(GrammarContext context) {

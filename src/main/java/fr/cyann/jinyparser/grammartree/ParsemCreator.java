@@ -22,22 +22,32 @@ import java.lang.reflect.Constructor;
  */
 public class ParsemCreator<P extends ParsemElement> extends GrammarDecorator {
 
-	private final Class<P> clazz;
+    private final String name;
+    private final Class<P> clazz;
 	private ParsemVisitor<P, ? extends VisitorContext> visitor;
 
 	/**
 	 * Default constructor.
-	 *
-	 * @param decorated the decorated grammar element.
-	 * @param clazz     the grammar element class to create.
-	 */
-	public ParsemCreator(GrammarElement decorated, Class<P> clazz) {
-		super(decorated);
-		this.clazz = clazz;
+     *  @param decorated the decorated grammar element.
+     * @param clazz     the grammar element class to create.
+     */
+    public ParsemCreator(String name, GrammarElement decorated, Class<P> clazz) {
+        super(decorated);
+        this.name = name;
+        this.clazz = clazz;
 	}
 
-	/**
-	 * Get the parsem class to produce.
+    /**
+     * Get the production name.
+     *
+     * @return the production name.
+     */
+    public String getName() {
+        return name;
+    }
+
+    /**
+     * Get the parsem class to produce.
 	 *
 	 * @return the parsem class to produce.
 	 */

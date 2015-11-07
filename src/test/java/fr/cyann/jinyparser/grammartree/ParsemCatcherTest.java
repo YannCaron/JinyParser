@@ -19,7 +19,7 @@ public class ParsemCatcherTest extends TestCase {
 
 		String source = "ab";
 
-		GrammarElement g = sequence(createTerminal(lexem(word("a"))), catcherDefault(createNonTerminal(lexem(word("b"))), 1));
+        GrammarElement g = sequence(createTerminal("TODO:NAME", lexem(word("a"))), catcherDefault(createNonTerminal("TODO:NAME", lexem(word("b"))), 1));
 
 		GrammarContext context = new GrammarContext(source);
 
@@ -35,7 +35,7 @@ public class ParsemCatcherTest extends TestCase {
 
 		String source = "ab";
 
-		GrammarElement g = sequence(createTerminal(lexem(word("a"))), catcherDefault(createNonTerminal(lexem(word("b"))), 1));
+        GrammarElement g = sequence(createTerminal("TODO:NAME", lexem(word("a"))), catcherDefault(createNonTerminal("TODO:NAME", lexem(word("b"))), 1));
 
 		GrammarContext context = new GrammarContext(source);
 

@@ -32,8 +32,10 @@ public abstract class GrammarNode extends GrammarElement implements Iterable<Gra
 		}
 	}
 
-	/** {@inheritDoc} */
-	@Override
+    /**
+     * {@inheritDoc}
+     */
+    @Override
 	public Iterator<GrammarElement> iterator() {
 		return children.iterator();
 	}

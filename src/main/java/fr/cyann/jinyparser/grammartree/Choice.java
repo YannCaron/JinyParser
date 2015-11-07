@@ -17,12 +17,12 @@ public class Choice extends GrammarNode {
 	/**
 	 * {@inheritDoc}
 	 */
-	public Choice(GrammarElement... grammarElements) {
-		super(grammarElements);
-	}
+    public Choice(GrammarElement[] children) {
+        super(children);
+    }
 
-	/**
-	 * {@inheritDoc}
+    /**
+     * {@inheritDoc}
 	 */
 	@Override
 	protected boolean lookahead(GrammarContext context) {

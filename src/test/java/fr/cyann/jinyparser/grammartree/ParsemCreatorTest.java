@@ -22,7 +22,7 @@ public class ParsemCreatorTest extends TestCase {
 	public void testSetVisitor() throws Exception {
 		String source = "a";
 
-		ParsemCreator<DefaultTerminal> p = createTerminal(lexem(word("a")));
+        ParsemCreator<DefaultTerminal> p = createTerminal("TODO:NAME", lexem(word("a")));
 
 		assertNull(getPrivateField(p, "visitor"));
 
@@ -41,7 +41,7 @@ public class ParsemCreatorTest extends TestCase {
 	public void testLookahead() throws Exception {
 		String source = "a";
 
-		ParsemCreator<DefaultTerminal> p = createTerminal(lexem(word("a")));
+        ParsemCreator<DefaultTerminal> p = createTerminal("TODO:NAME", lexem(word("a")));
 
 		GrammarContext context = new GrammarContext(source);
 
@@ -56,7 +56,7 @@ public class ParsemCreatorTest extends TestCase {
 
 		String source = "a";
 
-		ParsemCreator<DefaultTerminal> p = createTerminal(lexem(word("a")));
+        ParsemCreator<DefaultTerminal> p = createTerminal("TODO:NAME", lexem(word("a")));
 
 		GrammarContext context = new GrammarContext(source);
 

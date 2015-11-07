@@ -137,69 +137,81 @@ public final class GrammarFactory {
         return new LexemCreator(decorated, lexemType);
     }
 
-    /**
-     * Grammar element that produce a default terminal create.
-     *
-     * @param decorated the grammar that decide if create will be produced.
-     * @return the new grammar element.
-     */
-    public static ParsemCreator<DefaultTerminal> createTerminal(LexemCreator decorated) {
-        return new ParsemCreator<DefaultTerminal>(decorated, DefaultTerminal.class);
-    }
-
-    /**
-     * Grammar element that produce a default terminal create.
-     *
-     * @param decorated the grammar that decide if create will be produced.
-     * @return the new grammar element.
-     */
-    public static ParsemCreator<DefaultNonTerminal> createNonTerminal(GrammarElement decorated) {
-        return new ParsemCreator<DefaultNonTerminal>(decorated, DefaultNonTerminal.class);
-    }
 
     /**
      * Grammar element that produce create (process parse tree element in the stack).
      *
+     *
+     * @param name
      * @param decorated the grammar that decide if create will be produced.
      * @param clazz     the create element class to create.
      * @return the new grammar element.
      */
-    public static <P extends ParsemElement> ParsemCreator<P> create(GrammarElement decorated, Class<P> clazz) {
-        return new ParsemCreator<P>(decorated, clazz);
+    public static <P extends ParsemElement> ParsemCreator<P> create(String name, GrammarElement decorated, Class<P> clazz) {
+        return new ParsemCreator<P>(name, decorated, clazz);
+    }
+
+    /**
+     * Grammar element that produce a default terminal create.
+     *
+     *
+     * @param name
+     * @param decorated the grammar that decide if create will be produced.
+     * @return the new grammar element.
+     */
+    public static ParsemCreator<DefaultTerminal> createTerminal(String name, LexemCreator decorated) {
+        return new ParsemCreator<DefaultTerminal>(name, decorated, DefaultTerminal.class);
+    }
+
+    /**
+     * Grammar element that produce a default terminal create.
+     *
+     *
+     * @param name
+     * @param decorated the grammar that decide if create will be produced.
+     * @return the new grammar element.
+     */
+    public static ParsemCreator<DefaultNonTerminal> createNonTerminal(String name, GrammarElement decorated) {
+        return new ParsemCreator<DefaultNonTerminal>(name, decorated, DefaultNonTerminal.class);
     }
 
     /**
      * Create a lexem that manage spaces and then a terminal parsem.
      *
+     *
+     * @param name
      * @param decorated the grammar that decide if create will be produced.
      * @param lexemType the type of the lexem to create.
      * @return the created grammar element.
      */
-    public static ParsemCreator<DefaultTerminal> produceTerminal(GrammarElement decorated, LexemType lexemType) {
-        return GrammarFactory.createTerminal(lexem(decorated, lexemType));
+    public static ParsemCreator<DefaultTerminal> produceTerminal(String name, GrammarElement decorated, LexemType lexemType) {
+        return GrammarFactory.createTerminal(name, lexem(decorated, lexemType));
     }
 
     /**
      * Create a lexem that manage spaces and then a non terminal parsem.
      *
+     *
+     * @param name
      * @param decorated the grammar that decide if create will be produced.
      * @param lexemType the type of the lexem to create.
      * @return the created grammar element.
      */
-    public static ParsemCreator<DefaultNonTerminal> produceNonTerminal(GrammarElement decorated, LexemType lexemType) {
-        return GrammarFactory.createNonTerminal(lexem(decorated, lexemType));
+    public static ParsemCreator<DefaultNonTerminal> produceNonTerminal(String name, GrammarElement decorated, LexemType lexemType) {
+        return GrammarFactory.createNonTerminal(name, lexem(decorated, lexemType));
     }
 
     /**
      * Create a lexem that manage spaces and then a parsem.
      *
+     * @param name
      * @param decorated   the grammar that decide if create will be produced.
      * @param lexemType   the type of the lexem to create.
      * @param parsemClass the class of the parsem to create.
      * @return the created grammar element.
      */
-    public static <P extends ParsemElement> ParsemCreator produce(GrammarElement decorated, LexemType lexemType, Class<P> parsemClass) {
-        return GrammarFactory.create(lexem(decorated, lexemType), parsemClass);
+    public static <P extends ParsemElement> ParsemCreator produce(String name, GrammarElement decorated, LexemType lexemType, Class<P> parsemClass) {
+        return GrammarFactory.create(name, lexem(decorated, lexemType), parsemClass);
     }
 
     /**
@@ -272,6 +284,7 @@ public final class GrammarFactory {
     /**
      * Create a new sequence grammar element.
      *
+     *
      * @param elements list of children.
      * @return the new grammar element.
      */
@@ -283,10 +296,12 @@ public final class GrammarFactory {
 	/**
 	 * Create a wrapper where grammar element must be repeated a number of time (equivalent to sequence(g, g, g, ...)).
 	 *
-	 * @param element the grammar element to decorate.
-	 * @param count   how many time, the element must be repeated.
-	 * @return the new grammar element.
-	 */
+     *
+     * @param name
+     * @param element the grammar element to decorate.
+     * @param count   how many time, the element must be repeated.
+     * @return the new grammar element.
+     */
 	public static Sequence asMany(GrammarElement element, int count) {
 		GrammarElement[] elements = new GrammarElement[count];
 		for (int i = 0; i < count; i++)
@@ -296,6 +311,8 @@ public final class GrammarFactory {
 
 	/**
 	 * Create a new choice grammar element.
+     *
+     *
      *
      * @param elements list of children.
      * @return the new grammar element.

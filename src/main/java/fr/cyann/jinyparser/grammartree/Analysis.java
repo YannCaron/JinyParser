@@ -7,6 +7,8 @@ package fr.cyann.jinyparser.grammartree;/**
  * ou écrivez à Creative Commons, 444 Castro Street, Suite 900, Mountain View, California, 94041, USA.
  **/
 
+import fr.cyann.jinyparser.parsetree.Terminal;
+
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -19,6 +21,8 @@ import static fr.cyann.jinyparser.grammartree.GrammarElement.AbstractVisitor;
  */
 class Analysis {
 
+    public static final String DEFAULT_GRAMMAR_NAME = "Grammar";
+
     private Analysis() {
         throw new RuntimeException("Static class cannot be instantiated.");
     }
@@ -30,6 +34,8 @@ class Analysis {
 
         // evaluate usage
         root.visit(new AbstractVisitor() {
+            int num = 0;
+
             @Override
             public void visitLeaf(GrammarLeaf grammar) {
                 super.visitLeaf(grammar);
@@ -43,7 +49,18 @@ class Analysis {
 
             @Override
             public void visitDecorator(GrammarDecorator grammar) {
+
+                // TODO
                 super.visitDecorator(grammar);
+                if (grammar instanceof ParsemCreator) {
+                    ParsemCreator creator = (ParsemCreator) grammar;
+                    if (Terminal.class.isAssignableFrom(creator.getParsemClass())) {
+                        GrammarName grammarName = new GrammarName(creator.getName(), creator);
+                        if (grammar.getParent() != null)
+                            grammar.getParent().replace(grammar, grammarName);
+                    }
+                }
+
             }
 
             @Override
@@ -51,10 +68,11 @@ class Analysis {
                 boolean found = usage.get(grammar) != null;
                 appendToUsage(grammar);
 
-                if (!found)
+                if (!found) {
                     super.visitNode(grammar);
-                else
+                } else {
                     repeatedNode.add(grammar);
+                }
             }
 
             public void appendToUsage(GrammarElement element) {
@@ -66,10 +84,9 @@ class Analysis {
 
         // interpose recursive to node used multi time.
         int num = 0;
-        for (final GrammarNode node : repeatedNode) {
-            //node.getParent().replace(node, new Recursive("G" + num++).setGrammar(node));
 
-            final GrammarElement newNode = new GrammarName(node, "G" + num++);
+        for (final GrammarNode node : repeatedNode) {
+            final GrammarElement newNode = new GrammarName("G" + num++, node);
 
             root.visit(new AbstractVisitor() {
                 @Override
@@ -102,7 +119,7 @@ class Analysis {
         if (root.getClass().isAssignableFrom(Recursive.class)) {
             return root;
         }
-        return new GrammarName(root, "Grammar");
+        return new GrammarName(DEFAULT_GRAMMAR_NAME, root);
 
     }
 
@@ -110,7 +127,7 @@ class Analysis {
 
     static class GrammarName extends Recursive {
 
-        public GrammarName(GrammarElement decorated, String name) {
+        public GrammarName(String name, GrammarElement decorated) {
             super(name);
             super.grammar = decorated;
         }
