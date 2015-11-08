@@ -126,7 +126,56 @@ public abstract class GrammarElement {
 		visitor.visitAfter(this);
 	}
 
-	// TODO javadoc
+    /*
+        Iterator<GrammarElement> parentIterator() {
+            return new Iterator<GrammarElement>() {
+                GrammarElement current;
+
+                @Override
+                public boolean hasNext() {
+                    return current.parent != null;
+                }
+
+                @Override
+                public GrammarElement next() {
+                    current = current.parent;
+                    return current;
+                }
+
+                @Override
+                public void remove() {
+                    throw new RuntimeException("Cannot remove on this iterator.");
+                }
+            };
+        }
+
+        protected abstract boolean hasNextDepthFirst();
+
+        protected abstract GrammarElement nextDepthFirst();
+
+        Iterator<GrammarElement> depthFirstIterator() {
+            return new Iterator<GrammarElement>() {
+                GrammarElement current;
+
+                @Override
+                public boolean hasNext() {
+                    return current.hasNextDepthFirst();
+                }
+
+                @Override
+                public GrammarElement next() {
+                    current = current.nextDepthFirst();
+                    return current;
+                }
+
+                @Override
+                public void remove() {
+                    throw new RuntimeException("Cannot remove on this iterator.");
+                }
+            };
+        }
+    */
+    // TODO javadoc
 	interface SimpleVisitor {
 		void visitBefore(GrammarElement grammar);
 
