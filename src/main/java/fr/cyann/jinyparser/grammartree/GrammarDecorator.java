@@ -27,6 +27,7 @@ public abstract class GrammarDecorator extends GrammarElement {
 	 * @param decorated the decorated object.
 	 */
 	protected GrammarDecorator(GrammarElement decorated) {
+		decorated.setParent(this);
 		this.decorated = decorated;
 	}
 

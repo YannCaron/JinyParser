@@ -38,28 +38,35 @@ class Analysis {
 		}
 
 		// find node names
-		/*GrammarNode currentNode = null;
-		for (GrammarElement element : root.breadthFirstSearch()) {
-			System.out.println(element);
+		for (GrammarElement element : root.depthFirstSearch()) {
+			if (element instanceof ParsemCreator) {
 
-			if (element instanceof GrammarNode) {
-				currentNode = (GrammarNode)element;
-			} else if (element instanceof ParsemCreator) {
-				nodeNames.put(currentNode, ((ParsemCreator)element).getName());
+				String name = ((ParsemCreator) element).getName();
+
+				for (GrammarElement parent : element.ascendingSearch()) {
+					boolean found = false;
+
+					if (parent instanceof ParsemDropper) {
+						found = true;
+					} else if (!found && parent instanceof GrammarNode) {
+						nodeNames.put(parent, name);
+						found = true;
+					}
+				}
 			}
+		}
 
-		}*/
 
 		// interpose recursive to node used multi time.
-		int num = 0;
+		//int num = 0;
 
 		for (GrammarElement node : usedElements.keySet()) {
 			int usage = usedElements.get(node);
 
 			if (usage > 1) {
 
-				//String name = nodeNames.get(node);
-				String name = "G" + num++;
+				String name = nodeNames.get(node);
+				//String name = "G" + num++;
 				GrammarElement newNode = new GrammarName(name, node);
 
 				// all elements

@@ -15,6 +15,7 @@ import fr.cyann.jinyparser.parsetree.AggregateField;
 import fr.cyann.jinyparser.parsetree.NonTerminal;
 import fr.cyann.jinyparser.parsetree.ParsemElement;
 import fr.cyann.jinyparser.parsetree.Terminal;
+import fr.cyann.jinyparser.utils.RailroadDiagram;
 import junit.framework.TestCase;
 
 import java.util.ArrayList;
@@ -36,13 +37,12 @@ public class BnfTest extends TestCase {
 		// lexer
 		GrammarElement leftParenthesis = lexem(charIn("("), LexemType.SYMBOL);
 		GrammarElement rightParenthesis = lexem(charIn(")"), LexemType.SYMBOL);
-        GrammarElement number = produce("Number", oneOrMore(charIn("0123456789")), NUMBER, AstNumber.class);
+		GrammarElement number = produce("Number", oneOrMore(charIn('0', '9')), NUMBER, AstNumber.class);
 
         GrammarElement addSign = produceTerminal("AddSign", charIn("+"), OPERATOR);
         GrammarElement multiplySign = produceTerminal("MultiplySign", charIn("*"), OPERATOR);
 
-		//Recursive addition = production("Addition");
-		//Recursive multiplication = production("Multiplication");
+		// recursive
 		Recursive term = production("Term");
 
 		// <multiplication> := <produceNumber> [ { '*' <produceNumber> } ]
@@ -63,7 +63,7 @@ public class BnfTest extends TestCase {
 		System.out.println("Grammar tree:\n" + grammar.toBnf());
 		System.out.println();
 
-		//RailroadDiagram.Browse(grammar);
+		RailroadDiagram.Browse(grammar);
 
 	}
 
@@ -79,14 +79,14 @@ public class BnfTest extends TestCase {
         GrammarElement elseif = sequence(dropper(produceTerminal("elseIf", word("elseif"), KEYWORD), "elseif"), pl, pr, bl, br);
         GrammarElement else_ = sequence(dropper(produceTerminal("else", word("else"), KEYWORD), "else"), bl, br);
 
-		GrammarElement ifProd = sequence(if_, zeroOrOne(oneOrMore(elseif)), zeroOrOne(else_));
+		GrammarElement ifProd = sequence(if_, zeroOrMore(elseif), zeroOrOne(else_));
 		GrammarElement.ProcessedGrammar grammar = ifProd.process();
 
 		// to BNF
 		System.out.println("Grammar tree:\n" + grammar.toBnf());
 		System.out.println();
 
-		//RailroadDiagram.Browse(grammar);
+		RailroadDiagram.Browse(grammar);
 
 	}
 
