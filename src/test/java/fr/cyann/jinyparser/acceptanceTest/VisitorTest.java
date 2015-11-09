@@ -65,15 +65,15 @@ public class VisitorTest extends TestCase {
 		String source = "7 + 10 + 4";
 
 		// term
-		GrammarElement digit = charIn("0123456789");
+		GrammarElement digit = charIn('0', '9');
 		GrammarElement sign = charIn("+-*/%");
 
 		// lexer
-        GrammarElement number = produce("TODO:NAME", oneOrMore(digit), NUMBER, AstNumber.class).setVisitor(VISIT_NUMBER);
+		GrammarElement number = produce("Number", oneOrMore(digit), NUMBER, AstNumber.class).setVisitor(VISIT_NUMBER);
 
-        GrammarElement operation = catcher(create("TODO:NAME", number, AstBinaryExpression.class).setVisitor(VISIT_ADDITION), "right", "sign", "left");
+		GrammarElement operation = catcher(create("Operation", number, AstBinaryExpression.class).setVisitor(VISIT_ADDITION), "right", "sign", "left");
 
-        GrammarElement operator = produceTerminal("TODO:NAME", sign, OPERATOR);
+		GrammarElement operator = produceTerminal("Operator", sign, OPERATOR);
 
 		// parser
 		// grammar := <produceNumber> { <operator> <produceNumber>}
@@ -98,18 +98,18 @@ public class VisitorTest extends TestCase {
 		String source = "7 + 10 * 4 + 7";
 
 		// lexer
-        GrammarElement number = produce("TODO:NAME", oneOrMore(charIn("0123456789")), NUMBER, AstNumber.class).setVisitor(VISIT_NUMBER);
+		GrammarElement number = produce("Number", oneOrMore(charIn('0', '9')), NUMBER, AstNumber.class).setVisitor(VISIT_NUMBER);
 
-        GrammarElement addSign = produceTerminal("TODO:NAME", charIn("+"), OPERATOR);
-        GrammarElement multiplySign = produceTerminal("TODO:NAME", charIn("*"), OPERATOR);
+		GrammarElement addSign = produceTerminal("AddSign", charIn("+"), OPERATOR);
+		GrammarElement multiplySign = produceTerminal("MultiplySign", charIn("*"), OPERATOR);
 
 		// <multiplication> := <produceNumber> [ { '*' <produceNumber> } ]
-        GrammarElement multiplyOperation = catcher(produce("TODO:NAME", number, NUMBER, AstBinaryExpression.class).setVisitor(VISIT_MULTIPLICATION), "right", "sign", "left");
-        GrammarElement multiplication = sequence(number, zeroOrOne(oneOrMore(sequence(multiplySign, multiplyOperation))));
+		GrammarElement multiplyOperation = catcher(produce("Multiplication", number, NUMBER, AstBinaryExpression.class).setVisitor(VISIT_MULTIPLICATION), "right", "sign", "left");
+		GrammarElement multiplication = sequence(number, zeroOrOne(oneOrMore(sequence(multiplySign, multiplyOperation))));
 
 		// <addition> := <multiplication> [ { '+' <multiplication> } ]
-        GrammarElement addOperation = catcher(produce("TODO:NAME", multiplication, NUMBER, AstBinaryExpression.class).setVisitor(VISIT_ADDITION), "right", "sign", "left");
-        GrammarElement addition = sequence(multiplication, zeroOrOne(oneOrMore(sequence(addSign, addOperation))));
+		GrammarElement addOperation = catcher(produce("Addition", multiplication, NUMBER, AstBinaryExpression.class).setVisitor(VISIT_ADDITION), "right", "sign", "left");
+		GrammarElement addition = sequence(multiplication, zeroOrOne(oneOrMore(sequence(addSign, addOperation))));
 
 		// parse
 		GrammarContext c = addition.process().parse(source);
@@ -131,20 +131,20 @@ public class VisitorTest extends TestCase {
 		// lexer
 		GrammarElement leftParenthesis = lexem(charIn("("), LexemType.SYMBOL);
 		GrammarElement rightParenthesis = lexem(charIn(")"), LexemType.SYMBOL);
-        GrammarElement number = produce("TODO:NAME", oneOrMore(charIn("0123456789")), NUMBER, AstNumber.class).setVisitor(VISIT_NUMBER);
+		GrammarElement number = produce("Number", oneOrMore(charIn('0', '9')), NUMBER, AstNumber.class).setVisitor(VISIT_NUMBER);
 
-        GrammarElement addSign = produceTerminal("TODO:NAME", charIn("+"), OPERATOR);
-        GrammarElement multiplySign = produceTerminal("TODO:NAME", charIn("*"), OPERATOR);
+		GrammarElement addSign = produceTerminal("AddSign", charIn("+"), OPERATOR);
+		GrammarElement multiplySign = produceTerminal("MultiplySign", charIn("*"), OPERATOR);
 
-		Recursive term = production("Term");
+		Recursive term = recursive("Term");
 
 		// <multiplication> := <produceNumber> [ { '*' <produceNumber> } ]
-        GrammarElement multiplyOperation = catcher(produce("TODO:NAME", term, NUMBER, AstBinaryExpression.class).setVisitor(VISIT_MULTIPLICATION), "right", "sign", "left");
-        GrammarElement multiplication = sequence(term, zeroOrOne(oneOrMore(sequence(multiplySign, multiplyOperation))));
+		GrammarElement multiplyOperation = catcher(produce("Multiplication", term, NUMBER, AstBinaryExpression.class).setVisitor(VISIT_MULTIPLICATION), "right", "sign", "left");
+		GrammarElement multiplication = sequence(term, zeroOrOne(oneOrMore(sequence(multiplySign, multiplyOperation))));
 
 		// <addition> := <multiplication> [ { '+' <multiplication> } ]
-        GrammarElement addOperation = catcher(produce("TODO:NAME", multiplication, NUMBER, AstBinaryExpression.class).setVisitor(VISIT_ADDITION), "right", "sign", "left");
-        GrammarElement addition = sequence(multiplication, zeroOrOne(oneOrMore(sequence(addSign, addOperation))));
+		GrammarElement addOperation = catcher(produce("Addition", multiplication, NUMBER, AstBinaryExpression.class).setVisitor(VISIT_ADDITION), "right", "sign", "left");
+		GrammarElement addition = sequence(multiplication, zeroOrOne(oneOrMore(sequence(addSign, addOperation))));
 
 		// <num> := <number> | '(' <addition> ')'
 		term.setGrammar(choice(number, sequence(leftParenthesis, addition, rightParenthesis)));
@@ -198,12 +198,12 @@ public class VisitorTest extends TestCase {
 	//region tools
 
 	private GrammarElement produceNumber(GrammarElement decorated) {
-        return produce("TODO:NAME", decorated, NUMBER, AstNumber.class);
-    }
+		return produce("Number", decorated, NUMBER, AstNumber.class);
+	}
 
 	private GrammarElement produceBinaryExpression(GrammarElement decorated) {
-        return catcher(produce("TODO:NAME", decorated, NUMBER, AstBinaryExpression.class), "right", "sign", "left");
-    }
+		return catcher(produce("BinaryOperation", decorated, NUMBER, AstBinaryExpression.class), "right", "sign", "left");
+	}
 
 	static class AstNumber extends Terminal {
 

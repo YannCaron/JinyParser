@@ -1,4 +1,4 @@
-package fr.cyann.jinyparser.grammartree.core;/**
+package fr.cyann.jinyparser.tree;/**
  * Copyright (C) 09/11/15 Yann Caron aka cyann
  * <p/>
  * Cette œuvre est mise à disposition sous licence Attribution -

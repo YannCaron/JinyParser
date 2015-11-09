@@ -27,7 +27,7 @@ class Analysis {
 		Map<GrammarElement, String> nodeNames = new HashMap<GrammarElement, String>();
 
 		// count the usage of nodes
-		for (GrammarElement element : root.depthFirstSearch()) {
+		for (GrammarElement element : root.depthFirstTraversal()) {
 
 			// is node then count
 			if (element instanceof GrammarNode) {
@@ -38,12 +38,12 @@ class Analysis {
 		}
 
 		// find node names
-		for (GrammarElement element : root.depthFirstSearch()) {
+		for (GrammarElement element : root.depthFirstTraversal()) {
 			if (element instanceof ParsemCreator) {
 
 				String name = ((ParsemCreator) element).getName();
 
-				for (GrammarElement parent : element.ascendingSearch()) {
+				for (GrammarElement parent : element.ascendingTraversal()) {
 					boolean found = false;
 
 					if (parent instanceof ParsemDropper) {
@@ -70,7 +70,7 @@ class Analysis {
 				GrammarElement newNode = new GrammarName(name, node);
 
 				// all elements
-				for (GrammarElement element : root.depthFirstSearch()) {
+				for (GrammarElement element : root.depthFirstTraversal()) {
 					element.replace(node, newNode);
 				}
 
@@ -88,7 +88,6 @@ class Analysis {
 	}
 
 	// region inner class
-
 	static class GrammarName extends Recursive {
 
 		public GrammarName(String name, GrammarElement decorated) {

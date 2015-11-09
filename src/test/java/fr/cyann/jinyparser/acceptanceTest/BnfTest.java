@@ -43,7 +43,7 @@ public class BnfTest extends TestCase {
         GrammarElement multiplySign = produceTerminal("MultiplySign", charIn("*"), OPERATOR);
 
 		// recursive
-		Recursive term = production("Term");
+		Recursive term = recursive("Term");
 
 		// <multiplication> := <produceNumber> [ { '*' <produceNumber> } ]
         GrammarElement multiplyOperation = catcher(produce("Multiplication", term, NUMBER, AstBinaryExpression.class), "right", "sign", "left");

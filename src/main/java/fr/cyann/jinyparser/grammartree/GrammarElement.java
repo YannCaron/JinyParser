@@ -10,10 +10,10 @@ package fr.cyann.jinyparser.grammartree;
  **/
 
 import fr.cyann.jinyparser.exceptions.JinyException;
-import fr.cyann.jinyparser.grammartree.core.AscendingIterator;
-import fr.cyann.jinyparser.grammartree.core.BreadthFirstIterator;
-import fr.cyann.jinyparser.grammartree.core.DepthFirstIterator;
-import fr.cyann.jinyparser.grammartree.core.TreeIterable;
+import fr.cyann.jinyparser.tree.AscendingIterator;
+import fr.cyann.jinyparser.tree.BreadthFirstIterator;
+import fr.cyann.jinyparser.tree.DepthFirstIterator;
+import fr.cyann.jinyparser.tree.TreeIterable;
 import fr.cyann.jinyparser.utils.MultilingualMessage;
 
 import java.util.Iterator;
@@ -101,7 +101,7 @@ public abstract class GrammarElement implements TreeIterable<GrammarElement> {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public Iterable<GrammarElement> ascendingSearch() {
+	public Iterable<GrammarElement> ascendingTraversal() {
 		return new Iterable<GrammarElement>() {
 			@Override
 			public Iterator<GrammarElement> iterator() {
@@ -114,7 +114,7 @@ public abstract class GrammarElement implements TreeIterable<GrammarElement> {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public Iterable<GrammarElement> depthFirstSearch() {
+	public Iterable<GrammarElement> depthFirstTraversal() {
 		return new Iterable<GrammarElement>() {
 			@Override
 			public Iterator<GrammarElement> iterator() {
@@ -127,7 +127,7 @@ public abstract class GrammarElement implements TreeIterable<GrammarElement> {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public Iterable<GrammarElement> breadthFirstSearch() {
+	public Iterable<GrammarElement> breadthFirstTraversal() {
 		return new Iterable<GrammarElement>() {
 			@Override
 			public Iterator<GrammarElement> iterator() {
@@ -150,7 +150,7 @@ public abstract class GrammarElement implements TreeIterable<GrammarElement> {
 	 * Process the grammar to prepare parsing.<br>
 	 * Make analysis for :<br>
 	 * - Determine top level productions (for bnf expression).<br>
-	 * - Verify semantics like production consistency.
+	 * - Verify semantics like recursive consistency.
 	 *
 	 * @return the processed grammar object.
 	 */
@@ -247,7 +247,7 @@ public abstract class GrammarElement implements TreeIterable<GrammarElement> {
 		}
 
 		/**
-		 * Create a new production and consume the current grammar built.
+		 * Create a new recursive and consume the current grammar built.
 		 *
 		 * @param name    the grammar name.
 		 * @param grammar the grammar element.

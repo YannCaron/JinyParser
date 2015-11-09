@@ -322,7 +322,7 @@ public final class GrammarFactory {
 	    return choice;
     }
 
-	public static Recursive production(String name) {
+	public static Recursive recursive(String name) {
 		return new Recursive(name);
 	}
 

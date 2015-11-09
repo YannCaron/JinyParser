@@ -38,9 +38,9 @@ public class ParsemCreator<P extends ParsemElement> extends GrammarDecorator {
 	}
 
     /**
-     * Get the production name.
+     * Get the recursive name.
      *
-     * @return the production name.
+     * @return the recursive name.
      */
     public String getName() {
         return name;

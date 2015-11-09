@@ -13,7 +13,7 @@ import fr.cyann.jinyparser.lexem.LexemType;
 
 /**
  * The LexemCreatorCore class. Each time the decorated grammar element is parsed, it produce a Lexem and store it into the context.<br>
- * That represent the lexer production function.
+ * That represent the lexer recursive function.
  */
 public class LexemCreatorCore extends GrammarDecorator {
 

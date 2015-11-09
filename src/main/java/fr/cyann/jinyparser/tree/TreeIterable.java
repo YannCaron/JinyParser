@@ -1,4 +1,4 @@
-package fr.cyann.jinyparser.grammartree.core;/**
+package fr.cyann.jinyparser.tree;/**
  * Copyright (C) 09/11/15 Yann Caron aka cyann
  * <p/>
  * Cette œuvre est mise à disposition sous licence Attribution -
@@ -43,20 +43,20 @@ public interface TreeIterable<E> {
 	 *
 	 * @return
 	 */
-	Iterable<E> ascendingSearch();
+	Iterable<E> ascendingTraversal();
 
 	/**
 	 * Get the depth first order iterable of the grammar element.
 	 *
 	 * @return the iterable.
 	 */
-	Iterable<E> depthFirstSearch();
+	Iterable<E> depthFirstTraversal();
 
 	/**
 	 * Get the breadth first order iterable of the rammar element.
 	 *
 	 * @return the iterable.
 	 */
-	Iterable<E> breadthFirstSearch();
+	Iterable<E> breadthFirstTraversal();
 
 }

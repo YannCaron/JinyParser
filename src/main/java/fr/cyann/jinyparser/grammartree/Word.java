@@ -65,4 +65,10 @@ public class Word extends GrammarLeaf {
 		context.append("'");
 	}
 
+	@Override
+	public String toString() {
+		return "Word{" +
+				"word='" + word + '\'' +
+				'}';
+	}
 }

@@ -39,6 +39,7 @@ public class Recursive extends GrammarElement {
 	 * @param grammar the grammar to delegate to.
 	 */
 	public Recursive setGrammar(GrammarElement grammar) {
+		grammar.setParent(this);
 		this.grammar = grammar;
 		return this;
 	}
