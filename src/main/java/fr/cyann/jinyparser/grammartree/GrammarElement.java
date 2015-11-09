@@ -10,9 +10,16 @@ package fr.cyann.jinyparser.grammartree;
  **/
 
 import fr.cyann.jinyparser.exceptions.JinyException;
+import fr.cyann.jinyparser.grammartree.core.AscendingIterator;
+import fr.cyann.jinyparser.grammartree.core.BreadthFirstIterator;
+import fr.cyann.jinyparser.grammartree.core.DepthFirstIterator;
+import fr.cyann.jinyparser.grammartree.core.TreeIterable;
 import fr.cyann.jinyparser.utils.MultilingualMessage;
 
-import java.util.*;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.Locale;
+import java.util.Map;
 
 /**
  * The GrammarElement class. Then top abstract class of all grammar elements.<br>
@@ -20,15 +27,25 @@ import java.util.*;
  * Give the ability to declare (declarative programming) the language grammar by nesting grammars elements together.
  */
 @SuppressWarnings("WeakerAccess")
-public abstract class GrammarElement {
+public abstract class GrammarElement implements TreeIterable<GrammarElement> {
 
 	private GrammarElement parent;
 
+	// region properties
+
 	/**
-	 * The parent getter.
+	 * Get if element has parent.
 	 *
-	 * @return the parent of the node.
+	 * @return true if element has parent.
 	 */
+	public boolean hasParent() {
+		return (parent != null);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
 	public GrammarElement getParent() {
 		return parent;
 	}
@@ -41,15 +58,9 @@ public abstract class GrammarElement {
 	public void setParent(GrammarElement parent) {
 		this.parent = parent;
 	}
+	// endregion
 
-	/**
-	 * Get if element has parent.
-	 *
-	 * @return true if element has parent.
-	 */
-	public boolean hasParent() {
-		return (parent != null);
-	}
+	// region parsing
 
 	/**
 	 * The lookahead searching method. Used to find if following term / grammar is valid without consuming the lexemes.
@@ -58,22 +69,6 @@ public abstract class GrammarElement {
 	 * @return true if lookahead succeed, false otherwise.
 	 */
 	protected abstract boolean lookahead(GrammarContext context);
-
-	/**
-	 * The parsing method. Used to parse the source code passed in context.
-	 *
-	 * @param context the parsing context that contains all necessary resources to the parsing (iterators, flags and so on).
-	 * @return true if parsing succeed, false otherwise.
-	 */
-	protected abstract boolean parse(GrammarContext context);
-
-	/**
-	 * Replace the child element by another.
-	 *
-	 * @param element the element to be replaced in the list.
-	 * @param by      the element to replace with.
-	 */
-	public abstract boolean replace(GrammarElement element, GrammarElement by);
 
 	/**
 	 * Launch the lookahead search from a parsing method.
@@ -89,6 +84,67 @@ public abstract class GrammarElement {
 
 		return lookaheadResult;
 	}
+
+	/**
+	 * The parsing method. Used to parse the source code passed in context.
+	 *
+	 * @param context the parsing context that contains all necessary resources to the parsing (iterators, flags and so on).
+	 * @return true if parsing succeed, false otherwise.
+	 */
+	protected abstract boolean parse(GrammarContext context);
+
+	// endregion
+
+	// region iterator
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Iterable<GrammarElement> ascendingSearch() {
+		return new Iterable<GrammarElement>() {
+			@Override
+			public Iterator<GrammarElement> iterator() {
+				return new AscendingIterator<GrammarElement>(GrammarElement.this);
+			}
+		};
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Iterable<GrammarElement> depthFirstSearch() {
+		return new Iterable<GrammarElement>() {
+			@Override
+			public Iterator<GrammarElement> iterator() {
+				return new DepthFirstIterator(GrammarElement.this);
+			}
+		};
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Iterable<GrammarElement> breadthFirstSearch() {
+		return new Iterable<GrammarElement>() {
+			@Override
+			public Iterator<GrammarElement> iterator() {
+				return new BreadthFirstIterator(GrammarElement.this);
+			}
+		};
+	}
+
+	// endregion
+
+	/**
+	 * Replace the child element by another.
+	 *
+	 * @param element the element to be replaced in the list.
+	 * @param by      the element to replace with.
+	 */
+	public abstract boolean replace(GrammarElement element, GrammarElement by);
 
 	/**
 	 * Process the grammar to prepare parsing.<br>
@@ -109,78 +165,6 @@ public abstract class GrammarElement {
 	 * @param context the bnf context to build on.
 	 */
 	abstract void buildBnf(BnfContext context);
-
-	/**
-	 * Visit the tree in depth first order.
-	 *
-	 * @param visitor the visitor where methods are invoked during the traversal.
-	 */
-	abstract void visit(AbstractVisitor visitor);
-
-	// TODO a voir
-	void ascendingChain(SimpleVisitor visitor) {
-		visitor.visitBefore(this);
-		if (hasParent()) {
-			getParent().ascendingChain(visitor);
-		}
-		visitor.visitAfter(this);
-	}
-
-    /*
-        Iterator<GrammarElement> parentIterator() {
-            return new Iterator<GrammarElement>() {
-                GrammarElement current;
-
-                @Override
-                public boolean hasNext() {
-                    return current.parent != null;
-                }
-
-                @Override
-                public GrammarElement next() {
-                    current = current.parent;
-                    return current;
-                }
-
-                @Override
-                public void remove() {
-                    throw new RuntimeException("Cannot remove on this iterator.");
-                }
-            };
-        }
-
-        protected abstract boolean hasNextDepthFirst();
-
-        protected abstract GrammarElement nextDepthFirst();
-
-        Iterator<GrammarElement> depthFirstIterator() {
-            return new Iterator<GrammarElement>() {
-                GrammarElement current;
-
-                @Override
-                public boolean hasNext() {
-                    return current.hasNextDepthFirst();
-                }
-
-                @Override
-                public GrammarElement next() {
-                    current = current.nextDepthFirst();
-                    return current;
-                }
-
-                @Override
-                public void remove() {
-                    throw new RuntimeException("Cannot remove on this iterator.");
-                }
-            };
-        }
-    */
-    // TODO javadoc
-	interface SimpleVisitor {
-		void visitBefore(GrammarElement grammar);
-
-		void visitAfter(GrammarElement grammar);
-	}
 
 	/**
 	 * Represent a processed grammar. e.g an analysed grammar.
@@ -309,47 +293,6 @@ public abstract class GrammarElement {
 			}
 
 			return sb.toString();
-		}
-	}
-
-	/**
-	 * The visitor class. Revisited (it is not a joke) from the original GoF visitor pattern.<br>
-	 * This visitor is able to
-	 */
-	static abstract class AbstractVisitor {
-		final Set<Recursive> visitedRecursive = new HashSet<Recursive>();
-
-		public void visitLeaf(GrammarLeaf grammar) {
-		}
-
-		public void visitRecursive(Recursive grammar) {
-			if (visitedRecursive.contains(grammar)) return;
-			visitedRecursive.add(grammar);
-
-			grammar.grammar.visit(this);
-		}
-
-		public void visitDecorator(GrammarDecorator grammar) {
-			grammar.decorated.visit(this);
-		}
-
-		public void visitNode(GrammarNode grammar) {
-			for (GrammarElement child : grammar.children) {
-				child.visit(this);
-			}
-		}
-
-	}
-
-	static abstract class AbstractSimpleVisitor implements SimpleVisitor {
-		@Override
-		public void visitBefore(GrammarElement grammar) {
-
-		}
-
-		@Override
-		public void visitAfter(GrammarElement grammar) {
-
 		}
 	}
 

@@ -7,6 +7,9 @@ package fr.cyann.jinyparser.grammartree;/**
  * ou écrivez à Creative Commons, 444 Castro Street, Suite 900, Mountain View, California, 94041, USA.
  **/
 
+import java.util.Queue;
+import java.util.Stack;
+
 /**
  * The GrammarDecorator class. An abstract class for all grammar decorators (add a local parsing functionality).
  */
@@ -41,8 +44,16 @@ public abstract class GrammarDecorator extends GrammarElement {
 	 * {@inheritDoc}
 	 */
 	@Override
-	protected void visit(AbstractVisitor visitor) {
-		visitor.visitDecorator(this);
+	public void depthFirstPush(Stack<GrammarElement> stack) {
+		stack.push(this.decorated);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void breadthFirstAdd(Queue<GrammarElement> queue) {
+		queue.add(this.decorated);
 	}
 
 	/**

@@ -11,14 +11,17 @@ package fr.cyann.jinyparser.grammartree;
 import fr.cyann.jinyparser.exceptions.JinyException;
 import fr.cyann.jinyparser.utils.MultilingualMessage;
 
+import java.util.Queue;
+import java.util.Stack;
+
 /**
  * The Recursive grammar element definition.<br>
  * Give the ability to loop grammars togathers (and manage cycles).
  */
 public class Recursive extends GrammarElement {
 
-    protected final String name;
-    protected GrammarElement grammar;
+	protected final String name;
+	protected GrammarElement grammar;
 
 	/**
 	 * Default and mandatory constructor.
@@ -76,8 +79,16 @@ public class Recursive extends GrammarElement {
 	 * {@inheritDoc}
 	 */
 	@Override
-	protected void visit(AbstractVisitor visitor) {
-		visitor.visitRecursive(this);
+	public void depthFirstPush(Stack<GrammarElement> stack) {
+		stack.push(this.grammar);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void breadthFirstAdd(Queue<GrammarElement> queue) {
+		queue.add(this.grammar);
 	}
 
 	/**
@@ -94,4 +105,6 @@ public class Recursive extends GrammarElement {
 				"name='" + name + '\'' +
 				'}';
 	}
+
+
 }

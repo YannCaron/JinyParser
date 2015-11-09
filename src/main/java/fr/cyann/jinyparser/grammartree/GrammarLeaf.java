@@ -7,6 +7,9 @@ package fr.cyann.jinyparser.grammartree;/**
  * ou écrivez à Creative Commons, 444 Castro Street, Suite 900, Mountain View, California, 94041, USA.
  **/
 
+import java.util.Queue;
+import java.util.Stack;
+
 /**
  * The GrammarLeaf definition.
  */
@@ -24,8 +27,15 @@ abstract class GrammarLeaf extends GrammarElement {
 	 * {@inheritDoc}
 	 */
 	@Override
-	protected void visit(AbstractVisitor visitor) {
-		visitor.visitLeaf(this);
+	public void depthFirstPush(Stack<GrammarElement> stack) {
+		// do nothing
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void breadthFirstAdd(Queue<GrammarElement> queue) {
+		// do nothing
+	}
 }

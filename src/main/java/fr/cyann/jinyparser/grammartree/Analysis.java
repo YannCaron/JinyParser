@@ -7,149 +7,106 @@ package fr.cyann.jinyparser.grammartree;/**
  * ou écrivez à Creative Commons, 444 Castro Street, Suite 900, Mountain View, California, 94041, USA.
  **/
 
-import fr.cyann.jinyparser.parsetree.Terminal;
-
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
-
-import static fr.cyann.jinyparser.grammartree.GrammarElement.AbstractVisitor;
 
 /**
  * The Analysis definition.
  */
 class Analysis {
 
-    public static final String DEFAULT_GRAMMAR_NAME = "Grammar";
+	public static final String DEFAULT_GRAMMAR_NAME = "Grammar";
 
-    private Analysis() {
-        throw new RuntimeException("Static class cannot be instantiated.");
-    }
+	private Analysis() {
+		throw new RuntimeException("Static class cannot be instantiated.");
+	}
 
-    static GrammarElement findUsage(GrammarElement root) {
+	static GrammarElement findUsage(GrammarElement root) {
 
-        final Map<GrammarElement, Integer> usage = new HashMap<GrammarElement, Integer>();
-        final Set<GrammarNode> repeatedNode = new HashSet<GrammarNode>();
+		Map<GrammarElement, Integer> usedElements = new HashMap<GrammarElement, Integer>();
+		Map<GrammarElement, String> nodeNames = new HashMap<GrammarElement, String>();
 
-        // evaluate usage
-        root.visit(new AbstractVisitor() {
-            int num = 0;
+		// count the usage of nodes
+		for (GrammarElement element : root.depthFirstSearch()) {
 
-            @Override
-            public void visitLeaf(GrammarLeaf grammar) {
-                super.visitLeaf(grammar);
-            }
+			// is node then count
+			if (element instanceof GrammarNode) {
+				Integer used = usedElements.get(element);
+				if (used == null) used = 0;
+				usedElements.put(element, used + 1);
+			}
+		}
 
-            @Override
-            public void visitRecursive(Recursive grammar) {
-                appendToUsage(grammar);
-                super.visitRecursive(grammar);
-            }
+		// find node names
+		/*GrammarNode currentNode = null;
+		for (GrammarElement element : root.breadthFirstSearch()) {
+			System.out.println(element);
 
-            @Override
-            public void visitDecorator(GrammarDecorator grammar) {
+			if (element instanceof GrammarNode) {
+				currentNode = (GrammarNode)element;
+			} else if (element instanceof ParsemCreator) {
+				nodeNames.put(currentNode, ((ParsemCreator)element).getName());
+			}
 
-                // TODO
-                super.visitDecorator(grammar);
-                if (grammar instanceof ParsemCreator) {
-                    ParsemCreator creator = (ParsemCreator) grammar;
-                    if (Terminal.class.isAssignableFrom(creator.getParsemClass())) {
-                        GrammarName grammarName = new GrammarName(creator.getName(), creator);
-                        if (grammar.getParent() != null)
-                            grammar.getParent().replace(grammar, grammarName);
-                    }
-                }
+		}*/
 
-            }
+		// interpose recursive to node used multi time.
+		int num = 0;
 
-            @Override
-            public void visitNode(GrammarNode grammar) {
-                boolean found = usage.get(grammar) != null;
-                appendToUsage(grammar);
+		for (GrammarElement node : usedElements.keySet()) {
+			int usage = usedElements.get(node);
 
-                if (!found) {
-                    super.visitNode(grammar);
-                } else {
-                    repeatedNode.add(grammar);
-                }
-            }
+			if (usage > 1) {
 
-            public void appendToUsage(GrammarElement element) {
-                Integer used = usage.get(element);
-                if (used == null) used = 0;
-                usage.put(element, used + 1);
-            }
-        });
+				//String name = nodeNames.get(node);
+				String name = "G" + num++;
+				GrammarElement newNode = new GrammarName(name, node);
 
-        // interpose recursive to node used multi time.
-        int num = 0;
+				// all elements
+				for (GrammarElement element : root.depthFirstSearch()) {
+					element.replace(node, newNode);
+				}
 
-        for (final GrammarNode node : repeatedNode) {
-            final GrammarElement newNode = new GrammarName("G" + num++, node);
+				// and the root
+				if (root == node) root = newNode;
+			}
+		}
 
-            root.visit(new AbstractVisitor() {
-                @Override
-                public void visitLeaf(GrammarLeaf grammar) {
-                    super.visitLeaf(grammar);
-                }
+		// naming of the root node
+		if (root instanceof Recursive || root instanceof GrammarName) {
+			return root;
+		}
+		return new GrammarName(DEFAULT_GRAMMAR_NAME, root);
 
-                @Override
-                public void visitRecursive(Recursive grammar) {
-                    super.visitRecursive(grammar);
-                }
+	}
 
-                @Override
-                public void visitDecorator(GrammarDecorator grammar) {
-                    super.visitDecorator(grammar);
-                    grammar.replace(node, newNode);
-                }
+	// region inner class
 
-                @Override
-                public void visitNode(GrammarNode grammar) {
-                    super.visitNode(grammar);
-                    grammar.replace(node, newNode);
-                }
-            });
+	static class GrammarName extends Recursive {
 
-            if (root == node) root = newNode;
-        }
+		public GrammarName(String name, GrammarElement decorated) {
+			super(name);
+			super.grammar = decorated;
+		}
 
-        // naming of the root node
-        if (root.getClass().isAssignableFrom(Recursive.class)) {
-            return root;
-        }
-        return new GrammarName(DEFAULT_GRAMMAR_NAME, root);
+		@Override
+		protected boolean lookahead(GrammarContext context) {
+			return super.grammar.lookahead(context);
+		}
 
-    }
+		@Override
+		protected boolean parse(GrammarContext context) {
+			return super.grammar.parse(context);
+		}
 
-    // region inner class
+		@Override
+		public String toString() {
+			return "GrammarName {" +
+					"name='" + name + '\'' +
+					'}';
+		}
+	}
 
-    static class GrammarName extends Recursive {
-
-        public GrammarName(String name, GrammarElement decorated) {
-            super(name);
-            super.grammar = decorated;
-        }
-
-        @Override
-        protected boolean lookahead(GrammarContext context) {
-            return super.grammar.lookahead(context);
-        }
-
-        @Override
-        protected boolean parse(GrammarContext context) {
-            return super.grammar.parse(context);
-        }
-
-        @Override
-        public String toString() {
-            return "GrammarName {" +
-                    "name='" + name + '\'' +
-                    '}';
-        }
-    }
-
-    // end region
+	// end region
 
 }
