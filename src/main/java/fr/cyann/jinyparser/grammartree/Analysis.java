@@ -16,6 +16,7 @@ import java.util.Map;
 class Analysis {
 
 	public static final String DEFAULT_GRAMMAR_NAME = "Grammar";
+	public static final String DEFAULT_GRAMMAR_FORMAT = DEFAULT_GRAMMAR_NAME + "_%d";
 
 	private Analysis() {
 		throw new RuntimeException("Static class cannot be instantiated.");
@@ -37,14 +38,15 @@ class Analysis {
 			}
 		}
 
+		// TODO :
 		// find node names
 		for (GrammarElement element : root.depthFirstTraversal()) {
 			if (element instanceof ParsemCreator) {
 
 				String name = ((ParsemCreator) element).getName();
 
+				boolean found = false;
 				for (GrammarElement parent : element.ascendingTraversal()) {
-					boolean found = false;
 
 					if (parent instanceof ParsemDropper) {
 						found = true;
@@ -56,9 +58,8 @@ class Analysis {
 			}
 		}
 
-
 		// interpose recursive to node used multi time.
-		//int num = 0;
+		int num = 0;
 
 		for (GrammarElement node : usedElements.keySet()) {
 			int usage = usedElements.get(node);
@@ -66,7 +67,7 @@ class Analysis {
 			if (usage > 1) {
 
 				String name = nodeNames.get(node);
-				//String name = "G" + num++;
+				if (name == null) name = String.format(DEFAULT_GRAMMAR_FORMAT, num++);
 				GrammarElement newNode = new GrammarName(name, node);
 
 				// all elements

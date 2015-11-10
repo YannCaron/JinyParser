@@ -15,7 +15,6 @@ import fr.cyann.jinyparser.parsetree.AggregateField;
 import fr.cyann.jinyparser.parsetree.NonTerminal;
 import fr.cyann.jinyparser.parsetree.ParsemElement;
 import fr.cyann.jinyparser.parsetree.Terminal;
-import fr.cyann.jinyparser.utils.RailroadDiagram;
 import junit.framework.TestCase;
 
 import java.util.ArrayList;
@@ -64,7 +63,7 @@ public class BnfTest extends TestCase {
 		System.out.println("Grammar tree:\n" + grammar.toBnf());
 		System.out.println();
 
-		RailroadDiagram.Browse(grammar);
+		//RailroadDiagram.Browse(grammar);
 
 	}
 
@@ -87,7 +86,7 @@ public class BnfTest extends TestCase {
 		System.out.println("Grammar tree:\n" + grammar.toBnf());
 		System.out.println();
 
-		RailroadDiagram.Browse(grammar);
+		//RailroadDiagram.Browse(grammar);
 
 	}
 

@@ -7,13 +7,16 @@ package fr.cyann.jinyparser.tree;/**
  * ou écrivez à Creative Commons, 444 Castro Street, Suite 900, Mountain View, California, 94041, USA.
  **/
 
+import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Set;
 
 /**
  * The AscendingIterator definition.
  */
 public class AscendingIterator<E extends TreeIterable<E>> implements Iterator<E> {
 
+	private final Set<E> iterated;
 	private E current;
 
 	/**
@@ -23,6 +26,7 @@ public class AscendingIterator<E extends TreeIterable<E>> implements Iterator<E>
 	 */
 
 	public AscendingIterator(E root) {
+		this.iterated = new HashSet<E>();
 		this.current = root;
 	}
 
@@ -40,7 +44,14 @@ public class AscendingIterator<E extends TreeIterable<E>> implements Iterator<E>
 	@Override
 	public E next() {
 		E element = current;
-		current = current.getParent();
+
+		if (!iterated.contains(current)) {
+			iterated.add(current);
+			current = current.getParent();
+		} else {
+			current = null;
+		}
+
 		return element;
 	}
 
