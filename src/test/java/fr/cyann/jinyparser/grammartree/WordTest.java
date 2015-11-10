@@ -2,6 +2,7 @@ package fr.cyann.jinyparser.grammartree;
 
 import junit.framework.TestCase;
 
+import static fr.cyann.jinyparser.grammartree.GrammarFactory.freeWord;
 import static fr.cyann.jinyparser.grammartree.GrammarFactory.word;
 
 /**
@@ -21,6 +22,12 @@ public class WordTest extends TestCase {
         assertTrue(word("abc").lookahead(new GrammarContext(source)));
         assertFalse(word("abd").lookahead(new GrammarContext(source)));
         assertTrue(word("ab").lookahead(new GrammarContext(source)));
+
+	    source = "AbC";
+
+	    assertFalse(word("abc").lookahead(new GrammarContext(source)));
+	    assertTrue(freeWord("abc").lookahead(new GrammarContext(source)));
+
     }
 
     public void testParse() throws Exception {
@@ -29,5 +36,10 @@ public class WordTest extends TestCase {
         assertTrue(word("abc").parse(new GrammarContext(source)));
         assertFalse(word("abd").parse(new GrammarContext(source)));
         assertTrue(word("ab").parse(new GrammarContext(source)));
+
+	    source = "AbC";
+	    assertFalse(word("abc").parse(new GrammarContext(source)));
+	    assertTrue(freeWord("abc").parse(new GrammarContext(source)));
+
     }
 }

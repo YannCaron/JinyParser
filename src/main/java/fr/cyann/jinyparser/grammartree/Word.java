@@ -14,21 +14,35 @@ public class Word extends GrammarLeaf {
 
 
 	private final String word;
+	private final boolean caseSensitive;
 
 	/**
 	 * Default constructor.
 	 *
 	 * @param word the entire word to test.
 	 */
-	public Word(String word) {
+	public Word(String word, boolean caseSensitive) {
 		this.word = word;
+		this.caseSensitive = caseSensitive;
+	}
+
+	public Word(String word) {
+		this(word, true);
 	}
 
 	private boolean isTerm(GrammarContext context, boolean build) {
 		for (int i = 0; i < word.length(); i++) {
 			if (context.isTerminated()) return false;
+
 			char chr = word.charAt(i);
-			if (chr != context.currentChar()) return false;
+
+			// verify
+			if (caseSensitive) {
+				if (chr != context.currentChar()) return false;
+			} else {
+				if (Character.toLowerCase(chr) != Character.toLowerCase(context.currentChar())) return false;
+			}
+
 			if (build) {
 				context.nextCharParser();
 			} else {

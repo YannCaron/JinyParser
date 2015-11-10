@@ -66,8 +66,18 @@ public final class GrammarFactory {
      * @return the new grammar element.
      */
     public static Word word(String terms) {
-        return new Word(terms);
+	    return new Word(terms, true);
     }
+
+	/**
+	 * Create a new lexer not case sensitive word recognizer grammar element.
+	 *
+	 * @param terms the word to recognize.
+	 * @return the new grammar element.
+	 */
+	public static Word freeWord(String terms) {
+		return new Word(terms, false);
+	}
 
 	// endregion
 

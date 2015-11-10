@@ -9,7 +9,6 @@ import java.util.List;
 
 import static fr.cyann.jinyparser.grammartree.GrammarFactory.*;
 
-
 /**
  * Copyright (C) 10/11/15 Yann Caron aka cyann
  * <p/>
