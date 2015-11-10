@@ -26,6 +26,7 @@ import static fr.cyann.jinyparser.grammartree.GrammarFactory.*;
 /**
  * The VisitorTest definition.
  */
+@SuppressWarnings("ALL")
 public class BnfTest extends TestCase {
 
 	private static final LexemType NUMBER = new LexemType("produceNumber");

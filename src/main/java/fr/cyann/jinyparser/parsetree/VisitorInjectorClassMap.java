@@ -18,7 +18,7 @@ import java.util.Map;
  */
 public abstract class VisitorInjectorClassMap<C extends VisitorContext> extends VisitorInjector<C> {
 
-	private Map<Class<? extends ParsemElement>, ParsemVisitor<? extends ParsemElement, C>> map;
+	private final Map<Class<? extends ParsemElement>, ParsemVisitor<? extends ParsemElement, C>> map;
 
 	public VisitorInjectorClassMap() {
 		map = new HashMap<Class<? extends ParsemElement>, ParsemVisitor<? extends ParsemElement, C>>();

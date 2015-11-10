@@ -243,11 +243,9 @@ public final class GrammarFactory {
      */
     public static GrammarElement catcher(GrammarElement decorated, String... fieldNames) {
         GrammarElement grammar = decorated;
-        //for (int i = fieldNames.length - 1; i >= 0; i--) {
-        for (int i = 0; i < fieldNames.length; i++) {
-            String fieldName = fieldNames[i];
-            grammar = new ParsemCatcher(grammar, fieldName);
-        }
+	    for (String fieldName : fieldNames) {
+		    grammar = new ParsemCatcher(grammar, fieldName);
+	    }
 
         return grammar;
     }
@@ -289,15 +287,13 @@ public final class GrammarFactory {
      * @return the new grammar element.
      */
     public static Sequence sequence(GrammarElement... elements) {
-	    Sequence sequence = new Sequence(elements);
-	    return sequence;
+	    return new Sequence(elements);
     }
 
 	/**
 	 * Create a wrapper where grammar element must be repeated a number of time (equivalent to sequence(g, g, g, ...)).
 	 *
      *
-     * @param name
      * @param element the grammar element to decorate.
      * @param count   how many time, the element must be repeated.
      * @return the new grammar element.

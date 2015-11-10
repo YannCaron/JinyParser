@@ -26,6 +26,7 @@ public class CharNotInTest extends TestCase {
 			grammar.process().parse("abcdeABCDE");
 			fail("Should not be parsed !");
 		} catch (Exception e) {
+			System.out.println("Exception OK !");
 		}
 
 		charNotIn.add('a', 'z');
@@ -34,6 +35,7 @@ public class CharNotInTest extends TestCase {
 			grammar.process().parse("abcde");
 			fail("Should not be parsed !");
 		} catch (Exception e) {
+			System.out.println("Exception OK !");
 		}
 
 		grammar.process().parse("!+-*/");

@@ -118,7 +118,7 @@ public abstract class GrammarElement implements TreeIterable<GrammarElement> {
 		return new Iterable<GrammarElement>() {
 			@Override
 			public Iterator<GrammarElement> iterator() {
-				return new DepthFirstIterator(GrammarElement.this);
+				return new DepthFirstIterator<GrammarElement>(GrammarElement.this);
 			}
 		};
 	}
@@ -131,7 +131,7 @@ public abstract class GrammarElement implements TreeIterable<GrammarElement> {
 		return new Iterable<GrammarElement>() {
 			@Override
 			public Iterator<GrammarElement> iterator() {
-				return new BreadthFirstIterator(GrammarElement.this);
+				return new BreadthFirstIterator<GrammarElement>(GrammarElement.this);
 			}
 		};
 	}
@@ -144,6 +144,7 @@ public abstract class GrammarElement implements TreeIterable<GrammarElement> {
 	 * @param element the element to be replaced in the list.
 	 * @param by      the element to replace with.
 	 */
+	@SuppressWarnings("UnusedReturnValue")
 	public abstract boolean replace(GrammarElement element, GrammarElement by);
 
 	/**
@@ -234,7 +235,7 @@ public abstract class GrammarElement implements TreeIterable<GrammarElement> {
 		}
 
 		/**
-		 * Append string to the current stringbuilder.
+		 * Append string to the current stringBuilder.
 		 *
 		 * @param string the string to append.
 		 */

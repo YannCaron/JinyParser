@@ -21,6 +21,7 @@ import static fr.cyann.jinyparser.testUtils.Utils.lexerToTerms;
 /**
  * The DefaultParseContextTest definition.
  */
+@SuppressWarnings("ALL")
 public class LexerTest extends TestCase {
 
 	private static final LexemType NUMBER = new LexemType("NUMBER");
@@ -66,12 +67,14 @@ public class LexerTest extends TestCase {
 			grammar.process().parse("0xff00aaaa");
 			fail("Should not works!");
 		} catch (Exception e) {
+			System.out.println("Exception OK !");
 		}
 
 		try {
 			grammar.process().parse("0xff00a");
 			fail("Should not works!");
 		} catch (Exception e) {
+			System.out.println("Exception OK !");
 		}
 
 	}

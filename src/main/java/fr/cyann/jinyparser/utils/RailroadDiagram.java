@@ -25,9 +25,8 @@ public class RailroadDiagram {
 
 	public static void Browse(ProcessedGrammar root) {
 		String urlFormat = BOTTLE_CAPS_URL_FORMAT;
-        String url = null;
         try {
-	        url = String.format(urlFormat, URLEncoder.encode(root.toBnf(), "UTF-8"));
+	        String url = String.format(urlFormat, URLEncoder.encode(root.toBnf(), "UTF-8"));
 	        Internet.Browse(url);
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();

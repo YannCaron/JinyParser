@@ -21,7 +21,7 @@ import java.net.URISyntaxException;
 public class Internet {
 
     private Internet() {
-        throw new RuntimeException("Static class cannot be instanciated !");
+	    throw new RuntimeException("Static class cannot be instantiated !");
     }
 
     public static void Browse(String url) {

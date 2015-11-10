@@ -103,11 +103,4 @@ public class ParsemCreator<P extends ParsemElement> extends GrammarDecorator {
 		return res;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	void buildBnf(BnfContext context) {
-		super.buildBnf(context);
-	}
 }

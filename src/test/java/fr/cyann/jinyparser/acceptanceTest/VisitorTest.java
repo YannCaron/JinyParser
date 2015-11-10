@@ -150,10 +150,10 @@ public class VisitorTest extends TestCase {
 		term.setGrammar(choice(number, sequence(leftParenthesis, addition, rightParenthesis)));
 
 		// parser
-		GrammarElement grammar = addition;
+		GrammarElement.ProcessedGrammar grammar = addition.process();
 
 		// parse
-		GrammarContext c = grammar.process().parse(source);
+		GrammarContext c = grammar.parse(source);
 
 		System.out.println("Parse tree: " + c.getParseTree());
 
@@ -273,8 +273,8 @@ public class VisitorTest extends TestCase {
 			return stack.pop();
 		}
 
-		public Integer push(Integer item) {
-			return stack.push(item);
+		public void push(Integer item) {
+			stack.push(item);
 		}
 
 		public Integer firstElement() {
@@ -284,7 +284,7 @@ public class VisitorTest extends TestCase {
 
 	static class ToStringContext extends VisitorContext {
 
-		private StringBuilder sb;
+		private final StringBuilder sb;
 
 		ToStringContext() {
 			sb = new StringBuilder();

@@ -24,8 +24,8 @@ public class Utils {
         throw new RuntimeException("Cannot instantiate static class !");
     }
 
-    public static final List<String> lexerToTerms(Iterable<Lexem> lexer) {
-        List<String> result = new ArrayList<String>();
+	public static List<String> lexerToTerms(Iterable<Lexem> lexer) {
+		List<String> result = new ArrayList<String>();
         for (Lexem lexem : lexer) {
             result.add(lexem.getTerm());
         }

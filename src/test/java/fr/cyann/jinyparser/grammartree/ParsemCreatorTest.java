@@ -20,11 +20,10 @@ import static fr.cyann.jinyparser.testUtils.Reflexion.getPrivateField;
 public class ParsemCreatorTest extends TestCase {
 
 	public void testSetVisitor() throws Exception {
-		String source = "a";
-
         ParsemCreator<DefaultTerminal> p = createTerminal("TODO:NAME", lexem(word("a")));
 
-		assertNull(getPrivateField(p, "visitor"));
+		ParsemVisitor<DefaultTerminal, VisitorContext> visitorField = getPrivateField(p, "visitor");
+		assertNull(visitorField);
 
 		ParsemVisitor<DefaultTerminal, VisitorContext> visitor = new ParsemVisitor<DefaultTerminal, VisitorContext>() {
 			@Override
@@ -34,7 +33,7 @@ public class ParsemCreatorTest extends TestCase {
 		};
 		p.setVisitor(visitor);
 
-		assertEquals(visitor, getPrivateField(p, "visitor"));
+		assertEquals(visitor, visitorField);
 
 	}
 

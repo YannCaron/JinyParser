@@ -51,6 +51,7 @@ public class CharIn extends GrammarLeaf {
 	 * @param characters the characters to add.
 	 * @return this.
 	 */
+	@SuppressWarnings("UnusedReturnValue")
 	public CharIn add(String characters) {
 		this.characters.append(characters);
 		bnf.append(characters);
