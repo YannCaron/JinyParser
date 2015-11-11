@@ -30,7 +30,7 @@ public class MultilingualMessage {
 	}
 
 	/**
-	 * Factory to create a message.
+	 * Factory to createTerminal a message.
 	 *
 	 * @param defaultEnglish the default message in english.
 	 * @return the message object.

@@ -9,7 +9,6 @@ package fr.cyann.jinyparser.grammartree;/**
 
 import fr.cyann.jinyparser.lexem.Lexem;
 import fr.cyann.jinyparser.lexem.SourcePosition;
-import fr.cyann.jinyparser.parsetree.ParsemBuildable;
 import fr.cyann.jinyparser.parsetree.ParsemElement;
 import fr.cyann.jinyparser.utils.StringLookaheadIterator;
 
@@ -19,7 +18,7 @@ import java.util.*;
  * The GrammarContext class. A context pass through parser tree that contains all intermediates states of lexing / parsing.<br>
  * All the parsing resources.
  */
-public class GrammarContext implements ParsemBuildable {
+public class GrammarContext {
 
 	private final StringLookaheadIterator iterator;
 	private final SourcePosition positionManager;
@@ -155,7 +154,6 @@ public class GrammarContext implements ParsemBuildable {
 	}
 
 	/** {@inheritDoc} */
-	@Override
 	public Lexem getCurrentLexem() {
 		return lexer.get(lexer.size() - 1);
 	}
@@ -179,7 +177,6 @@ public class GrammarContext implements ParsemBuildable {
 	// endregion
 
 	// region parser
-
 	/**
 	 * Push parsemElement element on the top of parser stack.
 	 * @param parsemElement the abstract syntax tree element.
@@ -189,13 +186,26 @@ public class GrammarContext implements ParsemBuildable {
 	}
 
 	/** {@inheritDoc} */
-	@Override
 	public ParsemElement popParsem() {
 		return parser.pop();
 	}
 
-    public boolean isParserEmpty() {
-        return parser.empty();
+	/**
+	 * Gives the current parsem.
+	 *
+	 * @return the current parsem.
+	 */
+	public ParsemElement peekParsem() {
+		return parser.peek();
+	}
+
+	/**
+	 * Get if parser is empty.
+	 *
+	 * @return true if empty.
+	 */
+	public boolean isParserEmpty() {
+		return parser.empty();
     }
 
 	/**

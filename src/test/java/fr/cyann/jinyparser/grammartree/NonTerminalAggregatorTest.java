@@ -13,7 +13,7 @@ import static fr.cyann.jinyparser.grammartree.GrammarFactory.*;
  * Pour voir une copie de cette licence, visitez http://creativecommons.org/licenses/by-nc-sa/3.0/fr/
  * ou écrivez à Creative Commons, 444 Castro Street, Suite 900, Mountain View, California, 94041, USA.
  **/
-public class ParsemDropperTest extends TestCase {
+public class NonTerminalAggregatorTest extends TestCase {
 
 	public void testLookahead() throws Exception {
 

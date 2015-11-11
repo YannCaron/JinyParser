@@ -40,10 +40,10 @@ public class LexemCreator extends LexemCreatorCore {
 	/**
 	 * Optional constructor.
 	 *
-	 * @param decorated the object to decorate.
 	 * @param lexemType the lexem type to produce.
+	 * @param decorated the object to decorate.
 	 */
-	public LexemCreator(GrammarElement decorated, LexemType lexemType) {
+	public LexemCreator(LexemType lexemType, GrammarElement decorated) {
 		this(decorated, lexemType, DEFAULT_SEPARATOR);
 	}
 

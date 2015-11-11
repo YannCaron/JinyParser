@@ -15,6 +15,8 @@ import java.util.Map;
  */
 class Analysis {
 
+	// TODO : Check that Production grammar never null
+
 	public static final String DEFAULT_GRAMMAR_NAME = "Grammar";
 	public static final String DEFAULT_GRAMMAR_FORMAT = DEFAULT_GRAMMAR_NAME + "_%d";
 
@@ -41,14 +43,14 @@ class Analysis {
 		// TODO :
 		// find node names
 		for (GrammarElement element : root.depthFirstTraversal()) {
-			if (element instanceof ParsemCreator) {
+			if (element instanceof TerminalCreator) {
 
-				String name = ((ParsemCreator) element).getName();
+				String name = ((TerminalCreator) element).getName();
 
 				boolean found = false;
 				for (GrammarElement parent : element.ascendingTraversal()) {
 
-					if (parent instanceof ParsemDropper) {
+					if (parent instanceof NonTerminalAggregator) {
 						found = true;
 					} else if (!found && parent instanceof GrammarNode) {
 						nodeNames.put(parent, name);

@@ -10,7 +10,9 @@ package fr.cyann.jinyparser.grammartree;
 
 import fr.cyann.jinyparser.exceptions.JinyException;
 import fr.cyann.jinyparser.lexem.Lexem;
-import fr.cyann.jinyparser.parsetree.ParsemElement;
+import fr.cyann.jinyparser.lexem.LexemType;
+import fr.cyann.jinyparser.parsetree.NonTerminal;
+import fr.cyann.jinyparser.parsetree.ParsemAccumulator;
 import fr.cyann.jinyparser.parsetree.ParsemVisitor;
 import fr.cyann.jinyparser.parsetree.VisitorContext;
 import fr.cyann.jinyparser.utils.MultilingualMessage;
@@ -18,9 +20,9 @@ import fr.cyann.jinyparser.utils.MultilingualMessage;
 import java.lang.reflect.Constructor;
 
 /**
- * The ParsemCreator class definition.<br>
+ * The TerminalCreator class definition.<br>
  */
-public class ParsemCreator<P extends ParsemElement> extends GrammarDecorator {
+public class NonTerminalCreator<P extends NonTerminal> extends GrammarDecorator {
 
     private final String name;
     private final Class<P> clazz;
@@ -28,12 +30,12 @@ public class ParsemCreator<P extends ParsemElement> extends GrammarDecorator {
 
 	/**
 	 * Default constructor.
-     *  @param decorated the decorated grammar element.
-     * @param clazz     the grammar element class to create.
-     */
-    public ParsemCreator(String name, GrammarElement decorated, Class<P> clazz) {
-        super(decorated);
-        this.name = name;
+	 * @param clazz     the grammar element class to createTerminal.
+	 * @param decorated the decorated grammar element.
+	 */
+	public NonTerminalCreator(String name, Class<P> clazz, GrammarElement decorated) {
+		super(decorated);
+		this.name = name;
         this.clazz = clazz;
 	}
 
@@ -67,6 +69,26 @@ public class ParsemCreator<P extends ParsemElement> extends GrammarDecorator {
 		return this;
 	}
 
+	private void createParsem(GrammarContext context) {
+
+		try {
+
+			// createTerminal non terminal
+			Constructor<P> constructor = clazz.getConstructor(Lexem.class);
+			constructor.setAccessible(true);
+			// TODO: LEXEM ????
+			NonTerminal parsem = constructor.newInstance(new Lexem("TODO", LexemType.NONE));
+
+			// createTerminal accumulator
+			ParsemAccumulator accumulator = new ParsemAccumulator(null, parsem);
+			accumulator.setVisitor(visitor);
+			context.pushParsem(accumulator);
+
+		} catch (Exception e) {
+			throw new JinyException(MultilingualMessage.create(e.toString()));
+		}
+	}
+
 	/**
 	 * {@inheritDoc}
 	 */
@@ -80,27 +102,14 @@ public class ParsemCreator<P extends ParsemElement> extends GrammarDecorator {
 	 */
 	@Override
 	protected boolean parse(GrammarContext context) {
-		context.resetTerm();
 
-		boolean res = decorated.parse(context);
+		createParsem(context);
 
-		if (res) {
+		boolean ret = decorated.parse(context);
 
-			try {
+		((ParsemAccumulator) context.popParsem()).build(context);
 
-				Constructor<P> constructor = clazz.getConstructor(Lexem.class);
-				constructor.setAccessible(true);
-				ParsemElement parsem = constructor.newInstance(context.getCurrentLexem());
-				parsem.setVisitor(visitor);
-				context.pushParsem(parsem);
-
-			} catch (Exception e) {
-				throw new JinyException(MultilingualMessage.create(e.toString()));
-			}
-
-		}
-
-		return res;
+		return ret;
 	}
 
 }

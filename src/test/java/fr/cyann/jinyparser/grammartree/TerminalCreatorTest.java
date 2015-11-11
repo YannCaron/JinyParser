@@ -17,10 +17,10 @@ import static fr.cyann.jinyparser.testUtils.Reflexion.getPrivateField;
  * ou écrivez à Creative Commons, 444 Castro Street, Suite 900, Mountain View, California, 94041, USA.
  **/
 
-public class ParsemCreatorTest extends TestCase {
+public class TerminalCreatorTest extends TestCase {
 
 	public void testSetVisitor() throws Exception {
-        ParsemCreator<DefaultTerminal> p = createTerminal("TODO:NAME", lexem(word("a")));
+		TerminalCreator<DefaultTerminal> p = createTerminal("TODO:NAME", lexem(word("a")));
 
 		ParsemVisitor<DefaultTerminal, VisitorContext> visitorField = getPrivateField(p, "visitor");
 		assertNull(visitorField);
@@ -40,7 +40,7 @@ public class ParsemCreatorTest extends TestCase {
 	public void testLookahead() throws Exception {
 		String source = "a";
 
-        ParsemCreator<DefaultTerminal> p = createTerminal("TODO:NAME", lexem(word("a")));
+		TerminalCreator<DefaultTerminal> p = createTerminal("TODO:NAME", lexem(word("a")));
 
 		GrammarContext context = new GrammarContext(source);
 
@@ -55,7 +55,7 @@ public class ParsemCreatorTest extends TestCase {
 
 		String source = "a";
 
-        ParsemCreator<DefaultTerminal> p = createTerminal("TODO:NAME", lexem(word("a")));
+		TerminalCreator<DefaultTerminal> p = createTerminal("TODO:NAME", lexem(word("a")));
 
 		GrammarContext context = new GrammarContext(source);
 

@@ -71,7 +71,7 @@ public class VisitorTest extends TestCase {
 		// lexer
 		GrammarElement number = produce("Number", oneOrMore(digit), NUMBER, AstNumber.class).setVisitor(VISIT_NUMBER);
 
-		GrammarElement operation = catcher(create("Operation", number, AstBinaryExpression.class).setVisitor(VISIT_ADDITION), "right", "sign", "left");
+		GrammarElement operation = catcher(createTerminal("Operation", number, AstBinaryExpression.class).setVisitor(VISIT_ADDITION), "right", "sign", "left");
 
 		GrammarElement operator = produceTerminal("Operator", sign, OPERATOR);
 

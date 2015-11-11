@@ -37,23 +37,23 @@ public class BnfTest extends TestCase {
 		// lexer
 		GrammarElement leftParenthesis = lexem(charIn("("), LexemType.SYMBOL);
 		GrammarElement rightParenthesis = lexem(charIn(")"), LexemType.SYMBOL);
-		GrammarElement number = produce("Number", oneOrMore(charIn('0', '9')), NUMBER, AstNumber.class);
+		GrammarElement number = terminal("Number", NUMBER, AstNumber.class, oneOrMore(charIn('0', '9')));
 
-        GrammarElement addSign = produceTerminal("AddSign", charIn("+"), OPERATOR);
-        GrammarElement multiplySign = produceTerminal("MultiplySign", charIn("*"), OPERATOR);
+		GrammarElement addSign = terminal("AddSign", OPERATOR, charIn("+"));
+		GrammarElement multiplySign = terminal("MultiplySign", OPERATOR, charIn("*"));
 
 		// recursive
 		Recursive term = recursive("Term");
 
 		// <multiplication> := <produceNumber> [ { '*' <produceNumber> } ]
-        GrammarElement multiplyOperation = catcher(produce("Multiplication", term, NUMBER, AstBinaryExpression.class), "right", "sign", "left");
-        GrammarElement multiplication = sequence(term, zeroOrMore(sequence(multiplySign, multiplyOperation)));
+		GrammarElement multiplication = nonTerminal("Multiplication", AstBinaryExpression.class,
+				sequence(aggregator("left", term), zeroOrMore(sequence(aggregator("sign", multiplySign), main(aggregator("right", term))))));
 
 		// <addition> := <multiplication> [ { '+' <multiplication> } ]
-        GrammarElement addOperation = catcher(produce("Addition", multiplication, NUMBER, AstBinaryExpression.class), "right", "sign", "left");
-        GrammarElement addition = sequence(multiplication, zeroOrMore(sequence(addSign, addOperation)));
+		GrammarElement addition = nonTerminal("Addition", AstBinaryExpression.class,
+				sequence(aggregator("left", multiplication), zeroOrMore(sequence(aggregator("sign", addSign), main(aggregator("right", multiplication))))));
 
-		// <num> := <number> | '(' <addition> ')'
+		// <term> := <number> | '(' <addition> ')'
 		term.setGrammar(choice(number, sequence(leftParenthesis, addition, rightParenthesis)));
 
 		// parser
@@ -62,6 +62,11 @@ public class BnfTest extends TestCase {
 		// to BNF
 		System.out.println("Grammar tree:\n" + grammar.toBnf());
 		System.out.println();
+
+		String result = "('+' ('+' 'n7' ('*' 'n5' 'n8')) 'n14')";
+		ParsemElement root = grammar.parse("7 + 5 * 8 + 14").getParseTree();
+		System.out.println(root);
+		assertEquals(result, root.toString());
 
 		//RailroadDiagram.Browse(grammar);
 
@@ -75,9 +80,9 @@ public class BnfTest extends TestCase {
 		GrammarElement bl = lexem(word("{"), LexemType.SYMBOL);
 		GrammarElement br = lexem(word("}"), LexemType.SYMBOL);
 
-        GrammarElement if_ = sequence(produce("If", word("if"), KEYWORD, AstIf.class), pl, pr, bl, br);
-        GrammarElement elseif = sequence(dropper(produceTerminal("elseIf", word("elseif"), KEYWORD), "elseif"), pl, pr, bl, br);
-        GrammarElement else_ = sequence(dropper(produceTerminal("else", word("else"), KEYWORD), "else"), bl, br);
+		GrammarElement if_ = sequence(produce("If", word("if"), KEYWORD, AstIf.class), pl, pr, bl, br);
+		GrammarElement elseif = sequence(dropper(produceTerminal("elseIf", word("elseif"), KEYWORD), "elseif"), pl, pr, bl, br);
+		GrammarElement else_ = sequence(dropper(produceTerminal("else", word("else"), KEYWORD), "else"), bl, br);
 
 		GrammarElement ifProd = sequence(if_, zeroOrMore(elseif), zeroOrOne(else_));
 		GrammarElement.ProcessedGrammar grammar = ifProd.process();

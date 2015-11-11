@@ -13,20 +13,20 @@ import fr.cyann.jinyparser.parsetree.ParsemElement;
 import fr.cyann.jinyparser.utils.MultilingualMessage;
 
 /**
- * The ParsemDropper class definition.<br>
+ * The NonTerminalAggregator class definition.<br>
  * Aggregate self parsem with previous created one. Result parsem is the previous one.
  */
-public class ParsemDropper extends GrammarDecorator {
+public class NonTerminalAggregator extends GrammarDecorator {
 
     private final String fieldName;
 
     /**
      * Default constructor.
      *
-     * @param decorated the decorated element.
      * @param fieldName the name of the field to drop.
+     * @param decorated the decorated element.
      */
-    public ParsemDropper(GrammarElement decorated, String fieldName) {
+    public NonTerminalAggregator(String fieldName, GrammarElement decorated) {
         super(decorated);
         this.fieldName = fieldName;
     }
@@ -51,12 +51,12 @@ public class ParsemDropper extends GrammarDecorator {
         if (res) {
 
             if (context.isParserEmpty())
-                throw new JinyException(MultilingualMessage.create("ParsemDropper [%s] try to pop parsem from the stack, but the stack is empty. No parsem was previously created.").setArgs(fieldName));
-            ParsemElement elementToAggregate = context.popParsem();
+	            throw new JinyException(MultilingualMessage.create("NonTerminalAggregator [%s] try to pop parsem from the stack, but the stack is empty. No parsem was previously created.").setArgs(fieldName));
+	        ParsemElement elementToAggregate = context.popParsem();
 
             if (context.isParserEmpty())
-                throw new JinyException(MultilingualMessage.create("ParsemDropper [%s] try to pop parsem from the stack, but the stack is empty. Not enough parsem has been created.").setArgs(fieldName));
-            ParsemElement nonTerminal = context.popParsem();
+	            throw new JinyException(MultilingualMessage.create("NonTerminalAggregator [%s] try to pop parsem from the stack, but the stack is empty. Not enough parsem has been created.").setArgs(fieldName));
+	        ParsemElement nonTerminal = context.popParsem();
 
             nonTerminal.aggregate(fieldName, elementToAggregate);
 

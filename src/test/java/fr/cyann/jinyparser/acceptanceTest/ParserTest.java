@@ -45,7 +45,7 @@ public class ParserTest extends TestCase {
 		// lexer
 
 		GrammarElement number = produce("Number", oneOrMore(digit), NUMBER, AstNumber.class);
-		GrammarElement operation = catcher(create("Operation", number, AstBinaryExpression.class), "right", "sign", "left");
+		GrammarElement operation = catcher(createTerminal("Operation", number, AstBinaryExpression.class), "right", "sign", "left");
 
 		GrammarElement operator = produceTerminal("Operator", sign, OPERATOR);
 
