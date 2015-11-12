@@ -8,6 +8,7 @@ package fr.cyann.jinyparser.grammartree;
  * ou écrivez à Creative Commons, 444 Castro Street, Suite 900, Mountain View, California, 94041, USA.
  **/
 
+import fr.cyann.jinyparser.parsetree.DefaultNonTerminal;
 import fr.cyann.jinyparser.parsetree.NonTerminal;
 import fr.cyann.jinyparser.parsetree.ParsemElement;
 
@@ -53,7 +54,7 @@ public class NonTerminalCreator extends GrammarDecorator {
 	 */
 	public NonTerminalCreator aggregateWith(int number) {
 		for (int i = 0; i < number; i++) {
-			this.fieldNames.add(this.fieldNames.get(0));
+			this.fieldNames.add(DefaultNonTerminal.SUB_NODE_IDENTITY);
 		}
 		return this;
 	}

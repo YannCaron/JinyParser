@@ -178,8 +178,8 @@ public final class GrammarFactory {
 	/**
 	 * Create a production that create a defaultTerminal parsem when decorated element (a lexem creator) is parser.
 	 *
-	 * @param name        the name of the production.
-	 * @param decorated   the decorated element.
+	 * @param name      the name of the production.
+	 * @param decorated the decorated element.
 	 * @return the production.
 	 */
 	public static TerminalProduction<DefaultTerminal> terminal(String name, LexemCreator decorated) {
@@ -200,14 +200,39 @@ public final class GrammarFactory {
 		return new NonTerminalProduction<P>(name, parsemClass, decorated);
 	}
 
+	/**
+	 * Create a production that create a defaultNonTerminal parsem container.<br>
+	 * Must be employed with NonTerminalCreator to raise the real production.
+	 *
+	 * @param name      the name of the production.
+	 * @param decorated the decorated element.
+	 * @return the production.
+	 */
 	public static NonTerminalProduction<DefaultNonTerminal> nonTerminal(String name, GrammarElement decorated) {
 		return nonTerminal(name, DefaultNonTerminal.class, decorated);
 	}
 
+	/**
+	 * Create the non terminal parsem and aggregate the decorated production with it.<br>
+	 * Must be used encapsulated on a non terminal production.<br>
+	 * If not parsed, real non terminal will not be produced and terminals will keep their position on the program stack.
+	 *
+	 * @param fieldName the field name (use annotation @AggregateField to match with) in the parsem to aggregate the decorated element with.
+	 * @param decorated the decorated element.
+	 * @return the sub production.
+	 */
 	public static NonTerminalCreator create(String fieldName, GrammarElement decorated) {
 		return new NonTerminalCreator(fieldName, decorated);
 	}
 
+	/**
+	 * Create the default non terminal parsem and aggregate the decorated production with it.<br>
+	 * Must be used encapsulated on a non terminal production.<br>
+	 * If not parsed, real non terminal will not be produced and terminals will keep their position on the program stack.
+	 *
+	 * @param decorated the decorated element.
+	 * @return the sub production.
+	 */
 	public static NonTerminalCreator create(GrammarElement decorated) {
 		return create(DefaultNonTerminal.SUB_NODE_IDENTITY, decorated);
 	}
