@@ -15,16 +15,12 @@ import fr.cyann.jinyparser.lexem.Lexem;
 @SuppressWarnings("WeakerAccess")
 public abstract class ParsemElement {
 
-	private final Lexem lexem;
 	private ParsemVisitor visitor;
 
-	public ParsemElement(Lexem lexem) {
-		this.lexem = lexem;
+	public ParsemElement() {
 	}
 
-	public Lexem getLexem() {
-		return lexem;
-	}
+	public abstract Lexem getLexem();
 
 	public void setVisitor(ParsemVisitor visitor) {
 		this.visitor = visitor;

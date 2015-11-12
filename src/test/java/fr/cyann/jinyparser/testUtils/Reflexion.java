@@ -21,8 +21,19 @@ public class Reflexion {
         throw new RuntimeException("Cannot instantiate static class !");
     }
 
-    public static <T> T getPrivateField(Object o, String fieldName) throws NoSuchFieldException, IllegalAccessException {
-        Field field = o.getClass().getDeclaredField(fieldName);
+	public static <T> T getPrivateFieldValue(Object o, String fieldName) throws IllegalAccessException {
+		Class<?> clazz = o.getClass();
+
+		Field field = null;
+
+		while (field == null && clazz.getSuperclass() != null) {
+			try {
+				field = clazz.getDeclaredField(fieldName);
+			} catch (NoSuchFieldException e) {
+				clazz = clazz.getSuperclass();
+			}
+		}
+
         field.setAccessible(true);
         return (T) field.get(o);
     }

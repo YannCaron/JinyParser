@@ -1,6 +1,5 @@
-package fr.cyann.jinyparser.grammartree;
-/**
- * Copyright (C) 14/10/15 Yann Caron aka cyann
+package fr.cyann.jinyparser.grammartree;/**
+ * Copyright (C) 12/11/15 Yann Caron aka cyann
  * <p/>
  * Cette œuvre est mise à disposition sous licence Attribution -
  * Pas d’Utilisation Commerciale - Partage dans les Mêmes Conditions 3.0 France.
@@ -8,19 +7,14 @@ package fr.cyann.jinyparser.grammartree;
  * ou écrivez à Creative Commons, 444 Castro Street, Suite 900, Mountain View, California, 94041, USA.
  **/
 
-import fr.cyann.jinyparser.exceptions.JinyException;
-import fr.cyann.jinyparser.lexem.Lexem;
 import fr.cyann.jinyparser.parsetree.ParsemElement;
 import fr.cyann.jinyparser.parsetree.ParsemVisitor;
 import fr.cyann.jinyparser.parsetree.VisitorContext;
-import fr.cyann.jinyparser.utils.MultilingualMessage;
-
-import java.lang.reflect.Constructor;
 
 /**
- * The TerminalCreator class definition.<br>
+ * The GrammarProduction definition.
  */
-public class TerminalCreator<P extends ParsemElement> extends GrammarDecorator {
+public abstract class GrammarProduction<P extends ParsemElement> extends GrammarDecorator {
 
 	private final String name;
 	private final Class<P> clazz;
@@ -29,10 +23,11 @@ public class TerminalCreator<P extends ParsemElement> extends GrammarDecorator {
 	/**
 	 * Default constructor.
 	 *
+	 * @param name      the production name.
 	 * @param clazz     the grammar element class to createTerminal.
 	 * @param decorated the decorated grammar element.
 	 */
-	public TerminalCreator(String name, Class<P> clazz, GrammarElement decorated) {
+	public GrammarProduction(String name, Class<P> clazz, GrammarElement decorated) {
 		super(decorated);
 		this.name = name;
 		this.clazz = clazz;
@@ -57,13 +52,22 @@ public class TerminalCreator<P extends ParsemElement> extends GrammarDecorator {
 	}
 
 	/**
+	 * Get the visitor.
+	 *
+	 * @return the visitor.
+	 */
+	public ParsemVisitor<P, ? extends VisitorContext> getVisitor() {
+		return visitor;
+	}
+
+	/**
 	 * The parsem visitor accessor.<br>
 	 * Define the behaviour of the parsem element when it will be traversed.
 	 *
 	 * @param visitor the visitor to delegate to the parsem.
 	 * @return this.
 	 */
-	public GrammarElement setVisitor(ParsemVisitor<P, ? extends VisitorContext> visitor) {
+	public GrammarProduction setVisitor(ParsemVisitor<P, ? extends VisitorContext> visitor) {
 		this.visitor = visitor;
 		return this;
 	}
@@ -80,28 +84,8 @@ public class TerminalCreator<P extends ParsemElement> extends GrammarDecorator {
 	 * {@inheritDoc}
 	 */
 	@Override
-	protected boolean parse(GrammarContext context) {
-		context.resetTerm();
-
-		boolean res = decorated.parse(context);
-
-		if (res) {
-
-			try {
-
-				Constructor<P> constructor = clazz.getConstructor(Lexem.class);
-				constructor.setAccessible(true);
-				ParsemElement parsem = constructor.newInstance(context.getCurrentLexem());
-				parsem.setVisitor(visitor);
-				context.pushParsem(parsem);
-
-			} catch (Exception e) {
-				throw new JinyException(MultilingualMessage.create(e.toString()));
-			}
-
-		}
-
-		return res;
+	void buildBnf(BnfContext context) {
+		context.newProduction(name, decorated);
 	}
 
 }

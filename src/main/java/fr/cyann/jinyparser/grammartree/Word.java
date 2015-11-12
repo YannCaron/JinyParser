@@ -26,6 +26,11 @@ public class Word extends GrammarLeaf {
 		this.caseSensitive = caseSensitive;
 	}
 
+	/**
+	 * Default constructor.
+	 *
+	 * @param word word to compare with.
+	 */
 	public Word(String word) {
 		this(word, true);
 	}
@@ -79,6 +84,9 @@ public class Word extends GrammarLeaf {
 		context.append("'");
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public String toString() {
 		return "Word{" +

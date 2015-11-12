@@ -33,6 +33,13 @@ public class Recursive extends GrammarElement {
 	}
 
 	/**
+	 * @return
+	 */
+	public GrammarElement getGrammar() {
+		return grammar;
+	}
+
+	/**
 	 * Set the grammar to delegate to.<br>
 	 * This call is mandatory before parsing. Elsewhere it throw an exception.
 	 *

@@ -34,7 +34,7 @@ public class LexerTest extends TestCase {
         GrammarElement digit = charIn("0123456789");
 
 		// lexer
-		GrammarElement number = lexem(oneOrMore(digit), NUMBER);
+		GrammarElement number = lexem(NUMBER, oneOrMore(digit));
 
 		// parser
 		GrammarElement grammar = asMany(number, 3);
@@ -55,7 +55,7 @@ public class LexerTest extends TestCase {
 		GrammarElement hexDigit = charIn('0', '9').add('a', 'f').add('A', 'F');
 
 		// lexer
-		GrammarElement grammar = lexem(sequence(word("0x"), asMany(hexDigit, 6)), NUMBER);
+		GrammarElement grammar = lexem(NUMBER, sequence(word("0x"), asMany(hexDigit, 6)));
 
 		// parse
 		GrammarContext c = grammar.process().parse(source);
@@ -88,9 +88,9 @@ public class LexerTest extends TestCase {
         GrammarElement sign = charIn("+-*/%");
 
 		// lexer
-		GrammarElement number = lexem(oneOrMore(digit), NUMBER);
+		GrammarElement number = lexem(NUMBER, oneOrMore(digit));
 
-        GrammarElement operator = lexem(sign, LexemType.SYMBOL);
+		GrammarElement operator = lexem(LexemType.SYMBOL, sign);
 
 		// parser
 		GrammarElement grammar = sequence(number, oneOrMore(sequence(operator, number)));

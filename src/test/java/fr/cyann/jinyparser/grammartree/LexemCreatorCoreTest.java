@@ -3,7 +3,8 @@ package fr.cyann.jinyparser.grammartree;
 import fr.cyann.jinyparser.lexem.LexemType;
 import junit.framework.TestCase;
 
-import static fr.cyann.jinyparser.grammartree.GrammarFactory.produceTerminal;
+import static fr.cyann.jinyparser.grammartree.GrammarFactory.lexem;
+import static fr.cyann.jinyparser.grammartree.GrammarFactory.terminal;
 
 /**
  * Copyright (C) 17/10/15 Yann Caron aka cyann
@@ -16,14 +17,17 @@ import static fr.cyann.jinyparser.grammartree.GrammarFactory.produceTerminal;
 
 public class LexemCreatorCoreTest extends TestCase {
 
+	private static GrammarElement getGrammar() {
+		LexemCreator lexWord = lexem(LexemType.SYMBOL, new Word("abc"));
+		return terminal("ABC", lexWord);
+	}
+
     public void testLookahead() throws Exception {
 
         String source = "abc";
         GrammarContext context = new GrammarContext(source);
 
-        GrammarElement producer = produceTerminal("TODO:NAME", new Word("abc"), LexemType.SYMBOL);
-
-        boolean result = producer.lookahead(context);
+	    boolean result = getGrammar().lookahead(context);
 
         assertTrue("'abc' literal should be parsed by grammar !", result);
         try {
@@ -41,9 +45,7 @@ public class LexemCreatorCoreTest extends TestCase {
         String source = "abc";
         GrammarContext context = new GrammarContext(source);
 
-        GrammarElement producer = produceTerminal("TODO:NAME", new Word("abc"), LexemType.SYMBOL);
-
-        boolean result = producer.parse(context);
+	    boolean result = getGrammar().parse(context);
 
         assertTrue("'abc' literal should be parsed by grammar !", result);
         assertEquals("'abc'", context.popParsem().toString());

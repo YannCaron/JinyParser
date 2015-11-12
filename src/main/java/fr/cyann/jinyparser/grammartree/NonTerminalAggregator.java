@@ -18,52 +18,52 @@ import fr.cyann.jinyparser.utils.MultilingualMessage;
  */
 public class NonTerminalAggregator extends GrammarDecorator {
 
-    private final String fieldName;
+	private final String fieldName;
 
-    /**
-     * Default constructor.
-     *
-     * @param fieldName the name of the field to drop.
-     * @param decorated the decorated element.
-     */
-    public NonTerminalAggregator(String fieldName, GrammarElement decorated) {
-        super(decorated);
-        this.fieldName = fieldName;
-    }
+	/**
+	 * Default constructor.
+	 *
+	 * @param fieldName the name of the field to drop.
+	 * @param decorated the decorated element.
+	 */
+	public NonTerminalAggregator(String fieldName, GrammarElement decorated) {
+		super(decorated);
+		this.fieldName = fieldName;
+	}
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    protected boolean lookahead(GrammarContext context) {
-        return decorated.lookahead(context);
-    }
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	protected boolean lookahead(GrammarContext context) {
+		return decorated.lookahead(context);
+	}
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    protected boolean parse(GrammarContext context) {
-        context.resetTerm();
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	protected boolean parse(GrammarContext context) {
+		context.resetTerm();
 
-        boolean res = decorated.parse(context);
+		boolean res = decorated.parse(context);
 
-        if (res) {
+		if (res) {
 
-            if (context.isParserEmpty())
-	            throw new JinyException(MultilingualMessage.create("NonTerminalAggregator [%s] try to pop parsem from the stack, but the stack is empty. No parsem was previously created.").setArgs(fieldName));
-	        ParsemElement elementToAggregate = context.popParsem();
+			if (context.isParserEmpty())
+				throw new JinyException(MultilingualMessage.create("NonTerminalAggregator [%s] try to pop parsem from the stack, but the stack is empty. No parsem was previously created.").setArgs(fieldName));
+			ParsemElement elementToAggregate = context.popParsem();
 
-            if (context.isParserEmpty())
-	            throw new JinyException(MultilingualMessage.create("NonTerminalAggregator [%s] try to pop parsem from the stack, but the stack is empty. Not enough parsem has been created.").setArgs(fieldName));
-	        ParsemElement nonTerminal = context.popParsem();
+			if (context.isParserEmpty())
+				throw new JinyException(MultilingualMessage.create("NonTerminalAggregator [%s] try to pop parsem from the stack, but the stack is empty. Not enough parsem has been created.").setArgs(fieldName));
+			ParsemElement nonTerminal = context.popParsem();
 
-            nonTerminal.aggregate(fieldName, elementToAggregate);
+			nonTerminal.aggregate(fieldName, elementToAggregate);
 
-            context.pushParsem(nonTerminal);
+			context.pushParsem(nonTerminal);
 
-        }
+		}
 
-        return res;
-    }
+		return res;
+	}
 }

@@ -1,7 +1,10 @@
 package fr.cyann.jinyparser.grammartree;
 
 import fr.cyann.jinyparser.lexem.LexemType;
-import fr.cyann.jinyparser.parsetree.*;
+import fr.cyann.jinyparser.parsetree.DefaultNonTerminal;
+import fr.cyann.jinyparser.parsetree.DefaultTerminal;
+import fr.cyann.jinyparser.parsetree.NonTerminal;
+import fr.cyann.jinyparser.parsetree.Terminal;
 
 /**
  * The ${CLASS_NAME} class.
@@ -9,21 +12,21 @@ import fr.cyann.jinyparser.parsetree.*;
  */
 public final class GrammarFactory {
 
-    private GrammarFactory() {
-        throw new RuntimeException("Static class cannot be instanced");
-    }
+	private GrammarFactory() {
+		throw new RuntimeException("Static class cannot be instanced");
+	}
 
-    // region lexer
+	// region lexer
 
-    /**
-     * Create a new lexer char recognizer grammar element.
-     *
-     * @param terms the list of character to recognize.
-     * @return the new grammar element.
-     */
-    public static CharIn charIn(String terms) {
-        return new CharIn(terms);
-    }
+	/**
+	 * Create a new lexer char recognizer grammar element.
+	 *
+	 * @param terms the list of character to recognize.
+	 * @return the new grammar element.
+	 */
+	public static CharIn charIn(String terms) {
+		return new CharIn(terms);
+	}
 
 	/**
 	 * Create a new lexer char recognizer grammar element.
@@ -59,13 +62,13 @@ public final class GrammarFactory {
 
 	/**
 	 * Create a new lexer word recognizer grammar element.
-     *
-     * @param terms the word to recognize.
-     * @return the new grammar element.
-     */
-    public static Word word(String terms) {
-	    return new Word(terms, true);
-    }
+	 *
+	 * @param terms the word to recognize.
+	 * @return the new grammar element.
+	 */
+	public static Word word(String terms) {
+		return new Word(terms, true);
+	}
 
 	/**
 	 * Create a new lexer not case sensitive word recognizer grammar element.
@@ -85,7 +88,7 @@ public final class GrammarFactory {
 	 * Create a wrapper where grammar element can be repeated zero or one time (equivalent to optional(g)).
 	 *
 	 * @param decorated the grammar element to decorate.
-     * @return the new grammar element.
+	 * @return the new grammar element.
 	 */
 	public static Optional zeroOrOne(GrammarElement decorated) {
 		return new Optional(decorated);
@@ -114,68 +117,27 @@ public final class GrammarFactory {
 	/**
 	 * Create a new token producer grammar element.
 	 *
-     * @param decorated the grammar that decide if lexem will be produced.
-     * @param lexemType the token type of the token to produce.
-     * @return the new grammar element.
-     */
-    public static LexemCreatorCore lexemCore(GrammarElement decorated, LexemType lexemType) {
-        return new LexemCreatorCore(decorated, lexemType);
-    }
+	 * @param decorated the grammar that decide if lexem will be produced.
+	 * @param lexemType the token type of the token to produce.
+	 * @return the new grammar element.
+	 */
+	public static LexemCreatorCore lexemCore(GrammarElement decorated, LexemType lexemType) {
+		return new LexemCreatorCore(decorated, lexemType);
+	}
 
-    /**
-     * Create a new line incrementer grammar element.
-     *
-     * @param decorated the grammar element to decorate.
-     * @return the new grammar element.
-     */
-    public static LineIncrementer lineIncrementer(GrammarElement decorated) {
-	    return new LineIncrementer(decorated);
-    }
+	/**
+	 * Create a new line incrementer grammar element.
+	 *
+	 * @param decorated the grammar element to decorate.
+	 * @return the new grammar element.
+	 */
+	public static LineIncrementer lineIncrementer(GrammarElement decorated) {
+		return new LineIncrementer(decorated);
+	}
 
 	// endregion
 
 	// region production
-
-	public static <P extends Terminal> TerminalCreator<P> terminal(String name, LexemType lexemType, Class<P> parsemClass, GrammarElement decorated) {
-		return new TerminalCreator(name, parsemClass, new LexemCreator(lexemType, decorated));
-	}
-
-	public static TerminalCreator<DefaultTerminal> terminal(String name, LexemType lexemType, GrammarElement decorated) {
-		return terminal(name, lexemType, DefaultTerminal.class, decorated);
-	}
-
-	public static <P extends NonTerminal> NonTerminalCreator<P> nonTerminal(String name, Class<P> parsemClass, GrammarElement decorated) {
-		return new NonTerminalCreator<P>(name, parsemClass, decorated);
-	}
-
-	public static NonTerminalCreator<DefaultNonTerminal> nonTerminal(String name, GrammarElement decorated) {
-		return nonTerminal(name, DefaultNonTerminal.class, decorated);
-	}
-
-	/**
-	 * Grammar element that drop the current parsem to the previous one according a code to aggregate them together.
-	 *
-	 * @param fieldName the name of the field that will accept the child parsem.
-	 * @param decorated the grammar that decide if createTerminal will be produced.
-	 * @return the new grammar element.
-	 */
-	public static NonTerminalAggregator aggregator(String fieldName, GrammarElement decorated) {
-		return new NonTerminalAggregator(fieldName, decorated);
-	}
-
-	/**
-	 * Grammar element that drop the current parsem to the previous DefaultNonTerminal parsem to aggregate them together.
-	 *
-	 * @param decorated the grammar that decide if createTerminal will be produced.
-	 * @return the new grammar element.
-	 */
-	public static NonTerminalAggregator aggregator(GrammarElement decorated) {
-		return new NonTerminalAggregator(DefaultNonTerminal.SUB_NODE_IDENTITY, decorated);
-	}
-
-	public static NonTerminalMain main(GrammarElement decorated) {
-		return new NonTerminalMain(decorated);
-	}
 
 	/**
 	 * Grammar element that produce lexem (process token on lexer) of DEFAULT lexemType.<br>
@@ -192,160 +154,106 @@ public final class GrammarFactory {
 	 * Grammar element that produce lexem (process token on lexer).<br>
 	 * Create also a new token producer grammar element that manage separators.
 	 *
-	 * @param decorated the grammar element to decorate.
 	 * @param lexemType the token type of the token to produce.
+	 * @param decorated the grammar element to decorate.
 	 * @return the new grammar element.
 	 */
-	public static LexemCreator lexem(GrammarElement decorated, LexemType lexemType) {
+	public static LexemCreator lexem(LexemType lexemType, GrammarElement decorated) {
 		return new LexemCreator(lexemType, decorated);
 	}
 
-
 	/**
-	 * Grammar element that produce createTerminal (process parse tree element in the stack).
+	 * Create a production that create a terminal parsem when decorated element (a lexem creator) is parser.
 	 *
-	 * @param name
-	 * @param decorated the grammar that decide if createTerminal will be produced.
-	 * @param clazz     the createTerminal element class to createTerminal.
-	 * @return the new grammar element.
+	 * @param name        the name of the production.
+	 * @param parsemClass the class of the parsem to create.
+	 * @param decorated   the decorated element.
+	 * @param <P>         the parsem type.
+	 * @return the production.
 	 */
-	public static <P extends ParsemElement> TerminalCreator<P> createTerminal(String name, GrammarElement decorated, Class<P> clazz) {
-		return new TerminalCreator<P>(name, clazz, decorated);
+	public static <P extends Terminal> TerminalProduction<P> terminal(String name, Class<P> parsemClass, LexemCreator decorated) {
+		return new TerminalProduction(name, parsemClass, decorated);
 	}
 
 	/**
-	 * Grammar element that produce a default terminal createTerminal.
+	 * Create a production that create a defaultTerminal parsem when decorated element (a lexem creator) is parser.
 	 *
-	 * @param name
-	 * @param decorated the grammar that decide if createTerminal will be produced.
-	 * @return the new grammar element.
+	 * @param name        the name of the production.
+	 * @param decorated   the decorated element.
+	 * @return the production.
 	 */
-	public static TerminalCreator<DefaultTerminal> createTerminal(String name, LexemCreator decorated) {
-		return new TerminalCreator<DefaultTerminal>(name, DefaultTerminal.class, decorated);
+	public static TerminalProduction<DefaultTerminal> terminal(String name, LexemCreator decorated) {
+		return terminal(name, DefaultTerminal.class, decorated);
 	}
 
 	/**
-	 * Grammar element that produce a default terminal createTerminal.
+	 * Create a production that create a nonTerminal parsem container.<br>
+	 * Must be employed with NonTerminalCreator to raise the real production.
 	 *
-	 * @param name
-	 * @param decorated the grammar that decide if createTerminal will be produced.
-	 * @return the new grammar element.
+	 * @param name        the name of the production.
+	 * @param parsemClass the class of the parsem to create.
+	 * @param decorated   the decorated element.
+	 * @param <P>         the parsem type.
+	 * @return the production.
 	 */
-	public static TerminalCreator<DefaultNonTerminal> createNonTerminal(String name, GrammarElement decorated) {
-		return new TerminalCreator<DefaultNonTerminal>(name, DefaultNonTerminal.class, decorated);
+	public static <P extends NonTerminal> NonTerminalProduction<P> nonTerminal(String name, Class<P> parsemClass, GrammarElement decorated) {
+		return new NonTerminalProduction<P>(name, parsemClass, decorated);
+	}
+
+	public static NonTerminalProduction<DefaultNonTerminal> nonTerminal(String name, GrammarElement decorated) {
+		return nonTerminal(name, DefaultNonTerminal.class, decorated);
+	}
+
+	public static NonTerminalCreator create(String fieldName, GrammarElement decorated) {
+		return new NonTerminalCreator(fieldName, decorated);
+	}
+
+	public static NonTerminalCreator create(GrammarElement decorated) {
+		return create(DefaultNonTerminal.SUB_NODE_IDENTITY, decorated);
 	}
 
 	/**
-	 * Create a lexem that manage spaces and then a terminal parsem.
+	 * Grammar element that drop the current parsem to the previous one according a code to dropper them together.
 	 *
-	 * @param name
-	 * @param decorated the grammar that decide if createTerminal will be produced.
-	 * @param lexemType the type of the lexem to createTerminal.
-	 * @return the created grammar element.
-	 */
-	public static TerminalCreator<DefaultTerminal> produceTerminal(String name, GrammarElement decorated, LexemType lexemType) {
-		return GrammarFactory.createTerminal(name, lexem(decorated, lexemType));
-	}
-
-	/**
-	 * Create a lexem that manage spaces and then a non terminal parsem.
-	 *
-	 * @param name
-	 * @param decorated the grammar that decide if createTerminal will be produced.
-	 * @param lexemType the type of the lexem to createTerminal.
-	 * @return the created grammar element.
-	 */
-	public static TerminalCreator<DefaultNonTerminal> produceNonTerminal(String name, GrammarElement decorated, LexemType lexemType) {
-		return GrammarFactory.createNonTerminal(name, lexem(decorated, lexemType));
-	}
-
-	/**
-	 * Create a lexem that manage spaces and then a parsem.
-	 *
-	 * @param name
-	 * @param decorated   the grammar that decide if createTerminal will be produced.
-	 * @param lexemType   the type of the lexem to createTerminal.
-	 * @param parsemClass the class of the parsem to createTerminal.
-	 * @return the created grammar element.
-	 */
-	public static <P extends ParsemElement> TerminalCreator produce(String name, GrammarElement decorated, LexemType lexemType, Class<P> parsemClass) {
-		return GrammarFactory.createTerminal(name, lexem(decorated, lexemType), parsemClass);
-	}
-
-	/**
-	 * Grammar element that drop the current parsem to the previous one according a code to aggregate them together.
-	 *
-	 * @param decorated the grammar that decide if createTerminal will be produced.
 	 * @param fieldName the name of the field that will accept the child parsem.
+	 * @param decorated the grammar that decide if createTerminal will be produced.
 	 * @return the new grammar element.
 	 */
-	public static NonTerminalAggregator dropper(GrammarElement decorated, String fieldName) {
+	public static NonTerminalAggregator aggregate(String fieldName, GrammarElement decorated) {
 		return new NonTerminalAggregator(fieldName, decorated);
 	}
 
 	/**
-	 * Grammar element that drop the current parsem to the previous DefaultNonTerminal parsem to aggregate them together.
+	 * Grammar element that drop the current parsem to the previous DefaultNonTerminal parsem to dropper them together.
 	 *
 	 * @param decorated the grammar that decide if createTerminal will be produced.
 	 * @return the new grammar element.
 	 */
-	public static NonTerminalAggregator dropperDefault(GrammarElement decorated) {
-		return new NonTerminalAggregator(DefaultNonTerminal.SUB_NODE_IDENTITY, decorated);
-	}
-
-	/**
-	 * Grammar element that catch the previous parsem to aggregate with the current one.
-	 *
-	 * @param decorated the grammar that decide if createTerminal will be produced.
-	 * @return the new grammar element.
-	 */
-	public static GrammarElement catcher(GrammarElement decorated, String... fieldNames) {
-		GrammarElement grammar = decorated;
-		for (String fieldName : fieldNames) {
-			grammar = new ParsemCatcher(grammar, fieldName);
-		}
-
-		return grammar;
-	}
-
-	/**
-	 * Grammar element that catch the nth previous parsem(s) to aggregate with the current DefaultNonTerminal grammar element.
-	 *
-	 * @param decorated     the grammar that decide if createTerminal will be produced.
-	 * @param howManyParsem how many previous parsem to aggregate with.
-	 * @return the new grammar element.
-	 */
-	public static GrammarElement catcherDefault(GrammarElement decorated, int howManyParsem) {
-		String[] names = new String[howManyParsem];
-		for (int i = 0; i < howManyParsem; i++) {
-			names[i] = DefaultNonTerminal.SUB_NODE_IDENTITY;
-		}
-		return catcher(decorated, names);
+	public static NonTerminalAggregator aggregate(GrammarElement decorated) {
+		return aggregate(DefaultNonTerminal.SUB_NODE_IDENTITY, decorated);
 	}
 
 	// endregion
 
-    // region node
+	// region node
 
-    /**
-     * Create a new sequence grammar element.
-     *
-     *
-     * @param elements list of children.
-     * @return the new grammar element.
-     */
-    public static Sequence sequence(GrammarElement... elements) {
-	    return new Sequence(elements);
-    }
+	/**
+	 * Create a new sequence grammar element.
+	 *
+	 * @param elements list of children.
+	 * @return the new grammar element.
+	 */
+	public static Sequence sequence(GrammarElement... elements) {
+		return new Sequence(elements);
+	}
 
 	/**
 	 * Create a wrapper where grammar element must be repeated a number of time (equivalent to sequence(g, g, g, ...)).
 	 *
-     *
-     * @param element the grammar element to decorate.
-     * @param count   how many time, the element must be repeated.
-     * @return the new grammar element.
-     */
+	 * @param element the grammar element to decorate.
+	 * @param count   how many time, the element must be repeated.
+	 * @return the new grammar element.
+	 */
 	public static Sequence asMany(GrammarElement element, int count) {
 		GrammarElement[] elements = new GrammarElement[count];
 		for (int i = 0; i < count; i++)
@@ -355,21 +263,19 @@ public final class GrammarFactory {
 
 	/**
 	 * Create a new choice grammar element.
-     *
-     *
-     *
-     * @param elements list of children.
-     * @return the new grammar element.
-     */
-    public static Choice choice(GrammarElement... elements) {
-	    Choice choice = new Choice(elements);
-	    return choice;
-    }
+	 *
+	 * @param elements list of children.
+	 * @return the new grammar element.
+	 */
+	public static Choice choice(GrammarElement... elements) {
+		Choice choice = new Choice(elements);
+		return choice;
+	}
 
 	public static Recursive recursive(String name) {
 		return new Recursive(name);
 	}
 
-    // endregion
+	// endregion
 
 }

@@ -5,8 +5,9 @@ import fr.cyann.jinyparser.parsetree.ParsemVisitor;
 import fr.cyann.jinyparser.parsetree.VisitorContext;
 import junit.framework.TestCase;
 
-import static fr.cyann.jinyparser.grammartree.GrammarFactory.*;
-import static fr.cyann.jinyparser.testUtils.Reflexion.getPrivateField;
+import static fr.cyann.jinyparser.grammartree.GrammarFactory.lexem;
+import static fr.cyann.jinyparser.grammartree.GrammarFactory.terminal;
+import static fr.cyann.jinyparser.testUtils.Reflexion.getPrivateFieldValue;
 
 /**
  * Copyright (C) 25/10/15 Yann Caron aka cyann
@@ -17,13 +18,18 @@ import static fr.cyann.jinyparser.testUtils.Reflexion.getPrivateField;
  * ou écrivez à Creative Commons, 444 Castro Street, Suite 900, Mountain View, California, 94041, USA.
  **/
 
-public class TerminalCreatorTest extends TestCase {
+public class TerminalProductionTest extends TestCase {
+
+	private static TerminalProduction getGrammar() {
+		LexemCreator lexA = lexem(new Word("a"));
+		return terminal("A", lexA);
+	}
 
 	public void testSetVisitor() throws Exception {
-		TerminalCreator<DefaultTerminal> p = createTerminal("TODO:NAME", lexem(word("a")));
+		TerminalProduction grammar = getGrammar();
 
-		ParsemVisitor<DefaultTerminal, VisitorContext> visitorField = getPrivateField(p, "visitor");
-		assertNull(visitorField);
+		ParsemVisitor<DefaultTerminal, VisitorContext> visitorFieldValue = getPrivateFieldValue(grammar, "visitor");
+		assertNull(visitorFieldValue);
 
 		ParsemVisitor<DefaultTerminal, VisitorContext> visitor = new ParsemVisitor<DefaultTerminal, VisitorContext>() {
 			@Override
@@ -31,22 +37,21 @@ public class TerminalCreatorTest extends TestCase {
 				// do nothing
 			}
 		};
-		p.setVisitor(visitor);
+		grammar.setVisitor(visitor);
 
-		assertEquals(visitor, visitorField);
+		visitorFieldValue = getPrivateFieldValue(grammar, "visitor");
+		assertEquals(visitor, visitorFieldValue);
 
 	}
 
 	public void testLookahead() throws Exception {
 		String source = "a";
 
-		TerminalCreator<DefaultTerminal> p = createTerminal("TODO:NAME", lexem(word("a")));
-
 		GrammarContext context = new GrammarContext(source);
 
 		assertNull(context.getParseTree());
 
-		p.lookahead(context);
+		getGrammar().lookahead(context);
 
 		assertNull(context.getParseTree());
 	}
@@ -55,13 +60,11 @@ public class TerminalCreatorTest extends TestCase {
 
 		String source = "a";
 
-		TerminalCreator<DefaultTerminal> p = createTerminal("TODO:NAME", lexem(word("a")));
-
 		GrammarContext context = new GrammarContext(source);
 
 		assertNull(context.getParseTree());
 
-		p.parse(context);
+		getGrammar().parse(context);
 
 		assertNotNull(context.getParseTree());
 		assertEquals("a", context.getParseTree().getLexem().getTerm());

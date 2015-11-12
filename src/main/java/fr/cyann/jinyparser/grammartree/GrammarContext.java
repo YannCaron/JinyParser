@@ -25,10 +25,12 @@ public class GrammarContext {
 	private final StringBuilder term;
 	private final List<Lexem> lexer;
 	private final Stack<ParsemElement> parser;
+	private final Stack<NonTerminalProduction> creatorStack;
 	private final Map<Integer, GrammarElement> packrat;
 
 	/**
 	 * Default constructor.
+	 *
 	 * @param source the source code to parse.
 	 */
 	public GrammarContext(String source) {
@@ -37,6 +39,7 @@ public class GrammarContext {
 		term = new StringBuilder();
 		lexer = new ArrayList<Lexem>();
 		parser = new Stack<ParsemElement>();
+		creatorStack = new Stack<NonTerminalProduction>();
 		packrat = new HashMap<Integer, GrammarElement>();
 	}
 
@@ -65,6 +68,7 @@ public class GrammarContext {
 
 	/**
 	 * Return the current character of source.
+	 *
 	 * @return the current character.
 	 */
 	public Character currentChar() {
@@ -81,17 +85,17 @@ public class GrammarContext {
 	/**
 	 * Jump to next character in the source code.
 	 */
-    public void nextCharLookahead() {
-	    iterator.next();
+	public void nextCharLookahead() {
+		iterator.next();
 	}
 
 	/**
 	 * Jump to next character in the source code and process current word.
 	 */
-    public void nextCharParser() {
-	    term.append(iterator.current());
-	    iterator.next();
-	    positionManager.increment();
+	public void nextCharParser() {
+		term.append(iterator.current());
+		iterator.next();
+		positionManager.increment();
 	}
 
 	/**
@@ -116,6 +120,7 @@ public class GrammarContext {
 
 	/**
 	 * Get the term from the buffer.
+	 *
 	 * @return the constructed term.
 	 */
 	public String getTerm() {
@@ -131,6 +136,7 @@ public class GrammarContext {
 
 	/**
 	 * Get the current position.
+	 *
 	 * @return the current position.
 	 */
 	public int getPositionManager() {
@@ -139,6 +145,7 @@ public class GrammarContext {
 
 	/**
 	 * Get the current line number.
+	 *
 	 * @return the current line number.
 	 */
 	public int getLine() {
@@ -147,19 +154,23 @@ public class GrammarContext {
 
 	/**
 	 * Get the current column number.
+	 *
 	 * @return the current column number.
 	 */
 	public int getColumn() {
 		return positionManager.getColumn();
 	}
 
-	/** {@inheritDoc} */
+	/**
+	 * {@inheritDoc}
+	 */
 	public Lexem getCurrentLexem() {
 		return lexer.get(lexer.size() - 1);
 	}
 
 	/**
 	 * Set the current lexem.
+	 *
 	 * @param lexem the current lexem to store.
 	 */
 	public void appendLexem(Lexem lexem) {
@@ -168,24 +179,54 @@ public class GrammarContext {
 
 	/**
 	 * Give the list of lexem (lexer) that resulting from lexing.
+	 *
 	 * @return the list of lexem
 	 */
-    public List<Lexem> getLexer() {
-        return lexer;
+	public List<Lexem> getLexer() {
+		return lexer;
 	}
 
 	// endregion
 
 	// region parser
+
+	/**
+	 * Get the current creator.
+	 *
+	 * @return the current creator.
+	 */
+	public NonTerminalProduction getCurrentCreator() {
+		return creatorStack.peek();
+	}
+
+	/**
+	 * Set the current creator on the top of the stack.
+	 *
+	 * @param creator the current creator.
+	 */
+	public void setCurrentCreator(NonTerminalProduction creator) {
+		creatorStack.push(creator);
+	}
+
+	/**
+	 * Pop the current creator from the stack (current become the last one).
+	 */
+	public void backToPreviousCreator() {
+		creatorStack.pop();
+	}
+
 	/**
 	 * Push parsemElement element on the top of parser stack.
+	 *
 	 * @param parsemElement the abstract syntax tree element.
 	 */
 	public void pushParsem(ParsemElement parsemElement) {
 		parser.push(parsemElement);
 	}
 
-	/** {@inheritDoc} */
+	/**
+	 * {@inheritDoc}
+	 */
 	public ParsemElement popParsem() {
 		return parser.pop();
 	}
@@ -206,10 +247,11 @@ public class GrammarContext {
 	 */
 	public boolean isParserEmpty() {
 		return parser.empty();
-    }
+	}
 
 	/**
 	 * Get the root element of the parse tree.
+	 *
 	 * @return the first element in the stack.
 	 */
 	public ParsemElement getParseTree() {
@@ -235,6 +277,7 @@ public class GrammarContext {
 
 	/**
 	 * Give the string representation of the object. Useful for debugging.
+	 *
 	 * @return the string representation of the object.
 	 */
 	@Override

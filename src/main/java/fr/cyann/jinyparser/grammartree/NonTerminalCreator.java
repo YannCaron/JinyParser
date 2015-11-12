@@ -8,85 +8,54 @@ package fr.cyann.jinyparser.grammartree;
  * ou écrivez à Creative Commons, 444 Castro Street, Suite 900, Mountain View, California, 94041, USA.
  **/
 
-import fr.cyann.jinyparser.exceptions.JinyException;
-import fr.cyann.jinyparser.lexem.Lexem;
-import fr.cyann.jinyparser.lexem.LexemType;
 import fr.cyann.jinyparser.parsetree.NonTerminal;
-import fr.cyann.jinyparser.parsetree.ParsemAccumulator;
-import fr.cyann.jinyparser.parsetree.ParsemVisitor;
-import fr.cyann.jinyparser.parsetree.VisitorContext;
-import fr.cyann.jinyparser.utils.MultilingualMessage;
+import fr.cyann.jinyparser.parsetree.ParsemElement;
 
-import java.lang.reflect.Constructor;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 /**
- * The TerminalCreator class definition.<br>
+ * The TerminalProduction class definition.<br>
  */
-public class NonTerminalCreator<P extends NonTerminal> extends GrammarDecorator {
+public class NonTerminalCreator extends GrammarDecorator {
 
-    private final String name;
-    private final Class<P> clazz;
-	private ParsemVisitor<P, ? extends VisitorContext> visitor;
+	private final List<String> fieldNames;
 
 	/**
 	 * Default constructor.
-	 * @param clazz     the grammar element class to createTerminal.
-	 * @param decorated the decorated grammar element.
-	 */
-	public NonTerminalCreator(String name, Class<P> clazz, GrammarElement decorated) {
-		super(decorated);
-		this.name = name;
-        this.clazz = clazz;
-	}
-
-    /**
-     * Get the recursive name.
-     *
-     * @return the recursive name.
-     */
-    public String getName() {
-        return name;
-    }
-
-    /**
-     * Get the parsem class to produce.
 	 *
-	 * @return the parsem class to produce.
+	 * @param fieldName the field name to aggregate the decorated grammar production with.
+	 * @param decorated the decorated element.
 	 */
-	public Class<P> getParsemClass() {
-		return clazz;
+	public NonTerminalCreator(String fieldName, GrammarElement decorated) {
+		super(decorated);
+		fieldNames = new ArrayList<String>();
+		fieldNames.add(fieldName);
 	}
 
 	/**
-	 * The parsem visitor accessor.<br>
-	 * Define the behaviour of the parsem element when it will be traversed.
+	 * When non terminal node is created, aggregate the nth previous parsem with it.
 	 *
-	 * @param visitor the visitor to delegate to the parsem.
+	 * @param fieldNames the fields to aggregate with.
 	 * @return this.
 	 */
-	public GrammarElement setVisitor(ParsemVisitor<P, ? extends VisitorContext> visitor) {
-		this.visitor = visitor;
+	public NonTerminalCreator aggregateWith(String... fieldNames) {
+		this.fieldNames.addAll(Arrays.asList(fieldNames));
 		return this;
 	}
 
-	private void createParsem(GrammarContext context) {
-
-		try {
-
-			// createTerminal non terminal
-			Constructor<P> constructor = clazz.getConstructor(Lexem.class);
-			constructor.setAccessible(true);
-			// TODO: LEXEM ????
-			NonTerminal parsem = constructor.newInstance(new Lexem("TODO", LexemType.NONE));
-
-			// createTerminal accumulator
-			ParsemAccumulator accumulator = new ParsemAccumulator(null, parsem);
-			accumulator.setVisitor(visitor);
-			context.pushParsem(accumulator);
-
-		} catch (Exception e) {
-			throw new JinyException(MultilingualMessage.create(e.toString()));
+	/**
+	 * When default non terminal node is created, aggregate the nth previous parsem with it.
+	 *
+	 * @param number the number of previous parsem to aggregate.
+	 * @return this.
+	 */
+	public NonTerminalCreator aggregateWith(int number) {
+		for (int i = 0; i < number; i++) {
+			this.fieldNames.add(this.fieldNames.get(0));
 		}
+		return this;
 	}
 
 	/**
@@ -102,14 +71,22 @@ public class NonTerminalCreator<P extends NonTerminal> extends GrammarDecorator 
 	 */
 	@Override
 	protected boolean parse(GrammarContext context) {
+		context.resetTerm();
 
-		createParsem(context);
+		boolean res = decorated.parse(context);
 
-		boolean ret = decorated.parse(context);
+		if (res) {
+			NonTerminal nonTerminal = context.getCurrentCreator().createParsem();
 
-		((ParsemAccumulator) context.popParsem()).build(context);
+			for (String fieldName : fieldNames) {
+				ParsemElement elementToAggregate = context.popParsem();
+				nonTerminal.aggregate(fieldName, elementToAggregate);
+			}
 
-		return ret;
+			context.pushParsem(nonTerminal);
+		}
+
+		return res;
 	}
 
 }

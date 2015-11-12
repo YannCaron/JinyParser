@@ -7,19 +7,16 @@ package fr.cyann.jinyparser.acceptanceTest;/**
  * ou écrivez à Creative Commons, 444 Castro Street, Suite 900, Mountain View, California, 94041, USA.
  **/
 
+import fr.cyann.jinyparser.acceptanceTest.Grammars.AstBinaryExpression;
+import fr.cyann.jinyparser.acceptanceTest.Grammars.AstNumber;
 import fr.cyann.jinyparser.grammartree.GrammarContext;
 import fr.cyann.jinyparser.grammartree.GrammarElement;
-import fr.cyann.jinyparser.grammartree.Recursive;
-import fr.cyann.jinyparser.lexem.Lexem;
-import fr.cyann.jinyparser.lexem.LexemType;
-import fr.cyann.jinyparser.parsetree.*;
+import fr.cyann.jinyparser.parsetree.ParsemVisitor;
+import fr.cyann.jinyparser.parsetree.VisitorContext;
+import fr.cyann.jinyparser.parsetree.VisitorInjectorClassMap;
 import junit.framework.TestCase;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Stack;
-
-import static fr.cyann.jinyparser.grammartree.GrammarFactory.*;
 
 /**
  * The VisitorTest definition.
@@ -29,14 +26,14 @@ public class VisitorTest extends TestCase {
 	static final ParsemVisitor<AstNumber, ArithmeticContext> VISIT_NUMBER = new ParsemVisitor<AstNumber, ArithmeticContext>() {
 		@Override
 		public void visit(AstNumber parsem, ArithmeticContext context) {
-			context.push(parsem.value);
+			context.push(parsem.getValue());
 		}
 	};
 	static final ParsemVisitor<AstBinaryExpression, ArithmeticContext> VISIT_ADDITION = new ParsemVisitor<AstBinaryExpression, ArithmeticContext>() {
 		@Override
 		public void visit(AstBinaryExpression parsem, ArithmeticContext context) {
-			parsem.left.visit(context);
-			parsem.right.visit(context);
+			parsem.getLeft().visit(context);
+			parsem.getRight().visit(context);
 
 			int i1 = context.pop();
 			int i2 = context.pop();
@@ -47,8 +44,8 @@ public class VisitorTest extends TestCase {
 	static final ParsemVisitor<AstBinaryExpression, ArithmeticContext> VISIT_MULTIPLICATION = new ParsemVisitor<AstBinaryExpression, ArithmeticContext>() {
 		@Override
 		public void visit(AstBinaryExpression parsem, ArithmeticContext context) {
-			parsem.left.visit(context);
-			parsem.right.visit(context);
+			parsem.getLeft().visit(context);
+			parsem.getRight().visit(context);
 
 			int i1 = context.pop();
 			int i2 = context.pop();
@@ -56,31 +53,16 @@ public class VisitorTest extends TestCase {
 			context.push(i1 * i2);
 		}
 	};
-	private static final LexemType NUMBER = new LexemType("produceNumber");
-	private static final LexemType OPERATOR = new LexemType("operator");
-	private static final LexemType KEYWORD = new LexemType("keyword");
 
 	public void testTrivialParser() {
 
 		String source = "7 + 10 + 4";
 
-		// term
-		GrammarElement digit = charIn('0', '9');
-		GrammarElement sign = charIn("+-*/%");
-
-		// lexer
-		GrammarElement number = produce("Number", oneOrMore(digit), NUMBER, AstNumber.class).setVisitor(VISIT_NUMBER);
-
-		GrammarElement operation = catcher(createTerminal("Operation", number, AstBinaryExpression.class).setVisitor(VISIT_ADDITION), "right", "sign", "left");
-
-		GrammarElement operator = produceTerminal("Operator", sign, OPERATOR);
-
 		// parser
-		// grammar := <produceNumber> { <operator> <produceNumber>}
-		GrammarElement grammar = sequence(number, oneOrMore(sequence(operator, operation)));
+		GrammarElement.ProcessedGrammar grammar = Grammars.arithmeticWithLevelAndParenthesis(VISIT_NUMBER, VISIT_ADDITION, VISIT_MULTIPLICATION);
 
 		// parse
-		GrammarContext c = grammar.process().parse(source);
+		GrammarContext c = grammar.parse(source);
 
 		System.out.println("Parse tree: " + c.getParseTree());
 
@@ -97,22 +79,11 @@ public class VisitorTest extends TestCase {
 
 		String source = "7 + 10 * 4 + 7";
 
-		// lexer
-		GrammarElement number = produce("Number", oneOrMore(charIn('0', '9')), NUMBER, AstNumber.class).setVisitor(VISIT_NUMBER);
-
-		GrammarElement addSign = produceTerminal("AddSign", charIn("+"), OPERATOR);
-		GrammarElement multiplySign = produceTerminal("MultiplySign", charIn("*"), OPERATOR);
-
-		// <multiplication> := <produceNumber> [ { '*' <produceNumber> } ]
-		GrammarElement multiplyOperation = catcher(produce("Multiplication", number, NUMBER, AstBinaryExpression.class).setVisitor(VISIT_MULTIPLICATION), "right", "sign", "left");
-		GrammarElement multiplication = sequence(number, zeroOrOne(oneOrMore(sequence(multiplySign, multiplyOperation))));
-
-		// <addition> := <multiplication> [ { '+' <multiplication> } ]
-		GrammarElement addOperation = catcher(produce("Addition", multiplication, NUMBER, AstBinaryExpression.class).setVisitor(VISIT_ADDITION), "right", "sign", "left");
-		GrammarElement addition = sequence(multiplication, zeroOrOne(oneOrMore(sequence(addSign, addOperation))));
+		// parser
+		GrammarElement.ProcessedGrammar grammar = Grammars.arithmeticWithLevelAndParenthesis(VISIT_NUMBER, VISIT_ADDITION, VISIT_MULTIPLICATION);
 
 		// parse
-		GrammarContext c = addition.process().parse(source);
+		GrammarContext c = grammar.parse(source);
 
 		System.out.println("Parse tree: " + c.getParseTree());
 
@@ -128,29 +99,8 @@ public class VisitorTest extends TestCase {
 
 		String source = "7 + 10 * (4 + 7)";
 
-		// lexer
-		GrammarElement leftParenthesis = lexem(charIn("("), LexemType.SYMBOL);
-		GrammarElement rightParenthesis = lexem(charIn(")"), LexemType.SYMBOL);
-		GrammarElement number = produce("Number", oneOrMore(charIn('0', '9')), NUMBER, AstNumber.class).setVisitor(VISIT_NUMBER);
-
-		GrammarElement addSign = produceTerminal("AddSign", charIn("+"), OPERATOR);
-		GrammarElement multiplySign = produceTerminal("MultiplySign", charIn("*"), OPERATOR);
-
-		Recursive term = recursive("Term");
-
-		// <multiplication> := <produceNumber> [ { '*' <produceNumber> } ]
-		GrammarElement multiplyOperation = catcher(produce("Multiplication", term, NUMBER, AstBinaryExpression.class).setVisitor(VISIT_MULTIPLICATION), "right", "sign", "left");
-		GrammarElement multiplication = sequence(term, zeroOrOne(oneOrMore(sequence(multiplySign, multiplyOperation))));
-
-		// <addition> := <multiplication> [ { '+' <multiplication> } ]
-		GrammarElement addOperation = catcher(produce("Addition", multiplication, NUMBER, AstBinaryExpression.class).setVisitor(VISIT_ADDITION), "right", "sign", "left");
-		GrammarElement addition = sequence(multiplication, zeroOrOne(oneOrMore(sequence(addSign, addOperation))));
-
-		// <num> := <number> | '(' <addition> ')'
-		term.setGrammar(choice(number, sequence(leftParenthesis, addition, rightParenthesis)));
-
 		// parser
-		GrammarElement.ProcessedGrammar grammar = addition.process();
+		GrammarElement.ProcessedGrammar grammar = Grammars.arithmeticWithLevelAndParenthesis(VISIT_NUMBER, VISIT_ADDITION, VISIT_MULTIPLICATION);
 
 		// parse
 		GrammarContext c = grammar.parse(source);
@@ -171,7 +121,7 @@ public class VisitorTest extends TestCase {
 				this.addVisitor(AstNumber.class, new ParsemVisitor<AstNumber, ToStringContext>() {
 					@Override
 					public void visit(AstNumber parsem, ToStringContext context) {
-						context.append("n" + parsem.value);
+						context.append("n" + parsem.getValue());
 					}
 				});
 
@@ -179,9 +129,9 @@ public class VisitorTest extends TestCase {
 					@Override
 					public void visit(AstBinaryExpression parsem, ToStringContext context) {
 						context.append("(op ");
-						parsem.left.visit(context);
+						parsem.getLeft().visit(context);
 						context.append(" ");
-						parsem.right.visit(context);
+						parsem.getRight().visit(context);
 						context.append(")");
 					}
 				});
@@ -196,70 +146,6 @@ public class VisitorTest extends TestCase {
 	}
 
 	//region tools
-
-	private GrammarElement produceNumber(GrammarElement decorated) {
-		return produce("Number", decorated, NUMBER, AstNumber.class);
-	}
-
-	private GrammarElement produceBinaryExpression(GrammarElement decorated) {
-		return catcher(produce("BinaryOperation", decorated, NUMBER, AstBinaryExpression.class), "right", "sign", "left");
-	}
-
-	static class AstNumber extends Terminal {
-
-		private final int value;
-
-		public AstNumber(Lexem lexem) {
-			super(lexem);
-			value = Integer.valueOf(lexem.getTerm());
-
-		}
-
-		@Override
-		public String toString() {
-			return "'n" + value + "'";
-		}
-	}
-
-	static class AstBinaryExpression extends NonTerminal {
-
-		@AggregateField()
-		private ParsemElement left;
-		@AggregateField()
-		private ParsemElement sign;
-		@AggregateField()
-		private ParsemElement right;
-
-		public AstBinaryExpression(Lexem lexem) {
-			super(lexem);
-		}
-
-		@Override
-		public String toString() {
-			return "(" + sign + " " + left + " " + right + ")";
-		}
-
-	}
-
-	static class AstIf extends NonTerminal {
-
-		@AggregateField(identity = "elseif")
-		private final List<ParsemElement> elseifs;
-		private ParsemElement if_;
-		@AggregateField(identity = "else")
-		private ParsemElement else_;
-
-		public AstIf(Lexem lexem) {
-			super(lexem);
-			elseifs = new ArrayList<ParsemElement>();
-		}
-
-		@Override
-		public String toString() {
-			return "if (" + elseifs.toString() + " " + else_ + ")";
-		}
-
-	}
 
 	static class ArithmeticContext extends VisitorContext {
 

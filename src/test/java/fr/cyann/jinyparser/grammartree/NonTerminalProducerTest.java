@@ -13,19 +13,23 @@ import static fr.cyann.jinyparser.grammartree.GrammarFactory.*;
  * Pour voir une copie de cette licence, visitez http://creativecommons.org/licenses/by-nc-sa/3.0/fr/
  * ou écrivez à Creative Commons, 444 Castro Street, Suite 900, Mountain View, California, 94041, USA.
  **/
-public class ParsemCatcherTest extends TestCase {
+public class NonTerminalProducerTest extends TestCase {
+
+	private static GrammarElement getGrammar() {
+		GrammarElement a = terminal("A", lexem(new Word("a")));
+		GrammarElement b = terminal("B", lexem(new Word("b")));
+		return nonTerminal("AB", sequence(a, create(b).aggregateWith(1)));
+	}
 
 	public void testLookahead() throws Exception {
 
 		String source = "ab";
 
-        GrammarElement g = sequence(createTerminal("TODO:NAME", lexem(word("a"))), catcherDefault(createNonTerminal("TODO:NAME", lexem(word("b"))), 1));
-
 		GrammarContext context = new GrammarContext(source);
 
 		assertNull(context.getParseTree());
 
-		g.lookahead(context);
+		getGrammar().lookahead(context);
 
 		assertNull(context.getParseTree());
 
@@ -35,21 +39,21 @@ public class ParsemCatcherTest extends TestCase {
 
 		String source = "ab";
 
-        GrammarElement g = sequence(createTerminal("TODO:NAME", lexem(word("a"))), catcherDefault(createNonTerminal("TODO:NAME", lexem(word("b"))), 1));
-
 		GrammarContext context = new GrammarContext(source);
 
 		assertNull(context.getParseTree());
 
-		g.parse(context);
+		getGrammar().parse(context);
 
 		DefaultNonTerminal parsem = ((DefaultNonTerminal) context.getParseTree());
 
 		assertNotNull(context.getParseTree());
 		assertTrue(context.getParseTree() instanceof DefaultNonTerminal);
 
-		assertEquals("b", parsem.getLexem().getTerm());
+		assertEquals("a", parsem.getLexem().getTerm());
+		assertEquals("b", parsem.getLastLexem().getTerm());
 		assertEquals("a", parsem.getItem(0).getLexem().getTerm());
+		assertEquals("b", parsem.getItem(1).getLexem().getTerm());
 
 	}
 }

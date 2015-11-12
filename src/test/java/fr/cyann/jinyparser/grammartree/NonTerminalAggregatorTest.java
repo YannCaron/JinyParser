@@ -15,17 +15,21 @@ import static fr.cyann.jinyparser.grammartree.GrammarFactory.*;
  **/
 public class NonTerminalAggregatorTest extends TestCase {
 
+	private static GrammarElement getGrammar() {
+		GrammarElement a = terminal("A", lexem(new Word("a")));
+		GrammarElement b = terminal("B", lexem(new Word("b")));
+		return nonTerminal("AB", sequence(create(a), aggregate(b)));
+	}
+
 	public void testLookahead() throws Exception {
 
 		String source = "ab";
-
-        GrammarElement g = sequence(createNonTerminal("TODO:NAME", lexem(word("a"))), dropperDefault(createTerminal("TODO:NAME", lexem(word("b")))));
 
 		GrammarContext context = new GrammarContext(source);
 
 		assertNull(context.getParseTree());
 
-		g.lookahead(context);
+		getGrammar().lookahead(context);
 
 		assertNull(context.getParseTree());
 
@@ -35,13 +39,11 @@ public class NonTerminalAggregatorTest extends TestCase {
 
 		String source = "ab";
 
-        GrammarElement g = sequence(createNonTerminal("TODO:NAME", lexem(word("a"))), dropperDefault(createTerminal("TODO:NAME", lexem(word("b")))));
-
 		GrammarContext context = new GrammarContext(source);
 
 		assertNull(context.getParseTree());
 
-		g.parse(context);
+		getGrammar().parse(context);
 
 		DefaultNonTerminal parsem = ((DefaultNonTerminal) context.getParseTree());
 

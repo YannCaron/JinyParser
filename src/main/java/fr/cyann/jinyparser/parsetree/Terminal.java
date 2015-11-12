@@ -17,17 +17,28 @@ import fr.cyann.jinyparser.utils.MultilingualMessage;
 @SuppressWarnings("WeakerAccess")
 public abstract class Terminal extends ParsemElement {
 
+	private final Lexem lexem;
+
 	public Terminal(Lexem lexem) {
-		super(lexem);
+		this.lexem = lexem;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Lexem getLexem() {
+		return lexem;
+	}
+
+	/** {@inheritDoc} */
 	@Override
 	public void injectVisitor(VisitorInjector injector) {
 		setVisitor(injector.getVisitorFor(this));
 	}
 
 	public void aggregate(String fieldName, ParsemElement element) {
-        throw new JinyException(MultilingualMessage.create("Illegal function call ! Cannot aggregate element [%s] into terminal [%s] !").setArgs(element, this));
-    }
+		throw new JinyException(MultilingualMessage.create("Illegal function call ! Cannot dropper element [%s] into terminal [%s] !").setArgs(element, this));
+	}
 
 }

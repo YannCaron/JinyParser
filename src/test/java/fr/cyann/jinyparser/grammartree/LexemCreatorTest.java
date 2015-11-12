@@ -26,7 +26,7 @@ public class LexemCreatorTest extends TestCase {
 	    GrammarElement grammar = oneOrMore(lexemCore(charIn("abc"), LexemType.SYMBOL));
 	    assertFalse(grammar.lookahead(new GrammarContext(source)));
 
-	    grammar = oneOrMore(lexem(charIn("abc"), LexemType.SYMBOL)); // with separator management
+	    grammar = oneOrMore(lexem(LexemType.SYMBOL, charIn("abc"))); // with separator management
 	    assertTrue(grammar.lookahead(new GrammarContext(source)));
 
     }
@@ -38,7 +38,7 @@ public class LexemCreatorTest extends TestCase {
 	    GrammarElement grammar = oneOrMore(lexemCore(charIn("abc"), LexemType.SYMBOL));
 	    assertFalse(grammar.parse(new GrammarContext(source)));
 
-	    grammar = oneOrMore(lexem(charIn("abc"), LexemType.SYMBOL)); // with separator management
+	    grammar = oneOrMore(lexem(LexemType.SYMBOL, charIn("abc"))); // with separator management
 	    assertTrue(grammar.parse(new GrammarContext(source)));
 
 	    GrammarContext context = grammar.process().parse(source);

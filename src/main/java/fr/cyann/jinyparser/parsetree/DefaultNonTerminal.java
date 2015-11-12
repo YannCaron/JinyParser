@@ -9,8 +9,6 @@ package fr.cyann.jinyparser.parsetree;
  **/
 
 
-import fr.cyann.jinyparser.lexem.Lexem;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,9 +24,9 @@ public class DefaultNonTerminal extends NonTerminal {
     @AggregateField(identity = SUB_NODE_IDENTITY)
     private final List<ParsemElement> children;
 
-    public DefaultNonTerminal(Lexem lexemBegin) {
-        super(lexemBegin);
-        this.children = new ArrayList<ParsemElement>();
+	public DefaultNonTerminal() {
+		super();
+		this.children = new ArrayList<ParsemElement>();
     }
 
     int size() {
