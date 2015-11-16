@@ -157,7 +157,7 @@ public abstract class GrammarElement implements TreeIterable<GrammarElement> {
 	 * @return the processed grammar object.
 	 */
 	public ProcessedGrammar process() {
-		GrammarElement root = Analysis.processBnf(this);
+		GrammarElement root = Analysis.analyse(this);
 		return new ProcessedGrammar(root);
 	}
 

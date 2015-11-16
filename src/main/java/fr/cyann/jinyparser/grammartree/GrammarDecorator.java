@@ -42,6 +42,15 @@ public abstract class GrammarDecorator extends GrammarElement {
 	}
 
 	/**
+	 * Get the decorated grammar element.
+	 *
+	 * @return the decorated grammar element.
+	 */
+	public GrammarElement getDecorated() {
+		return decorated;
+	}
+
+	/**
 	 * {@inheritDoc}
 	 */
 	@Override

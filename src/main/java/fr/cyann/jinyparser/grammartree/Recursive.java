@@ -18,9 +18,9 @@ import java.util.Stack;
  * The Recursive grammar element definition.<br>
  * Give the ability to loop grammars togathers (and manage cycles).
  */
-public class Recursive extends GrammarElement {
+public class Recursive extends GrammarElement implements NamedGrammar {
 
-	protected final String name;
+	protected String name;
 	protected GrammarElement grammar;
 
 	/**
@@ -29,6 +29,20 @@ public class Recursive extends GrammarElement {
 	 * @param name the bnf name.
 	 */
 	public Recursive(String name) {
+		this.name = name;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public String getName() {
+		return name;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public void setName(String name) {
 		this.name = name;
 	}
 

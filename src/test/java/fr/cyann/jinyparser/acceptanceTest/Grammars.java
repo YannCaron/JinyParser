@@ -25,9 +25,9 @@ import static fr.cyann.jinyparser.grammartree.GrammarFactory.*;
  */
 public class Grammars {
 
-	private static final LexemType NUMBER = new LexemType("produceNumber");
-	private static final LexemType OPERATOR = new LexemType("operator");
-	private static final LexemType KEYWORD = new LexemType("keyword");
+	public static final LexemType NUMBER = new LexemType("produceNumber");
+	public static final LexemType OPERATOR = new LexemType("operator");
+	public static final LexemType KEYWORD = new LexemType("keyword");
 
 	private Grammars() {
 		throw new RuntimeException("Static class cannot be instantiated !");

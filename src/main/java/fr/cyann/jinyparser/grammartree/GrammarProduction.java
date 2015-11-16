@@ -14,10 +14,10 @@ import fr.cyann.jinyparser.parsetree.VisitorContext;
 /**
  * The GrammarProduction definition.
  */
-public abstract class GrammarProduction<P extends ParsemElement> extends GrammarDecorator {
+public abstract class GrammarProduction<P extends ParsemElement> extends GrammarDecorator implements NamedGrammar {
 
-	private final String name;
 	private final Class<P> clazz;
+	private String name;
 	private ParsemVisitor<P, ? extends VisitorContext> visitor;
 
 	/**
@@ -34,12 +34,17 @@ public abstract class GrammarProduction<P extends ParsemElement> extends Grammar
 	}
 
 	/**
-	 * Get the recursive name.
-	 *
-	 * @return the recursive name.
+	 * {@inheritDoc}
 	 */
 	public String getName() {
 		return name;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public void setName(String name) {
+		this.name = name;
 	}
 
 	/**
