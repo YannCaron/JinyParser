@@ -7,15 +7,12 @@ package fr.cyann.jinyparser.grammartree.utils;/**
  * ou écrivez à Creative Commons, 444 Castro Street, Suite 900, Mountain View, California, 94041, USA.
  **/
 
-import fr.cyann.jinyparser.exceptions.JinyException;
-import fr.cyann.jinyparser.grammartree.GrammarElement;
-import fr.cyann.jinyparser.grammartree.GrammarProduction;
-import fr.cyann.jinyparser.grammartree.NamedGrammar;
-import fr.cyann.jinyparser.grammartree.Recursive;
-import fr.cyann.jinyparser.utils.MultilingualMessage;
+import fr.cyann.jinyparser.grammartree.*;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * The Analysis definition.
@@ -27,6 +24,7 @@ public class Analysis {
 	 */
 	public static final String DEFAULT_GRAMMAR_NAME = "Grammar";
 	public static final String COUNTERED_GRAMMAR = "%1$s%2$d";
+
 	private Analysis() {
 		throw new RuntimeException("Static class cannot be instantiated.");
 	}
@@ -101,30 +99,64 @@ public class Analysis {
 
 	public static GrammarElement enhanceLRGrammar(GrammarElement root) {
 
+		RecursiveContext context = new RecursiveContext();
+		Tree<String> tree = new Tree<String>("root");
+		recursive(context, root, tree);
+
+		System.out.println(tree.toString());
 		//System.out.println("Result:\n" + context.sb);
 
 		return root;
 	}
 
-	public static class AnalysisException extends JinyException {
-		/**
-		 * Constructor.
-		 *
-		 * @param message the multilingual message.
-		 */
-		public AnalysisException(MultilingualMessage message) {
-			super(message);
+	private static void recursive(RecursiveContext context, GrammarElement element, Tree<String> tree) {
+
+		if (element instanceof Recursive) {
+			if (context.wasExplored(element)) {
+				tree.addLeaf(((NamedGrammar) element).getName());
+				return;
+			} else {
+				if (tree != tree.getRoot()) {
+					tree.addLeaf(((NamedGrammar) element).getName());
+				}
+				tree = tree.getRoot().addLeaf(((NamedGrammar) element).getName());
+			}
 		}
 
-		/**
-		 * Constructor.
-		 *
-		 * @param message the multilingual formatted message.
-		 */
-		public AnalysisException(MultilingualMessage.FormattedMessage message) {
-			super(message);
+		if (element instanceof GrammarNode) {
+
+			boolean first = true;
+			for (GrammarElement child : ((GrammarNode) element)) {
+
+				if (element instanceof Choice && !first) {
+					tree = tree.getRoot().addLeaf(tree.getHead());
+				}
+				first = false;
+
+				//tree.addLeaf(child.toString());
+				recursive(context, child, tree);
+
+			}
+
+		} else if (element instanceof GrammarDecorator) {
+			recursive(context, ((GrammarDecorator) element).getDecorated(), tree);
+		} else if (element instanceof Recursive) {
+			recursive(context, ((Recursive) element).getGrammar(), tree);
+		} else {
+			tree.addLeaf("inv");
 		}
 	}
 
+	private static class RecursiveContext {
+		private Set<GrammarElement> elementExplored = new HashSet<GrammarElement>();
+
+		boolean wasExplored(GrammarElement element) {
+			boolean result = elementExplored.contains(element);
+			elementExplored.add(element);
+			return result;
+		}
+
+
+	}
 
 }

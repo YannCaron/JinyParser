@@ -93,4 +93,10 @@ public abstract class GrammarProduction<P extends ParsemElement> extends Grammar
 		context.newProduction(name, decorated);
 	}
 
+	@Override
+	public String toString() {
+		return this.getClass().getSimpleName() + " {" +
+				"name='" + name + '\'' +
+				'}';
+	}
 }
