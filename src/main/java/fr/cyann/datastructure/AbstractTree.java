@@ -16,23 +16,21 @@ import java.util.Iterator;
  * Pour voir une copie de cette licence, visitez http://creativecommons.org/licenses/by-nc-sa/3.0/fr/
  * ou écrivez à Creative Commons, 444 Castro Street, Suite 900, Mountain View, California, 94041, USA.
  **/
-public abstract class AbstractTree<T> implements Tree<T> {
+public abstract class AbstractTree<E, T extends Tree<E, T>> implements Tree<E, T> {
 
 	private static final int indent = 2;
 	// attributes
-	protected final T head;
-	protected final Collection<Tree<T>> leafs;
-	protected Tree<T> parent;
+	protected final E head;
+	protected T parent;
 
 	// constructor
-	public AbstractTree(T head, Collection<Tree<T>> leafs) {
+	public AbstractTree(E head) {
 		this.head = head;
-		this.leafs = leafs;
 	}
 
 	// property
 	@Override
-	public T getHead() {
+	public E getHead() {
 		return head;
 	}
 
@@ -42,41 +40,42 @@ public abstract class AbstractTree<T> implements Tree<T> {
 	}
 
 	@Override
-	public Tree<T> getParent() {
+	public T getParent() {
 		return parent;
 	}
 
 	@Override
-	public void setParent(Tree<T> parent) {
+	public void setParent(T parent) {
 		this.parent = parent;
 	}
 
 	@Override
-	public Tree<T> getRoot() {
+	public T getRoot() {
 		if (parent != null) {
-			return this;
+			return getThis();
 		}
 		return parent.getRoot();
 	}
 
+	protected abstract Collection<T> getCollection();
+
 	// method
-	public Tree<T> addLeaf(Tree<T> leaf) {
-		leaf.setParent(this);
-		leafs.add(leaf);
-		return leaf;
+	public void addLeaf(T leaf) {
+		leaf.setParent(getThis());
+		getCollection().add(leaf);
 	}
 
 	@Override
-	public void replace(Tree<T> that, Tree<T> by) {
+	public void replace(T that, T by) {
 		that.setParent(null);
-		leafs.remove(that);
+		getCollection().remove(that);
 		addLeaf(by);
 	}
 
-	public Tree<T> insert(Tree<T> in) {
-		Tree<T> p = this.parent;
+	public T insert(T in) {
+		T p = this.parent;
 		if (p != null) {
-			p.replace(this, in);
+			p.replace(getThis(), in);
 		}
 
 		in.setParent(p);
@@ -85,13 +84,13 @@ public abstract class AbstractTree<T> implements Tree<T> {
 	}
 
 	@Override
-	public Iterator<Tree<T>> iterator() {
-		return leafs.iterator();
+	public Iterator<T> iterator() {
+		return getCollection().iterator();
 	}
 
 	@Override
 	public int size() {
-		return leafs.size();
+		return getCollection().size();
 	}
 
 	@Override
@@ -107,7 +106,7 @@ public abstract class AbstractTree<T> implements Tree<T> {
 			inc = inc + " ";
 		}
 		s = inc + head;
-		for (Tree<T> leaf : leafs) {
+		for (T leaf : getCollection()) {
 			s += "\n" + leaf.printTree(increment + indent);
 		}
 		return s;

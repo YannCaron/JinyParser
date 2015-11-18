@@ -6,6 +6,8 @@
 package fr.cyann.datastructure;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 /**
  * Copyright (C) 18/11/15 Yann Caron aka cyann
@@ -15,21 +17,33 @@ import java.util.ArrayList;
  * Pour voir une copie de cette licence, visitez http://creativecommons.org/licenses/by-nc-sa/3.0/fr/
  * ou écrivez à Creative Commons, 444 Castro Street, Suite 900, Mountain View, California, 94041, USA.
  **/
-public class ArrayTree<T> extends AbstractTree<T> {
+public class ArrayTree<E> extends AbstractTree<E, ArrayTree<E>> {
 
-	public ArrayTree(T head) {
-		super(head, new ArrayList<Tree<T>>());
+	protected final List<ArrayTree<E>> leafs;
+
+	public ArrayTree(E head) {
+		super(head);
+		leafs = new ArrayList<ArrayTree<E>>();
 	}
 
 	@Override
-	public ArrayTree<T> addLeaf(T leaf) {
-		ArrayTree<T> tree = new ArrayTree<T>(leaf);
-		super.addLeaf(tree);
-		return tree;
+	public ArrayTree<E> getThis() {
+		return this;
 	}
 
-	public ArrayTree<T> get(int index) {
-		return (ArrayTree<T>) ((ArrayList<Tree<T>>) leafs).get(index);
+	@Override
+	protected Collection<ArrayTree<E>> getCollection() {
+		return leafs;
+	}
+
+	@Override
+	public void addLeaf(E leaf) {
+		ArrayTree<E> tree = new ArrayTree<E>(leaf);
+		super.addLeaf(tree);
+	}
+
+	public ArrayTree<E> get(int index) {
+		return leafs.get(index);
 	}
 
 }

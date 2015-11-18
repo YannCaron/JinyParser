@@ -13,24 +13,26 @@ package fr.cyann.datastructure;
  * Pour voir une copie de cette licence, visitez http://creativecommons.org/licenses/by-nc-sa/3.0/fr/
  * ou écrivez à Creative Commons, 444 Castro Street, Suite 900, Mountain View, California, 94041, USA.
  **/
-public interface Tree<T> extends Iterable<Tree<T>> {
+public interface Tree<E, T extends Tree<E, T>> extends Iterable<T> {
 
-	T getHead();
+	E getHead();
 
 	boolean hasParent();
 
-	Tree<T> getParent();
+	T getParent();
 
-	void setParent(Tree<T> parent);
+	void setParent(T parent);
 
-	Tree<T> getRoot();
+	T getThis();
 
-	Tree<T> addLeaf(T leaf);
-
-	void replace(Tree<T> that, Tree<T> by);
-
-	String printTree(int increment);
+	T getRoot();
 
 	int size();
+
+	void addLeaf(E leaf);
+
+	void replace(T that, T by);
+
+	String printTree(int increment);
 
 }
