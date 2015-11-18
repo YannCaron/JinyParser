@@ -34,12 +34,12 @@ public class AnalyserTest extends TestCase {
 		LexemCreator lexMult = lexem(Grammars.OPERATOR, charIn("*"));
 
 		// terminal
-		GrammarElement number = terminal("Number", AstNumber.class, lexNum).setVisitor(numberVisitor);
-		GrammarElement addSign = terminal("AddSign", lexAdd);
-		GrammarElement multiplySign = terminal("MultiplySign", lexMult);
+		GrammarElement number = terminal("number", AstNumber.class, lexNum).setVisitor(numberVisitor);
+		GrammarElement addSign = terminal("addSign", lexAdd);
+		GrammarElement multiplySign = terminal("multiplySign", lexMult);
 
 		// recursive
-		Recursive expr = recursive("Expr");
+		Recursive expr = recursive("expr");
 
 		// non terminal
 
