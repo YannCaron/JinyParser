@@ -19,29 +19,43 @@ import java.util.List;
  **/
 public class ArrayTree<E> extends AbstractTree<E, ArrayTree<E>> {
 
-	protected final List<ArrayTree<E>> leafs;
+	private final List<ArrayTree<E>> leafs;
 
+	/**
+	 * Default constructor.
+	 *
+	 * @param head the element.
+	 */
 	public ArrayTree(E head) {
 		super(head);
 		leafs = new ArrayList<ArrayTree<E>>();
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public ArrayTree<E> getThis() {
 		return this;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	protected Collection<ArrayTree<E>> getCollection() {
 		return leafs;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void addLeaf(E leaf) {
 		ArrayTree<E> tree = new ArrayTree<E>(leaf);
 		super.addLeaf(tree);
 	}
 
+	/**
+	 * Get the element in order of its insertion.
+	 *
+	 * @param index the index to search.
+	 * @return the element.
+	 */
 	public ArrayTree<E> get(int index) {
 		return leafs.get(index);
 	}

@@ -18,37 +18,50 @@ import java.util.Iterator;
  **/
 public abstract class AbstractTree<E, T extends Tree<E, T>> implements Tree<E, T> {
 
-	private static final int indent = 2;
+	private static final int IDENT = 2;
+
 	// attributes
-	protected final E head;
-	protected T parent;
+	private final E head;
+	private T parent;
 
 	// constructor
+
+	/**
+	 * Default constructor.
+	 *
+	 * @param head the element value.
+	 */
 	public AbstractTree(E head) {
 		this.head = head;
 	}
 
 	// property
+
+	/** {@inheritDoc} */
 	@Override
 	public E getHead() {
 		return head;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public boolean hasParent() {
 		return parent != null;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public T getParent() {
 		return parent;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void setParent(T parent) {
 		this.parent = parent;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public T getRoot() {
 		if (parent != null) {
@@ -57,14 +70,26 @@ public abstract class AbstractTree<E, T extends Tree<E, T>> implements Tree<E, T
 		return parent.getRoot();
 	}
 
+	/**
+	 * Get the internal collection of the concrete class.
+	 *
+	 * @return the internal collection.
+	 */
 	protected abstract Collection<T> getCollection();
 
 	// method
-	public void addLeaf(T leaf) {
+
+	/**
+	 * Construct a sub-tree and add it to the current tree node.
+	 *
+	 * @param leaf the leaf to add.
+	 */
+	protected void addLeaf(T leaf) {
 		leaf.setParent(getThis());
 		getCollection().add(leaf);
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void replace(T that, T by) {
 		that.setParent(null);
@@ -72,7 +97,12 @@ public abstract class AbstractTree<E, T extends Tree<E, T>> implements Tree<E, T
 		addLeaf(by);
 	}
 
-	public T insert(T in) {
+	/**
+	 * Insert sub-tree between this and it's parent.
+	 *
+	 * @param in the sub-tree to insert.
+	 */
+	public void insert(T in) {
 		T p = this.parent;
 		if (p != null) {
 			p.replace(getThis(), in);
@@ -80,24 +110,27 @@ public abstract class AbstractTree<E, T extends Tree<E, T>> implements Tree<E, T
 
 		in.setParent(p);
 		this.setParent(in);
-		return in;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public Iterator<T> iterator() {
 		return getCollection().iterator();
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public int size() {
 		return getCollection().size();
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public String toString() {
 		return printTree(0);
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public final String printTree(int increment) {
 		String s = "";
@@ -107,7 +140,7 @@ public abstract class AbstractTree<E, T extends Tree<E, T>> implements Tree<E, T
 		}
 		s = inc + head;
 		for (T leaf : getCollection()) {
-			s += "\n" + leaf.printTree(increment + indent);
+			s += "\n" + leaf.printTree(increment + IDENT);
 		}
 		return s;
 	}

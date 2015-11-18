@@ -15,24 +15,76 @@ package fr.cyann.datastructure;
  **/
 public interface Tree<E, T extends Tree<E, T>> extends Iterable<T> {
 
+	/**
+	 * Get the element.
+	 *
+	 * @return the element.
+	 */
 	E getHead();
 
+	/**
+	 * Return if tree node has parent. If not, it is the root of the tree.
+	 *
+	 * @return true if tree node has parent.
+	 */
 	boolean hasParent();
 
+	/**
+	 * Get the tree node element.
+	 *
+	 * @return the tree node element.
+	 */
 	T getParent();
 
+	/**
+	 * Set the tree node element.
+	 *
+	 * @param parent the tree node element.
+	 */
 	void setParent(T parent);
 
+	/**
+	 * Get the this object with the right type (avoid cast on subclass).
+	 *
+	 * @return the object with the right type.
+	 */
 	T getThis();
 
+	/**
+	 * Get the root element by bubbling the tree.
+	 *
+	 * @return the root element.
+	 */
 	T getRoot();
 
+	/**
+	 * Get the number of sub-tree contained by the tree.
+	 *
+	 * @return the number of sub-tree.
+	 */
 	int size();
 
+	/**
+	 * Add sub-element to the tree node.
+	 *
+	 * @param leaf the element to add.
+	 */
 	void addLeaf(E leaf);
 
+	/**
+	 * Replace the sub-element by another.
+	 *
+	 * @param that the element to be replaced.
+	 * @param by the element to use to replace.
+	 */
 	void replace(T that, T by);
 
+	/**
+	 * Make a pretty print of the tree.
+	 *
+	 * @param increment the current incrementation factor.
+	 * @return the pretty print string representation of the tree.
+	 */
 	String printTree(int increment);
 
 }
