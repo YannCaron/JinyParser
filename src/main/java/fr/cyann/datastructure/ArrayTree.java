@@ -17,9 +17,9 @@ import java.util.List;
  * Pour voir une copie de cette licence, visitez http://creativecommons.org/licenses/by-nc-sa/3.0/fr/
  * ou écrivez à Creative Commons, 444 Castro Street, Suite 900, Mountain View, California, 94041, USA.
  **/
-public class ArrayTree<E> extends AbstractTree<E, ArrayTree<E>> {
+public class ArrayTree<E> extends AbstractTree<E> {
 
-	private final List<ArrayTree<E>> leafs;
+	private final List<Tree<E>> leafs;
 
 	/**
 	 * Default constructor.
@@ -28,26 +28,21 @@ public class ArrayTree<E> extends AbstractTree<E, ArrayTree<E>> {
 	 */
 	public ArrayTree(E head) {
 		super(head);
-		leafs = new ArrayList<ArrayTree<E>>();
+		leafs = new ArrayList<Tree<E>>();
 	}
 
 	/** {@inheritDoc} */
 	@Override
-	public ArrayTree<E> getThis() {
-		return this;
-	}
-
-	/** {@inheritDoc} */
-	@Override
-	protected Collection<ArrayTree<E>> getCollection() {
+	protected Collection<Tree<E>> getCollection() {
 		return leafs;
 	}
 
 	/** {@inheritDoc} */
 	@Override
-	public void addLeaf(E leaf) {
+	public ArrayTree<E> addLeaf(E leaf) {
 		ArrayTree<E> tree = new ArrayTree<E>(leaf);
 		super.addLeaf(tree);
+		return tree;
 	}
 
 	/**
@@ -57,7 +52,7 @@ public class ArrayTree<E> extends AbstractTree<E, ArrayTree<E>> {
 	 * @return the element.
 	 */
 	public ArrayTree<E> get(int index) {
-		return leafs.get(index);
+		return (ArrayTree<E>) leafs.get(index);
 	}
 
 }

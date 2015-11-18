@@ -16,13 +16,13 @@ import java.util.Iterator;
  * Pour voir une copie de cette licence, visitez http://creativecommons.org/licenses/by-nc-sa/3.0/fr/
  * ou écrivez à Creative Commons, 444 Castro Street, Suite 900, Mountain View, California, 94041, USA.
  **/
-public abstract class AbstractTree<E, T extends Tree<E, T>> implements Tree<E, T> {
+public abstract class AbstractTree<E> implements Tree<E> {
 
 	private static final int IDENT = 2;
 
 	// attributes
 	private final E head;
-	private T parent;
+	private Tree<E> parent;
 
 	// constructor
 
@@ -51,23 +51,23 @@ public abstract class AbstractTree<E, T extends Tree<E, T>> implements Tree<E, T
 
 	/** {@inheritDoc} */
 	@Override
-	public T getParent() {
+	public Tree<E> getParent() {
 		return parent;
 	}
 
 	/** {@inheritDoc} */
 	@Override
-	public void setParent(T parent) {
+	public void setParent(Tree<E> parent) {
 		this.parent = parent;
 	}
 
 	/** {@inheritDoc} */
 	@Override
-	public T getRoot() {
+	public Tree<E> getRoot() {
 		if (parent != null) {
-			return getThis();
+			return parent.getRoot();
 		}
-		return parent.getRoot();
+		return this;
 	}
 
 	/**
@@ -75,7 +75,7 @@ public abstract class AbstractTree<E, T extends Tree<E, T>> implements Tree<E, T
 	 *
 	 * @return the internal collection.
 	 */
-	protected abstract Collection<T> getCollection();
+	protected abstract Collection<Tree<E>> getCollection();
 
 	// method
 
@@ -84,14 +84,14 @@ public abstract class AbstractTree<E, T extends Tree<E, T>> implements Tree<E, T
 	 *
 	 * @param leaf the leaf to add.
 	 */
-	protected void addLeaf(T leaf) {
-		leaf.setParent(getThis());
+	protected void addLeaf(Tree<E> leaf) {
+		leaf.setParent(this);
 		getCollection().add(leaf);
 	}
 
 	/** {@inheritDoc} */
 	@Override
-	public void replace(T that, T by) {
+	public void replace(Tree<E> that, Tree<E> by) {
 		that.setParent(null);
 		getCollection().remove(that);
 		addLeaf(by);
@@ -102,10 +102,10 @@ public abstract class AbstractTree<E, T extends Tree<E, T>> implements Tree<E, T
 	 *
 	 * @param in the sub-tree to insert.
 	 */
-	public void insert(T in) {
-		T p = this.parent;
+	public void insert(Tree<E> in) {
+		Tree<E> p = this.parent;
 		if (p != null) {
-			p.replace(getThis(), in);
+			p.replace(this, in);
 		}
 
 		in.setParent(p);
@@ -114,7 +114,7 @@ public abstract class AbstractTree<E, T extends Tree<E, T>> implements Tree<E, T
 
 	/** {@inheritDoc} */
 	@Override
-	public Iterator<T> iterator() {
+	public Iterator<Tree<E>> iterator() {
 		return getCollection().iterator();
 	}
 
@@ -139,7 +139,7 @@ public abstract class AbstractTree<E, T extends Tree<E, T>> implements Tree<E, T
 			inc = inc + " ";
 		}
 		s = inc + head;
-		for (T leaf : getCollection()) {
+		for (Tree<E> leaf : getCollection()) {
 			s += "\n" + leaf.printTree(increment + IDENT);
 		}
 		return s;

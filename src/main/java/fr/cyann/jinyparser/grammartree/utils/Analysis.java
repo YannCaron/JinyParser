@@ -7,6 +7,8 @@ package fr.cyann.jinyparser.grammartree.utils;/**
  * ou écrivez à Creative Commons, 444 Castro Street, Suite 900, Mountain View, California, 94041, USA.
  **/
 
+import fr.cyann.datastructure.ArrayTree;
+import fr.cyann.datastructure.Tree;
 import fr.cyann.jinyparser.grammartree.*;
 
 import java.util.HashMap;
@@ -100,7 +102,7 @@ public class Analysis {
 	public static GrammarElement enhanceLRGrammar(GrammarElement root) {
 
 		RecursiveContext context = new RecursiveContext();
-		Tree<String> tree = new Tree<String>("root");
+		Tree<String> tree = new ArrayTree<String>("root");
 		recursive(context, root, tree);
 
 		System.out.println(tree.toString());

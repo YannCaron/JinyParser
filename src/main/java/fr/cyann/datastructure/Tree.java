@@ -13,7 +13,7 @@ package fr.cyann.datastructure;
  * Pour voir une copie de cette licence, visitez http://creativecommons.org/licenses/by-nc-sa/3.0/fr/
  * ou écrivez à Creative Commons, 444 Castro Street, Suite 900, Mountain View, California, 94041, USA.
  **/
-public interface Tree<E, T extends Tree<E, T>> extends Iterable<T> {
+public interface Tree<E> extends Iterable<Tree<E>> {
 
 	/**
 	 * Get the element.
@@ -34,28 +34,21 @@ public interface Tree<E, T extends Tree<E, T>> extends Iterable<T> {
 	 *
 	 * @return the tree node element.
 	 */
-	T getParent();
+	Tree<E> getParent();
 
 	/**
 	 * Set the tree node element.
 	 *
 	 * @param parent the tree node element.
 	 */
-	void setParent(T parent);
-
-	/**
-	 * Get the this object with the right type (avoid cast on subclass).
-	 *
-	 * @return the object with the right type.
-	 */
-	T getThis();
+	void setParent(Tree<E> parent);
 
 	/**
 	 * Get the root element by bubbling the tree.
 	 *
 	 * @return the root element.
 	 */
-	T getRoot();
+	Tree<E> getRoot();
 
 	/**
 	 * Get the number of sub-tree contained by the tree.
@@ -69,7 +62,7 @@ public interface Tree<E, T extends Tree<E, T>> extends Iterable<T> {
 	 *
 	 * @param leaf the element to add.
 	 */
-	void addLeaf(E leaf);
+	Tree<E> addLeaf(E leaf);
 
 	/**
 	 * Replace the sub-element by another.
@@ -77,7 +70,7 @@ public interface Tree<E, T extends Tree<E, T>> extends Iterable<T> {
 	 * @param that the element to be replaced.
 	 * @param by the element to use to replace.
 	 */
-	void replace(T that, T by);
+	void replace(Tree<E> that, Tree<E> by);
 
 	/**
 	 * Make a pretty print of the tree.
