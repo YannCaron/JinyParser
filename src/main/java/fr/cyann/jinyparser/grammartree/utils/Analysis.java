@@ -77,7 +77,7 @@ public class Analysis {
 	/**
 	 * Process the grammar tree and evaluate there production names are twice. Increment a counter for them.
 	 *
-	 * @param root the root of the grammar tree.
+	 * @param root the root element of the grammar tree.
 	 */
 	public static void enhanceProductionNames(GrammarElement root) {
 
@@ -108,6 +108,12 @@ public class Analysis {
 
 	}
 
+	/**
+	 * Detect when LR grammar style is written and transform it to LL grammar.
+	 *
+	 * @param root the root element of the grammar tree.
+	 * @return the new root.
+	 */
 	public static GrammarElement enhanceLRGrammar(GrammarElement root) {
 
 		RecursiveContext context = new RecursiveContext();
