@@ -68,7 +68,7 @@ public interface Tree<E> extends Iterable<Tree<E>> {
 	 * Replace the sub-element by another.
 	 *
 	 * @param that the element to be replaced.
-	 * @param by the element to use to replace.
+	 * @param by   the element to use to replace.
 	 */
 	void replace(Tree<E> that, Tree<E> by);
 

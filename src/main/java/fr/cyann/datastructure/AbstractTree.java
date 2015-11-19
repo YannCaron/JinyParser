@@ -37,31 +37,41 @@ public abstract class AbstractTree<E> implements Tree<E> {
 
 	// property
 
-	/** {@inheritDoc} */
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public E getHead() {
 		return head;
 	}
 
-	/** {@inheritDoc} */
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public boolean hasParent() {
 		return parent != null;
 	}
 
-	/** {@inheritDoc} */
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public Tree<E> getParent() {
 		return parent;
 	}
 
-	/** {@inheritDoc} */
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void setParent(Tree<E> parent) {
 		this.parent = parent;
 	}
 
-	/** {@inheritDoc} */
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public Tree<E> getRoot() {
 		if (parent != null) {
@@ -89,7 +99,9 @@ public abstract class AbstractTree<E> implements Tree<E> {
 		getCollection().add(leaf);
 	}
 
-	/** {@inheritDoc} */
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void replace(Tree<E> that, Tree<E> by) {
 		that.setParent(null);
@@ -112,25 +124,33 @@ public abstract class AbstractTree<E> implements Tree<E> {
 		this.setParent(in);
 	}
 
-	/** {@inheritDoc} */
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public Iterator<Tree<E>> iterator() {
 		return getCollection().iterator();
 	}
 
-	/** {@inheritDoc} */
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public int size() {
 		return getCollection().size();
 	}
 
-	/** {@inheritDoc} */
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public String toString() {
 		return printTree(0);
 	}
 
-	/** {@inheritDoc} */
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public final String printTree(int increment) {
 		String s = "";

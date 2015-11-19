@@ -31,13 +31,17 @@ public class ArrayTree<E> extends AbstractTree<E> {
 		leafs = new ArrayList<Tree<E>>();
 	}
 
-	/** {@inheritDoc} */
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	protected Collection<Tree<E>> getCollection() {
 		return leafs;
 	}
 
-	/** {@inheritDoc} */
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public ArrayTree<E> addLeaf(E leaf) {
 		ArrayTree<E> tree = new ArrayTree<E>(leaf);
