@@ -13,6 +13,14 @@ package fr.cyann.jinyparser.grammartree;/**
 public interface NamedGrammar {
 
 	/**
+	 * Get if named production is hidden or not.<br>
+	 * Useful to avoid Recursive and Production nesting.
+	 *
+	 * @return
+	 */
+	boolean isHidden();
+
+	/**
 	 * Get the recursive name.
 	 *
 	 * @return the recursive name.

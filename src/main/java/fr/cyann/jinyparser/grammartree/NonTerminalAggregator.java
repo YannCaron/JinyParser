@@ -71,6 +71,7 @@ public class NonTerminalAggregator extends GrammarDecorator {
 				context.pushParsem(nonTerminal);
 
 			} else {
+				// pending aggregation
 
 				checkLastElementOnParser(context);
 				ParsemElement elementToAggregate = context.peekParsem();

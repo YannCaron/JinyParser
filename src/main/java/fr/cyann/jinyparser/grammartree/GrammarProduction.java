@@ -36,6 +36,14 @@ public abstract class GrammarProduction<P extends ParsemElement> extends Grammar
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
+	public boolean isHidden() {
+		return false;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
 	public String getName() {
 		return name;
 	}

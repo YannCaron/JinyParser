@@ -31,8 +31,6 @@ public class Analysis {
 		throw new RuntimeException("Static class cannot be instantiated.");
 	}
 
-	// TODO : Check that Production grammar is never null
-
 	public static GrammarElement analyse(GrammarElement root) {
 
 		GrammarElement result = root;
@@ -57,6 +55,17 @@ public class Analysis {
 	 */
 	public static GrammarElement processBnf(GrammarElement root) {
 
+		// hide nested recursive and productions
+		for (GrammarElement element : root.depthFirstTraversal()) {
+			if (element instanceof Recursive) {
+				Recursive recursive = (Recursive) element;
+				if (recursive.getGrammar() instanceof GrammarProduction) {
+					recursive.setHide(true);
+				}
+			}
+		}
+
+		// determine if name is useful for the root element.
 		if (root instanceof Recursive || root instanceof GrammarProduction) {
 			return root;
 		} else {
@@ -83,7 +92,7 @@ public class Analysis {
 
 				NamedGrammar found = elementNames.get(name);
 
-				if (found != null && production != found) { // check object reference are not equals ! keep the ==
+				if (found != null && production != found && !production.isHidden() && !found.isHidden()) { // check object reference are not equals ! keep the ==
 					int newCounter = counters.containsKey(name) ? counters.get(name) + 1 : 1;
 					counters.put(name, newCounter);
 

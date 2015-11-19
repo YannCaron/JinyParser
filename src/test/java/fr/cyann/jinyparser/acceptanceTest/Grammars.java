@@ -47,8 +47,8 @@ public class Grammars {
 		GrammarElement multiplySign = terminal("MultiplySign", lexMult);
 
 		// recursive
-		Recursive multiplication = recursive("Term");
-		Recursive addition = recursive("Term");
+		Recursive multiplication = recursive("Multiplication");
+		Recursive addition = recursive("Addition");
 		Recursive term = recursive("Term");
 
 		// non terminal

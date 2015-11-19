@@ -22,6 +22,7 @@ public class Recursive extends GrammarElement implements NamedGrammar {
 
 	protected String name;
 	protected GrammarElement grammar;
+	private boolean hide;
 
 	/**
 	 * Default and mandatory constructor.
@@ -30,6 +31,24 @@ public class Recursive extends GrammarElement implements NamedGrammar {
 	 */
 	public Recursive(String name) {
 		this.name = name;
+		this.hide = false;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public boolean isHidden() {
+		return hide;
+	}
+
+	/**
+	 * Set the hide property.
+	 *
+	 * @param hide the value to set.
+	 */
+	public void setHide(boolean hide) {
+		this.hide = hide;
 	}
 
 	/**
@@ -118,7 +137,11 @@ public class Recursive extends GrammarElement implements NamedGrammar {
 	 */
 	@Override
 	void buildBnf(BnfContext context) {
-		context.newProduction(name, grammar);
+		if (!isHidden()) {
+			context.newProduction(name, grammar);
+		} else {
+			grammar.buildBnf(context);
+		}
 	}
 
 	@Override

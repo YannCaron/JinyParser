@@ -25,10 +25,9 @@ public class GrammarContext {
 	private final SourcePosition positionManager;
 	private final StringBuilder term;
 	private final List<Lexem> lexer;
+	private final Stack<NonTerminal> pendingNonTerminals;
 	private final Stack<ParsemElement> parser;
-	private final Stack<NonTerminalProduction> creatorStack;
 	private final Map<Integer, GrammarElement> packrat;
-	private final Stack<NonTerminal> pendingNonTerminals = new Stack<NonTerminal>();
 
 	//region Char Iterator
 
@@ -42,8 +41,8 @@ public class GrammarContext {
 		positionManager = new SourcePosition(1, 1);
 		term = new StringBuilder();
 		lexer = new ArrayList<Lexem>();
+		pendingNonTerminals = new Stack<NonTerminal>();
 		parser = new Stack<ParsemElement>();
-		creatorStack = new Stack<NonTerminalProduction>();
 		packrat = new HashMap<Integer, GrammarElement>();
 	}
 
@@ -179,9 +178,6 @@ public class GrammarContext {
 		this.lexer.add(lexem);
 	}
 
-	// endregion
-
-	// region parser
 
 	/**
 	 * Give the list of lexem (lexer) that resulting from lexing.
@@ -192,14 +188,34 @@ public class GrammarContext {
 		return lexer;
 	}
 
+	// endregion
+
+	// region parser
+
+	/**
+	 * Add a new pending non terminal parsem on the top of the pending stack.<br>
+	 * Gives the ability to create an optional NonTerminal.
+	 *
+	 * @param parsem the non terminal to push on the top of the stack.
+	 */
 	public void addNewPending(NonTerminal parsem) {
 		pendingNonTerminals.push(parsem);
 	}
 
+	/**
+	 * Get the last pending non terminal parsem.
+	 *
+	 * @return the last pending non terminal parsem.
+	 */
 	public NonTerminal getLastPending() {
 		return pendingNonTerminals.peek();
 	}
 
+	/**
+	 * Take the last parsem and definitely push it to the parser stack.<br>
+	 * Parsem is now activated and it's child elements are removed from the parser stack (but kept by the non terminal itself).<br>
+	 * The last pending is replaced by a Dummy that indicate that aggregation is now ensured into the parser stack.
+	 */
 	public void incorporateLastPending() {
 		NonTerminal lastPending = pendingNonTerminals.pop();
 		addNewPending(new NonTerminalDummy());
@@ -211,6 +227,9 @@ public class GrammarContext {
 		parser.push(lastPending);
 	}
 
+	/**
+	 * Remove the last pending element from the pending stack.
+	 */
 	public void removeLastPending() {
 		pendingNonTerminals.pop();
 	}
@@ -285,6 +304,10 @@ public class GrammarContext {
 		return "ParseContext:\n" + iterator + "\nAST: " + getParseTree();
 	}
 
+	/**
+	 * The non terminal dummy.<br>
+	 * Indicate that aggregation is now ensured into the parser stack.
+	 */
 	public static class NonTerminalDummy extends NonTerminal {
 	}
 }
