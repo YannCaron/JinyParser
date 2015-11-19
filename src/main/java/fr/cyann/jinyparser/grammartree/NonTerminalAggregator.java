@@ -9,6 +9,7 @@ package fr.cyann.jinyparser.grammartree;
  **/
 
 import fr.cyann.jinyparser.exceptions.JinyException;
+import fr.cyann.jinyparser.parsetree.NonTerminal;
 import fr.cyann.jinyparser.parsetree.ParsemElement;
 import fr.cyann.jinyparser.utils.MultilingualMessage;
 
@@ -18,7 +19,7 @@ import fr.cyann.jinyparser.utils.MultilingualMessage;
  */
 public class NonTerminalAggregator extends GrammarDecorator {
 
-	private final String fieldName;
+	protected final String fieldName;
 
 	/**
 	 * Default constructor.
@@ -39,6 +40,11 @@ public class NonTerminalAggregator extends GrammarDecorator {
 		return decorated.lookahead(context);
 	}
 
+	protected void checkLastElementOnParser(GrammarContext context) {
+		if (context.isParserEmpty())
+			throw new JinyException(MultilingualMessage.create("NonTerminalAggregator [%s] try to pop parsem from the stack, but the stack is empty. No parsem was previously created.").setArgs(fieldName));
+	}
+
 	/**
 	 * {@inheritDoc}
 	 */
@@ -50,17 +56,29 @@ public class NonTerminalAggregator extends GrammarDecorator {
 
 		if (res) {
 
-			if (context.isParserEmpty())
-				throw new JinyException(MultilingualMessage.create("NonTerminalAggregator [%s] try to pop parsem from the stack, but the stack is empty. No parsem was previously created.").setArgs(fieldName));
-			ParsemElement elementToAggregate = context.popParsem();
+			NonTerminal lastPending = context.getLastPending();
 
-			if (context.isParserEmpty())
-				throw new JinyException(MultilingualMessage.create("NonTerminalAggregator [%s] try to pop parsem from the stack, but the stack is empty. Not enough parsem has been created.").setArgs(fieldName));
-			ParsemElement nonTerminal = context.popParsem();
+			if (lastPending instanceof GrammarContext.NonTerminalDummy) {
+				// normal aggregation
 
-			nonTerminal.aggregate(fieldName, elementToAggregate);
+				checkLastElementOnParser(context);
+				ParsemElement elementToAggregate = context.popParsem();
 
-			context.pushParsem(nonTerminal);
+				checkLastElementOnParser(context);
+				ParsemElement nonTerminal = context.popParsem();
+
+				nonTerminal.aggregate(fieldName, elementToAggregate);
+				context.pushParsem(nonTerminal);
+
+			} else {
+
+				checkLastElementOnParser(context);
+				ParsemElement elementToAggregate = context.peekParsem();
+
+				context.getLastPending().aggregate(fieldName, elementToAggregate);
+
+			}
+
 
 		}
 

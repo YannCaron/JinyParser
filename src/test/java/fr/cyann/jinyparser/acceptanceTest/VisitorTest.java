@@ -64,10 +64,6 @@ public class VisitorTest extends TestCase {
 		// parse
 		GrammarContext c = grammar.parse(source);
 
-		System.out.println("Parse tree: " + c.getParseTree());
-
-		assertEquals("('+' ('+' 'n7' 'n10') 'n4')", c.getParseTree().toString());
-
 		// visit and test result
 		ArithmeticContext context = new ArithmeticContext();
 		c.getParseTree().visit(context);
@@ -85,17 +81,30 @@ public class VisitorTest extends TestCase {
 		// parse
 		GrammarContext c = grammar.parse(source);
 
-		System.out.println("Parse tree: " + c.getParseTree());
-
-		assertEquals("('+' ('+' 'n7' ('*' 'n10' 'n4')) 'n7')", c.getParseTree().toString());
-
 		// visit and test result
 		ArithmeticContext context = new ArithmeticContext();
 		c.getParseTree().visit(context);
 		assertEquals(54, context.firstElement().intValue());
 	}
 
-	public void testOperatorLevelWithParenthesisParser() {
+	public void testOperatorLevelWithParenthesisLeftParser() {
+
+		String source = "(7 + 10) * 4";
+
+		// parser
+		GrammarElement.ProcessedGrammar grammar = Grammars.arithmeticWithLevelAndParenthesis(VISIT_NUMBER, VISIT_ADDITION, VISIT_MULTIPLICATION);
+
+		// parse
+		GrammarContext c = grammar.parse(source);
+
+		// visit and test result
+		ArithmeticContext context = new ArithmeticContext();
+		c.getParseTree().visit(context);
+		assertEquals(68, context.firstElement().intValue());
+
+	}
+
+	public void testOperatorLevelWithParenthesisRightParser() {
 
 		String source = "7 + 10 * (4 + 7)";
 
@@ -104,10 +113,6 @@ public class VisitorTest extends TestCase {
 
 		// parse
 		GrammarContext c = grammar.parse(source);
-
-		System.out.println("Parse tree: " + c.getParseTree());
-
-		assertEquals("('+' 'n7' ('*' 'n10' ('+' 'n4' 'n7')))", c.getParseTree().toString());
 
 		// visit and test result
 		ArithmeticContext context = new ArithmeticContext();

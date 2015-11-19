@@ -213,11 +213,11 @@ public final class GrammarFactory {
 	}
 
 	/**
-	 * Create the non terminal parsem and aggregate the decorated production with it.<br>
-	 * Must be used encapsulated on a non terminal production.<br>
+	 * Incorporate the pending non terminal parsem.<br>
+	 * And aggregate the decorated terminal production with it.<br>
 	 * If not parsed, real non terminal will not be produced and terminals will keep their position on the program stack.
 	 *
-	 * @param fieldName the field name (use annotation @AggregateField to match with) in the parsem to aggregate the decorated element with.
+	 * @param fieldName the name of the field that will accept the child parsem.
 	 * @param decorated the decorated element.
 	 * @return the sub production.
 	 */
@@ -226,15 +226,15 @@ public final class GrammarFactory {
 	}
 
 	/**
-	 * Create the default non terminal parsem and aggregate the decorated production with it.<br>
-	 * Must be used encapsulated on a non terminal production.<br>
+	 * Incorporate the pending non terminal parsem.<br>
+	 * And aggregate the decorated terminal production with it.<br>
 	 * If not parsed, real non terminal will not be produced and terminals will keep their position on the program stack.
 	 *
 	 * @param decorated the decorated element.
 	 * @return the sub production.
 	 */
 	public static NonTerminalCreator create(GrammarElement decorated) {
-		return create(DefaultNonTerminal.SUB_NODE_IDENTITY, decorated);
+		return new NonTerminalCreator(DefaultNonTerminal.SUB_NODE_IDENTITY, decorated);
 	}
 
 	/**

@@ -18,7 +18,7 @@ public class NonTerminalProducerTest extends TestCase {
 	private static GrammarElement getGrammar() {
 		GrammarElement a = terminal("A", lexem(new Word("a")));
 		GrammarElement b = terminal("B", lexem(new Word("b")));
-		return nonTerminal("AB", sequence(a, create(b).aggregateWith(1)));
+		return nonTerminal("AB", sequence(aggregate(a), create(b)));
 	}
 
 	public void testLookahead() throws Exception {

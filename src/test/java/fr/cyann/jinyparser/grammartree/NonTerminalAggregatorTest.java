@@ -51,7 +51,9 @@ public class NonTerminalAggregatorTest extends TestCase {
 		assertTrue(context.getParseTree() instanceof DefaultNonTerminal);
 
 		assertEquals("a", parsem.getLexem().getTerm());
-		assertEquals("b", parsem.getItem(0).getLexem().getTerm());
+		assertEquals("a", parsem.getItem(0).getLexem().getTerm());
+		assertEquals("b", parsem.getItem(1).getLexem().getTerm());
+		assertEquals("b", parsem.getItem(1).getLexem().getTerm());
 
 	}
 }

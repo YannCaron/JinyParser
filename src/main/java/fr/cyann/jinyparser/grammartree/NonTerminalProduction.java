@@ -45,11 +45,11 @@ public class NonTerminalProduction<P extends NonTerminal> extends GrammarProduct
 	@Override
 	protected boolean parse(GrammarContext context) {
 
-		context.setCurrentCreator(this);
+		context.addNewPending(createParsem());
 
 		boolean ret = decorated.parse(context);
 
-		context.backToPreviousCreator();
+		context.removeLastPending();
 
 		return ret;
 	}

@@ -9,6 +9,7 @@ package fr.cyann.jinyparser.grammartree;/**
 
 import fr.cyann.jinyparser.lexem.Lexem;
 import fr.cyann.jinyparser.lexem.SourcePosition;
+import fr.cyann.jinyparser.parsetree.NonTerminal;
 import fr.cyann.jinyparser.parsetree.ParsemElement;
 import fr.cyann.jinyparser.utils.StringLookaheadIterator;
 
@@ -27,6 +28,9 @@ public class GrammarContext {
 	private final Stack<ParsemElement> parser;
 	private final Stack<NonTerminalProduction> creatorStack;
 	private final Map<Integer, GrammarElement> packrat;
+	private final Stack<NonTerminal> pendingNonTerminals = new Stack<NonTerminal>();
+
+	//region Char Iterator
 
 	/**
 	 * Default constructor.
@@ -42,8 +46,6 @@ public class GrammarContext {
 		creatorStack = new Stack<NonTerminalProduction>();
 		packrat = new HashMap<Integer, GrammarElement>();
 	}
-
-	//region Char Iterator
 
 	/**
 	 * Mark current character to give ability to backtrack to this position.
@@ -98,6 +100,10 @@ public class GrammarContext {
 		positionManager.increment();
 	}
 
+	//endregion
+
+	// region Lexer
+
 	/**
 	 * Tell if iteration is terminated.
 	 *
@@ -106,10 +112,6 @@ public class GrammarContext {
 	public boolean isTerminated() {
 		return iterator.isTerminated();
 	}
-
-	//endregion
-
-	// region Lexer
 
 	/**
 	 * Empty the term buffer.
@@ -177,6 +179,10 @@ public class GrammarContext {
 		this.lexer.add(lexem);
 	}
 
+	// endregion
+
+	// region parser
+
 	/**
 	 * Give the list of lexem (lexer) that resulting from lexing.
 	 *
@@ -186,33 +192,27 @@ public class GrammarContext {
 		return lexer;
 	}
 
-	// endregion
-
-	// region parser
-
-	/**
-	 * Get the current creator.
-	 *
-	 * @return the current creator.
-	 */
-	public NonTerminalProduction getCurrentCreator() {
-		return creatorStack.peek();
+	public void addNewPending(NonTerminal parsem) {
+		pendingNonTerminals.push(parsem);
 	}
 
-	/**
-	 * Set the current creator on the top of the stack.
-	 *
-	 * @param creator the current creator.
-	 */
-	public void setCurrentCreator(NonTerminalProduction creator) {
-		creatorStack.push(creator);
+	public NonTerminal getLastPending() {
+		return pendingNonTerminals.peek();
 	}
 
-	/**
-	 * Pop the current creator from the stack (current become the last one).
-	 */
-	public void backToPreviousCreator() {
-		creatorStack.pop();
+	public void incorporateLastPending() {
+		NonTerminal lastPending = pendingNonTerminals.pop();
+		addNewPending(new NonTerminalDummy());
+
+		for (int i = 0; i < lastPending.getChildCount(); i++) {
+			parser.pop();
+		}
+
+		parser.push(lastPending);
+	}
+
+	public void removeLastPending() {
+		pendingNonTerminals.pop();
 	}
 
 	/**
@@ -258,22 +258,22 @@ public class GrammarContext {
 		if (parser.empty()) return null;
 		return parser.firstElement();
 	}
-	//endregion
 
 	// region packrat
 	public void storeToPackrat(int pos, GrammarElement grammar) {
 		packrat.put(pos, grammar);
 	}
+	//endregion
 
 	public GrammarElement retrieveFromPackrat(int pos) {
 		return packrat.get(pos);
 	}
 
-	// endregion
-
 	public String getPositionToString() {
 		return positionManager.toString();
 	}
+
+	// endregion
 
 	/**
 	 * Give the string representation of the object. Useful for debugging.
@@ -283,5 +283,8 @@ public class GrammarContext {
 	@Override
 	public String toString() {
 		return "ParseContext:\n" + iterator + "\nAST: " + getParseTree();
+	}
+
+	public static class NonTerminalDummy extends NonTerminal {
 	}
 }

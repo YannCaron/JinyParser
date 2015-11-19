@@ -47,17 +47,19 @@ public class Grammars {
 		GrammarElement multiplySign = terminal("MultiplySign", lexMult);
 
 		// recursive
+		Recursive multiplication = recursive("Term");
+		Recursive addition = recursive("Term");
 		Recursive term = recursive("Term");
 
 		// non terminal
 
 		// <multiplication> := <produceNumber> [ { '*' <produceNumber> } ]
-		GrammarElement multiplication = nonTerminal("Multiplication", AstBinaryExpression.class,
-				sequence(term, zeroOrMore(sequence(multiplySign, create("right", term).aggregateWith("sign", "left"))))).setVisitor(multiplicationVisitor);
+		multiplication.setGrammar(nonTerminal("Multiplication", AstBinaryExpression.class,
+				sequence(aggregate("left", term), zeroOrOne(sequence(aggregate("sign", multiplySign), create("right", multiplication))))).setVisitor(multiplicationVisitor));
 
 		// <addition> := <multiplication> [ { '+' <multiplication> } ]
-		GrammarElement addition = nonTerminal("Addition", AstBinaryExpression.class,
-				sequence(multiplication, zeroOrMore(sequence(addSign, create("right", multiplication).aggregateWith("sign", "left"))))).setVisitor(additionVisitor);
+		addition.setGrammar(nonTerminal("Addition", AstBinaryExpression.class,
+				sequence(aggregate("left", multiplication), zeroOrOne(sequence(aggregate("sign", addSign), create("right", addition))))).setVisitor(additionVisitor));
 
 		// <term> := <number> | '(' <addition> ')'
 		term.setGrammar(choice(number, sequence(leftParenthesis, addition, rightParenthesis)));
@@ -86,11 +88,11 @@ public class Grammars {
 
 		// <multiplication> := <produceNumber> [ { '*' <produceNumber> } ]
 		GrammarProduction multiplication = nonTerminal("Multiplication",
-				sequence(term, zeroOrMore(sequence(multiplySign, create(term).aggregateWith(2))))).setVisitor(multiplicationVisitor);
+				sequence(aggregate(term), zeroOrMore(sequence(aggregate(multiplySign), create(term))))).setVisitor(multiplicationVisitor);
 
 		// <addition> := <multiplication> [ { '+' <multiplication> } ]
 		GrammarProduction addition = nonTerminal("Addition",
-				sequence(multiplication, zeroOrMore(sequence(addSign, create(multiplication).aggregateWith(2))))).setVisitor(additionVisitor);
+				sequence(aggregate(multiplication), zeroOrMore(sequence(aggregate(addSign), create(multiplication))))).setVisitor(additionVisitor);
 
 		// <term> := <number> | '(' <addition> ')'
 		term.setGrammar(choice(number, sequence(leftParenthesis, addition, rightParenthesis)));

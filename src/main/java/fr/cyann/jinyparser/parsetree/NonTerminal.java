@@ -22,9 +22,11 @@ import java.util.List;
 public abstract class NonTerminal extends ParsemElement {
 
 	private Lexem firstLexem, lastLexem;
+	private int childCount;
 
 	public NonTerminal() {
 		super();
+		this.childCount = 0;
 	}
 
 	private static boolean isListOfParsemElement(Field field) {
@@ -39,6 +41,10 @@ public abstract class NonTerminal extends ParsemElement {
 		}
 
 		return false;
+	}
+
+	public int getChildCount() {
+		return childCount;
 	}
 
 	@Override
@@ -94,10 +100,12 @@ public abstract class NonTerminal extends ParsemElement {
 				if (annotation != null && (name.equals(fieldName))) {
 
 					if (isListOfParsemElement(field)) {
-						((List<ParsemElement>) field.get(this)).add(0, element);
+						((List<ParsemElement>) field.get(this)).add(element);
+						this.childCount++;
 						found = true;
 					} else {
 						field.set(this, element);
+						this.childCount++;
 						found = true;
 					}
 

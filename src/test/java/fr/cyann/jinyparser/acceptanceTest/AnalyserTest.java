@@ -80,11 +80,11 @@ public class AnalyserTest extends TestCase {
 
 		// <multiplication> := <produceNumber> [ { '*' <produceNumber> } ]
 		GrammarElement multiplication = nonTerminal("Expression", AstBinaryExpression.class,
-				sequence(term, zeroOrMore(sequence(multiplySign, create("right", term).aggregateWith("sign", "left")))));
+				sequence(term, zeroOrMore(sequence(multiplySign, create("right", term)))));
 
 		// <addition> := <multiplication> [ { '+' <multiplication> } ]
 		GrammarElement addition = nonTerminal("Expression", AstBinaryExpression.class,
-				sequence(multiplication, zeroOrMore(sequence(addSign, create("right", multiplication).aggregateWith("sign", "left")))));
+				sequence(multiplication, zeroOrMore(sequence(addSign, create("right", multiplication)))));
 
 		// <term> := <number> | '(' <addition> ')'
 		term.setGrammar(choice(number, sequence(leftParenthesis, addition, rightParenthesis)));
