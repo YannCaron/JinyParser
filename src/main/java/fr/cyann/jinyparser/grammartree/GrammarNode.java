@@ -75,6 +75,18 @@ public abstract class GrammarNode extends GrammarElement implements Iterable<Gra
 		return result;
 	}
 
+	public int indexOfChild(GrammarElement element) {
+		return children.indexOf(element);
+	}
+
+	public GrammarElement getChild(int index) {
+		return children.get(index);
+	}
+
+	public void replace(int index, GrammarElement element) {
+		children.set(index, element);
+	}
+
 	/**
 	 * {@inheritDoc}
 	 */

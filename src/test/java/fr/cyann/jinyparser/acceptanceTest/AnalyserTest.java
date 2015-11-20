@@ -98,6 +98,8 @@ public class AnalyserTest extends TestCase {
 		// grammar
 		GrammarElement.ProcessedGrammar grammar = lrGrammar(null, null, null);
 
+		System.out.println(grammar.toBnf());
+
 		// source
 		String source = "7 + 10 * (4 + 7)";
 

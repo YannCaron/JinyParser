@@ -7,14 +7,11 @@ package fr.cyann.jinyparser.grammartree.utils;/**
  * ou écrivez à Creative Commons, 444 Castro Street, Suite 900, Mountain View, California, 94041, USA.
  **/
 
-import fr.cyann.datastructure.ArrayTree;
-import fr.cyann.datastructure.Tree;
+import fr.cyann.jinyparser.exceptions.JinyException;
 import fr.cyann.jinyparser.grammartree.*;
+import fr.cyann.jinyparser.utils.MultilingualMessage;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * The Analysis definition.
@@ -96,10 +93,8 @@ public class Analysis {
 					int newCounter = counters.containsKey(name) ? counters.get(name) + 1 : 1;
 					counters.put(name, newCounter);
 
-					//found.setName(String.format(COUNTERED_GRAMMAR, name, 0));
 					name = String.format(COUNTERED_GRAMMAR, name, newCounter);
 					production.setName(name);
-					//throw new AnalysisException(MultilingualMessage.create("Production names [%s] cannot be twice !").setArgs(production.getName()));
 				}
 
 				elementNames.put(name, production);
@@ -116,21 +111,189 @@ public class Analysis {
 	 */
 	public static GrammarElement enhanceLRGrammar(GrammarElement root) {
 
-		RecursiveContext context = new RecursiveContext();
-		Tree<String> tree = new ArrayTree<String>("root");
-		recursive(context, root, tree);
+		BuildCyclesContext context = new BuildCyclesContext();
+		buildCyclesRecursive(context, root);
+		System.out.println("Cycles detected: ");
+		for (int i = context.getCycles().size() - 1; i >= 0; i--) {
+			List<GrammarElement> cycle = context.getCycles().get(i);
+			System.out.println(" - cycle: " + cycle);
 
-		System.out.println(tree.toString());
-		//System.out.println("Result:\n" + context.sb);
+			// find choice
+			int choiceIndex = firstByType(cycle, Choice.class, 0);
+			if (choiceIndex == -1)
+				throw new JinyException(MultilingualMessage.create("Infinite loop detected in recursive grammar [%s]").setArgs(cycle.get(0).toString()));
+			Choice choice = (Choice) cycle.get(choiceIndex);
+
+			// find the next child in choice
+			GrammarElement child = cycle.get(choiceIndex + 1);
+			int childIndex = choice.indexOfChild(child);
+			System.out.println("index of child " + childIndex);
+			GrammarElement nextChild = choice.getChild(childIndex + 1);
+
+			// replace it by named recursive
+			Recursive subRecursive = new Recursive("SUB_XXX").setGrammar(nextChild);
+			choice.replace(childIndex + 1, subRecursive);
+
+			// replace the reference
+			// TODO: problem with replace
+			GrammarElement recursive = cycle.get(0);
+			GrammarElement last = cycle.get(cycle.size() - 1);
+			last.replace(recursive, subRecursive);
+
+		}
 
 		return root;
 	}
 
+	private static int firstByType(List<GrammarElement> list, Class<? extends GrammarElement> type, int start) {
+		for (int i = start; i < list.size(); i++) {
+			if (type.isAssignableFrom(list.get(i).getClass())) {
+				return i;
+			}
+		}
+		return -1;
+	}
+
+	/**
+	 * Gives the infinite cycles; e.g. all the cycles present in the graph that do not produce any lexem (in other words, all the cycles that do not contains any GrammarLeaf element like "Word", "CharIn" etc.).<br>
+	 * Inspired from the Tarjan's Algorithms. But backtrack when a sub-rule that create lexem was found.
+	 *
+	 * @param context The build cycle context.
+	 * @param element the element to explore.
+	 */
+	private static void buildCyclesRecursive(BuildCyclesContext context, GrammarElement element) {
+
+		context.pushToPath(element);
+
+		try {
+			if (element instanceof Recursive) {
+				if (context.wasExplored(element)) {
+					context.buildCycle(element);
+					context.setBroken(false);
+					return;
+				}
+			}
+
+			if (element instanceof GrammarNode) {
+
+				for (GrammarElement child : ((GrammarNode) element)) {
+
+					buildCyclesRecursive(context, child);
+					if (context.isBroken()) {
+						if (element instanceof Sequence)
+							break;
+						else
+							context.setBroken(false);
+					}
+
+				}
+
+			} else if (element instanceof GrammarDecorator) {
+				buildCyclesRecursive(context, ((GrammarDecorator) element).getDecorated());
+			} else if (element instanceof Recursive) {
+				buildCyclesRecursive(context, ((Recursive) element).getGrammar());
+			} else {
+				context.setBroken(true);
+				return;
+			}
+
+		} finally {
+			context.removeLastFromPath();
+		}
+
+	}
+
+	private static class BuildCyclesContext {
+		private final Set<GrammarElement> elementExplored;
+		private final Stack<GrammarElement> paths;
+		private final List<List<GrammarElement>> cycles;
+		private boolean broken;
+
+		public BuildCyclesContext() {
+			elementExplored = new HashSet<GrammarElement>();
+			paths = new Stack<GrammarElement>();
+			cycles = new ArrayList<List<GrammarElement>>();
+			broken = false;
+		}
+
+		public boolean wasExplored(GrammarElement element) {
+			boolean result = elementExplored.contains(element);
+			elementExplored.add(element);
+			return result;
+		}
+
+		public void pushToPath(GrammarElement element) {
+			paths.push(element);
+		}
+
+		public void removeLastFromPath() {
+			paths.pop();
+		}
+
+		public void buildCycle(GrammarElement startPoint) {
+			List<GrammarElement> list = new ArrayList<GrammarElement>();
+			int start = paths.search(startPoint);
+			for (int i = start; i < paths.size(); i++) {
+				list.add(paths.get(i - 1)); // shift to get from first
+			}
+
+			cycles.add(list);
+		}
+
+		public List<List<GrammarElement>> getCycles() {
+			return cycles;
+		}
+
+		public boolean isBroken() {
+			return broken;
+		}
+
+		public void setBroken(boolean broken) {
+			this.broken = broken;
+		}
+	}
+
+
+/*
+	private static List<GrammarElement> buildPath(RecursiveContext context, GrammarElement element) {
+
+		List<GrammarElement> chain = new ArrayList<GrammarElement>();
+
+		int index = context.paths.search(element);
+
+		for (int i = index; i < context.paths.size(); i++) {
+			GrammarElement pathElement = context.paths.get(i);
+			chain.add(pathElement);
+		}
+		System.out.println("Loop detected ! " + chain);
+
+		return chain;
+	}
+
+	private static int addRecursively(RecursiveContext context, GrammarElement element) {
+
+		int count = 1;
+		context.paths.add(element);
+		for (GrammarElement child : element.depthFirstTraversal()) {
+			count++;
+			context.paths.add(child);
+		}
+
+		return count;
+	}
+
 	private static void recursive(RecursiveContext context, GrammarElement element, Tree<String> tree) {
+
+		context.paths.push(element);
 
 		if (element instanceof Recursive) {
 			if (context.wasExplored(element)) {
 				tree.addLeaf(((NamedGrammar) element).getName());
+
+				buildPath(context, element);
+
+				context.paths.pop();
+
 				return;
 			} else {
 				if (tree != tree.getRoot()) {
@@ -143,6 +306,8 @@ public class Analysis {
 		if (element instanceof GrammarNode) {
 
 			boolean first = true;
+
+			int count = 0;
 			for (GrammarElement child : ((GrammarNode) element)) {
 
 				if (element instanceof Choice && !first) {
@@ -153,7 +318,19 @@ public class Analysis {
 				//tree.addLeaf(child.toString());
 				recursive(context, child, tree);
 
+				if (element instanceof Sequence) {
+					if (child instanceof Recursive) {
+						count++;
+						context.paths.add(child);
+					} else {
+						count += addRecursively(context, child);
+					}
+				}
+
 			}
+
+			for (int i = 0; i < count; i++) context.paths.pop();
+
 
 		} else if (element instanceof GrammarDecorator) {
 			recursive(context, ((GrammarDecorator) element).getDecorated(), tree);
@@ -162,10 +339,14 @@ public class Analysis {
 		} else {
 			tree.addLeaf("inv");
 		}
+
+		context.paths.pop();
+
 	}
 
 	private static class RecursiveContext {
-		private Set<GrammarElement> elementExplored = new HashSet<GrammarElement>();
+		private final Set<GrammarElement> elementExplored = new HashSet<GrammarElement>();
+		public final Stack<GrammarElement> paths = new Stack<GrammarElement>();
 
 		boolean wasExplored(GrammarElement element) {
 			boolean result = elementExplored.contains(element);
@@ -174,6 +355,6 @@ public class Analysis {
 		}
 
 
-	}
+	}*/
 
 }
