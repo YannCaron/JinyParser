@@ -17,83 +17,96 @@ import java.util.*;
 @SuppressWarnings("WeakerAccess")
 public abstract class GrammarNode extends GrammarElement implements Iterable<GrammarElement> {
 
-	final List<GrammarElement> children;
+    final List<GrammarElement> children;
 
-	/**
-	 * {@inheritDoc}
-	 */
-	public GrammarNode(GrammarElement[] children) {
-		this.children = Arrays.asList(children);
+    /**
+     * {@inheritDoc}
+     */
+    public GrammarNode(GrammarElement[] children) {
+        this.children = new ArrayList<GrammarElement>();
 
-		for (GrammarElement child : children) {
-			child.setParent(this);
-		}
-	}
+        for (GrammarElement child : children) {
+            if (child instanceof Recursive) {
+                this.children.add(new Link((Recursive) child, this));
+            } else {
+                child.setParent(this);
+                this.children.add(child);
+            }
+        }
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public Iterator<GrammarElement> iterator() {
-		return children.iterator();
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Iterator<GrammarElement> iterator() {
+        return children.iterator();
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public void depthFirstPush(Stack<GrammarElement> stack) {
-		int pos = stack.size();
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void depthFirstPush(Stack<GrammarElement> stack) {
+        int pos = stack.size();
 
-		for (GrammarElement element : this.children) {
-			stack.add(pos, element);
-		}
-	}
+        for (GrammarElement element : this.children) {
+            stack.add(pos, element);
+        }
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public void breadthFirstAdd(Queue<GrammarElement> queue) {
-		for (GrammarElement element : this.children) {
-			queue.add(element);
-		}
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void breadthFirstAdd(Queue<GrammarElement> queue) {
+        for (GrammarElement element : this.children) {
+            queue.add(element);
+        }
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public boolean replace(GrammarElement element, GrammarElement by) {
-		boolean result = false;
-		for (int i = 0; i < children.size(); i++) {
-			if (children.get(i).equals(element)) {
-				children.set(i, by);
-				result = true;
-			}
-		}
-		return result;
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean replace(GrammarElement element, GrammarElement by) {
+        boolean result = false;
+        for (int i = 0; i < children.size(); i++) {
+            if (children.get(i).equals(element)) {
+                children.set(i, by);
+                result = true;
+            }
+        }
+        return result;
+    }
 
-	public int indexOfChild(GrammarElement element) {
-		return children.indexOf(element);
-	}
+    /**
+     * Get the next element of specified grammar element in the children list.
+     *
+     * @param element the grammar element to search.
+     * @return the next grammar element in the children list.
+     */
+    public GrammarElement getNextOf(GrammarElement element) {
+        int index = children.indexOf(element);
+        return children.get(index + 1);
+    }
 
-	public GrammarElement getChild(int index) {
-		return children.get(index);
-	}
+    /**
+     * Remove the element of the list.
+     *
+     * @param element the element to remove
+     */
+    public void remove(GrammarElement element) {
+        children.remove(element);
+    }
 
-	public void replace(int index, GrammarElement element) {
-		children.set(index, element);
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public String toString() {
-		return this.getClass().getSimpleName() + " {" +
-				"childrenCount=" + children.size() +
-				"}";
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String toString() {
+        return this.getClass().getSimpleName() + " {" +
+                "childrenCount=" + children.size() +
+                "}";
+    }
 }

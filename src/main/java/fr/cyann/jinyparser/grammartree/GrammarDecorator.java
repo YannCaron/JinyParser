@@ -14,71 +14,81 @@ import java.util.Stack;
  * The GrammarDecorator class. An abstract class for all grammar decorators (add a local parsing functionality).
  */
 @SuppressWarnings("WeakerAccess")
-public abstract class GrammarDecorator extends GrammarElement {
+public abstract class GrammarDecorator<E extends GrammarElement> extends GrammarElement {
 
-	/**
-	 * The decorated object.
-	 */
-	GrammarElement decorated;
+    /**
+     * The decorated object.
+     */
+    E decorated;
 
-	/**
-	 * Default and mandatory constructor. Decorated object if final.
-	 *
-	 * @param decorated the decorated object.
-	 */
-	protected GrammarDecorator(GrammarElement decorated) {
-		decorated.setParent(this);
-		this.decorated = decorated;
-	}
+    /**
+     * Default and mandatory constructor. Decorated object if final.
+     *
+     * @param decorated the decorated object.
+     */
+    protected GrammarDecorator(E decorated) {
+        if (decorated != null)
+            decorated.setParent(this);
+        this.decorated = decorated;
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public boolean replace(GrammarElement element, GrammarElement by) {
-		if (!decorated.equals(element)) return false;
-		decorated = by;
-		return true;
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean replace(GrammarElement element, GrammarElement by) {
+        if (!decorated.equals(element)) return false;
+        decorated = (E) by;
+        return true;
+    }
 
-	/**
-	 * Get the decorated grammar element.
-	 *
-	 * @return the decorated grammar element.
-	 */
-	public GrammarElement getDecorated() {
-		return decorated;
-	}
+    /**
+     * Get the decorated grammar element.
+     *
+     * @return the decorated grammar element.
+     */
+    public GrammarElement getDecorated() {
+        return decorated;
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public void depthFirstPush(Stack<GrammarElement> stack) {
-		stack.push(this.decorated);
-	}
+    /**
+     * Set the decorated grammar element.
+     *
+     * @param decorated the decorated grammar element.
+     */
+    public void setDecorated(E decorated) {
+        this.decorated = decorated;
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public void breadthFirstAdd(Queue<GrammarElement> queue) {
-		queue.add(this.decorated);
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void depthFirstPush(Stack<GrammarElement> stack) {
+        stack.push(this.decorated);
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	void buildBnf(BnfContext context) {
-		decorated.buildBnf(context);
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void breadthFirstAdd(Queue<GrammarElement> queue) {
+        queue.add(this.decorated);
+    }
 
-	@Override
-	public String toString() {
-		return this.getClass().getSimpleName() + " {" +
-				"decorated=" + decorated.getClass().getSimpleName() +
-				"}";
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    void buildBnf(BnfContext context) {
+        decorated.buildBnf(context);
+    }
+
+    @Override
+    public String toString() {
+        return this.getClass().getSimpleName() + " {" +
+                "decorated=" + decorated.getClass().getSimpleName() +
+                "}";
+    }
 
 }

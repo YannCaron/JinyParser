@@ -11,17 +11,13 @@ package fr.cyann.jinyparser.grammartree;
 import fr.cyann.jinyparser.exceptions.JinyException;
 import fr.cyann.jinyparser.utils.MultilingualMessage;
 
-import java.util.Queue;
-import java.util.Stack;
-
 /**
  * The Recursive grammar element definition.<br>
  * Give the ability to loop grammars togathers (and manage cycles).
  */
-public class Recursive extends GrammarElement implements NamedGrammar {
+public class Recursive extends GrammarDecorator implements NamedGrammar {
 
 	protected String name;
-	protected GrammarElement grammar;
 	private boolean hide;
 
 	/**
@@ -30,7 +26,8 @@ public class Recursive extends GrammarElement implements NamedGrammar {
 	 * @param name the bnf name.
 	 */
 	public Recursive(String name) {
-		this.name = name;
+        super(null);
+        this.name = name;
 		this.hide = false;
 	}
 
@@ -66,11 +63,12 @@ public class Recursive extends GrammarElement implements NamedGrammar {
 	}
 
 	/**
-	 * @return
+     * Get the grammar
+     * @return
 	 */
 	public GrammarElement getGrammar() {
-		return grammar;
-	}
+        return decorated;
+    }
 
 	/**
 	 * Set the grammar to delegate to.<br>
@@ -80,8 +78,8 @@ public class Recursive extends GrammarElement implements NamedGrammar {
 	 */
 	public Recursive setGrammar(GrammarElement grammar) {
 		grammar.setParent(this);
-		this.grammar = grammar;
-		return this;
+        this.decorated = grammar;
+        return this;
 	}
 
 	/**
@@ -89,9 +87,9 @@ public class Recursive extends GrammarElement implements NamedGrammar {
 	 */
 	@Override
 	protected boolean lookahead(GrammarContext context) {
-		if (grammar != null) {
-			return grammar.lookahead(context);
-		}
+        if (decorated != null) {
+            return decorated.lookahead(context);
+        }
 		throw new JinyException(MultilingualMessage.create("Recursive grammar must have a grammar to delegate it the lookahead parsing! Please use the Recursive.setGrammar() method before parsing."));
 	}
 
@@ -100,36 +98,10 @@ public class Recursive extends GrammarElement implements NamedGrammar {
 	 */
 	@Override
 	protected boolean parse(GrammarContext context) {
-		if (grammar != null) {
-			return grammar.parse(context);
-		}
+        if (decorated != null) {
+            return decorated.parse(context);
+        }
 		throw new JinyException(MultilingualMessage.create("Recursive grammar must have a grammar to delegate it the parsing! Please use the Recursive.setGrammar() method before parsing."));
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public boolean replace(GrammarElement element, GrammarElement by) {
-		if (!grammar.equals(element)) return false;
-		grammar = by;
-		return true;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public void depthFirstPush(Stack<GrammarElement> stack) {
-		stack.push(this.grammar);
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public void breadthFirstAdd(Queue<GrammarElement> queue) {
-		queue.add(this.grammar);
 	}
 
 	/**
@@ -138,10 +110,10 @@ public class Recursive extends GrammarElement implements NamedGrammar {
 	@Override
 	void buildBnf(BnfContext context) {
 		if (!isHidden()) {
-			context.newProduction(name, grammar);
-		} else {
-			grammar.buildBnf(context);
-		}
+            context.newProduction(name, decorated);
+        } else {
+            decorated.buildBnf(context);
+        }
 	}
 
 	@Override

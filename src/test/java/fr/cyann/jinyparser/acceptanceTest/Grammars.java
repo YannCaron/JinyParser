@@ -53,12 +53,12 @@ public class Grammars {
 
 		// non terminal
 
-		// <multiplication> := <produceNumber> [ { '*' <produceNumber> } ]
-		multiplication.setGrammar(nonTerminal("Multiplication", AstBinaryExpression.class,
+        // <multiplication> := <term> [ { '*' <multiplication> } ]
+        multiplication.setGrammar(nonTerminal("Multiplication", AstBinaryExpression.class,
 				sequence(aggregate("left", term), zeroOrOne(sequence(aggregate("sign", multiplySign), create("right", multiplication))))).setVisitor(multiplicationVisitor));
 
-		// <addition> := <multiplication> [ { '+' <multiplication> } ]
-		addition.setGrammar(nonTerminal("Addition", AstBinaryExpression.class,
+        // <addition> := <multiplication> [ { '+' <addition> } ]
+        addition.setGrammar(nonTerminal("Addition", AstBinaryExpression.class,
 				sequence(aggregate("left", multiplication), zeroOrOne(sequence(aggregate("sign", addSign), create("right", addition))))).setVisitor(additionVisitor));
 
 		// <term> := <number> | '(' <addition> ')'

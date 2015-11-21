@@ -13,6 +13,8 @@ import fr.cyann.jinyparser.utils.MultilingualMessage;
 
 import java.util.*;
 
+import static fr.cyann.jinyparser.grammartree.GrammarFactory.*;
+
 /**
  * The Analysis definition.
  */
@@ -21,8 +23,9 @@ public class Analysis {
 	/**
 	 * The default grammar production name (for entry point).
 	 */
-	public static final String DEFAULT_GRAMMAR_NAME = "Grammar";
-	public static final String COUNTERED_GRAMMAR = "%1$s%2$d";
+    private static final String DEFAULT_GRAMMAR_NAME = "Grammar";
+    private static final String COUNTERED_GRAMMAR = "%1$s%2$d";
+    private static final String LR_SUBSTITUTE_NAME = "%s";
 
 	private Analysis() {
 		throw new RuntimeException("Static class cannot be instantiated.");
@@ -118,27 +121,34 @@ public class Analysis {
 			List<GrammarElement> cycle = context.getCycles().get(i);
 			System.out.println(" - cycle: " + cycle);
 
-			// find choice
-			int choiceIndex = firstByType(cycle, Choice.class, 0);
-			if (choiceIndex == -1)
-				throw new JinyException(MultilingualMessage.create("Infinite loop detected in recursive grammar [%s]").setArgs(cycle.get(0).toString()));
+            // find choice & sequence
+            Recursive recursive = (Recursive) cycle.get(0);
+            int choiceIndex = firstByType(cycle, Choice.class, 0);
+            if (choiceIndex == -1) // TODO
+                throw new JinyException(MultilingualMessage.create("Infinite loop detected in recursive grammar [%s]").setArgs(cycle.get(0).toString()));
 			Choice choice = (Choice) cycle.get(choiceIndex);
 
-			// find the next child in choice
-			GrammarElement child = cycle.get(choiceIndex + 1);
-			int childIndex = choice.indexOfChild(child);
-			System.out.println("index of child " + childIndex);
-			GrammarElement nextChild = choice.getChild(childIndex + 1);
+            int sequenceIndex = firstByType(cycle, Sequence.class, choiceIndex);
+            if (sequenceIndex == -1) // TODO
+                throw new JinyException(MultilingualMessage.create("Infinite loop detected in recursive grammar [%s]").setArgs(cycle.get(0).toString()));
+            Sequence sequence = (Sequence) cycle.get(sequenceIndex);
 
-			// replace it by named recursive
-			Recursive subRecursive = new Recursive("SUB_XXX").setGrammar(nextChild);
-			choice.replace(childIndex + 1, subRecursive);
+            // create sub expression
+            GrammarElement child = cycle.get(choiceIndex + 1);
+            GrammarElement nextChild = choice.getNextOf(child);
+            String name = String.format(LR_SUBSTITUTE_NAME, recursive.getName());
+            Recursive subRecursive = recursive(name).setGrammar(nextChild);
+            choice.replace(nextChild, subRecursive);
 
 			// replace the reference
-			// TODO: problem with replace
-			GrammarElement recursive = cycle.get(0);
-			GrammarElement last = cycle.get(cycle.size() - 1);
-			last.replace(recursive, subRecursive);
+            GrammarDecorator link = (GrammarDecorator) cycle.get(cycle.size() - 1);
+            link.setDecorated(subRecursive);
+
+            // build oneOrMore
+            sequence.remove(link);
+            sequence.getParent().replace(sequence, sequence(link, zeroOrOne(sequence)));
+
+
 
 		}
 
@@ -190,8 +200,6 @@ public class Analysis {
 
 			} else if (element instanceof GrammarDecorator) {
 				buildCyclesRecursive(context, ((GrammarDecorator) element).getDecorated());
-			} else if (element instanceof Recursive) {
-				buildCyclesRecursive(context, ((Recursive) element).getGrammar());
 			} else {
 				context.setBroken(true);
 				return;

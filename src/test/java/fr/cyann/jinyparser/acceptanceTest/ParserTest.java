@@ -27,7 +27,7 @@ public class ParserTest extends TestCase {
 
 	public void testTrivialParser() {
 
-		String source = "7 + 10 + 4";
+        String source = "7 + 10 + 4 + 7";
 
 		// grammar
 		GrammarElement.ProcessedGrammar grammar = Grammars.arithmeticWithLevelAndParenthesis(null, null, null);
@@ -37,7 +37,7 @@ public class ParserTest extends TestCase {
 
 		System.out.println("Parse tree: " + c.getParseTree());
 
-		assertEquals("('+' 'n7' ('+' 'n10' 'n4'))", c.getParseTree().toString());
+        assertEquals("('+' 'n7' ('+' 'n10' ('+' 'n4' 'n7')))", c.getParseTree().toString());
 
 	}
 

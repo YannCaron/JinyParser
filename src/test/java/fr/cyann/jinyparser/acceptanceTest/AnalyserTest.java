@@ -9,6 +9,7 @@ package fr.cyann.jinyparser.acceptanceTest;/**
 
 import fr.cyann.jinyparser.acceptanceTest.Grammars.AstBinaryExpression;
 import fr.cyann.jinyparser.acceptanceTest.Grammars.AstNumber;
+import fr.cyann.jinyparser.grammartree.GrammarContext;
 import fr.cyann.jinyparser.grammartree.GrammarElement;
 import fr.cyann.jinyparser.grammartree.LexemCreator;
 import fr.cyann.jinyparser.grammartree.Recursive;
@@ -34,8 +35,8 @@ public class AnalyserTest extends TestCase {
 		LexemCreator lexMult = lexem(Grammars.OPERATOR, charIn("*"));
 
 		// terminal
-		GrammarElement number = terminal("number", AstNumber.class, lexNum).setVisitor(numberVisitor);
-		GrammarElement addSign = terminal("addSign", lexAdd);
+        GrammarElement number = terminal("number", lexNum);
+        GrammarElement addSign = terminal("addSign", lexAdd);
 		GrammarElement multiplySign = terminal("multiplySign", lexMult);
 
 		// recursive
@@ -49,12 +50,12 @@ public class AnalyserTest extends TestCase {
 		//         | '(' <expr> ')'
 		expr.setGrammar(
 				choice(
-						sequence(expr, multiplySign, expr),
-						sequence(expr, addSign, expr),
-						number,
-						sequence(leftParenthesis, expr, rightParenthesis)
-				)
-		);
+                        nonTerminal("multiplication", sequence(aggregate(expr), create(multiplySign), aggregate(expr))),
+                        nonTerminal("addition", sequence(aggregate(expr), create(addSign), aggregate(expr))),
+                        number,
+                        sequence(leftParenthesis, expr, rightParenthesis)
+                )
+        );
 
 		// process
 		return expr.process();
@@ -98,21 +99,19 @@ public class AnalyserTest extends TestCase {
 		// grammar
 		GrammarElement.ProcessedGrammar grammar = lrGrammar(null, null, null);
 
-		System.out.println(grammar.toBnf());
-
 		// source
 		String source = "7 + 10 * (4 + 7)";
 
 		// to BNF
-		//System.out.println("Grammar tree:\n" + grammar.toBnf());
-		//System.out.println();
+        System.out.println("Grammar tree:\n" + grammar.toBnf());
+        System.out.println();
 
 		// parse
-		/*GrammarContext c = grammar.parse(source);
+        GrammarContext c = grammar.parse(source);
 
 		System.out.println("Parse tree: " + c.getParseTree());
 
-		assertEquals("('+' 'n7' ('*' 'n10' ('+' 'n4' 'n7')))", c.getParseTree().toString());*/
+        assertEquals("('7' '+' ('10' '*' ('4' '+' '7')))", c.getParseTree().toString());
 
 	}
 
