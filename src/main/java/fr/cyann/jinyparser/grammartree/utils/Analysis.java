@@ -39,7 +39,7 @@ public class Analysis {
 		result = processBnf(result);
 
 		// enhance LR
-		result = enhanceLRGrammar(result);
+        result = convertLRtoLLGrammar(result);
 
 		// check names
 		enhanceProductionNames(result);
@@ -112,7 +112,7 @@ public class Analysis {
 	 * @param root the root element of the grammar tree.
 	 * @return the new root.
 	 */
-	public static GrammarElement enhanceLRGrammar(GrammarElement root) {
+    public static GrammarElement convertLRtoLLGrammar(GrammarElement root) {
 
 		BuildCyclesContext context = new BuildCyclesContext();
 		buildCyclesRecursive(context, root);
