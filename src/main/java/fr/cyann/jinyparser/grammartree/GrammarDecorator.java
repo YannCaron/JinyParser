@@ -14,22 +14,20 @@ import java.util.Stack;
  * The GrammarDecorator class. An abstract class for all grammar decorators (add a local parsing functionality).
  */
 @SuppressWarnings("WeakerAccess")
-public abstract class GrammarDecorator<E extends GrammarElement> extends GrammarElement {
+public abstract class GrammarDecorator extends GrammarElement {
 
     /**
      * The decorated object.
      */
-    E decorated;
+    protected GrammarElement decorated;
 
     /**
      * Default and mandatory constructor. Decorated object if final.
      *
      * @param decorated the decorated object.
      */
-    protected GrammarDecorator(E decorated) {
-        if (decorated != null)
-            decorated.setParent(this);
-        this.decorated = decorated;
+    protected GrammarDecorator(GrammarElement decorated) {
+        setDecorated(decorated);
     }
 
     /**
@@ -38,7 +36,7 @@ public abstract class GrammarDecorator<E extends GrammarElement> extends Grammar
     @Override
     public boolean replace(GrammarElement element, GrammarElement by) {
         if (!decorated.equals(element)) return false;
-        decorated = (E) by;
+        decorated = by;
         return true;
     }
 
@@ -56,8 +54,16 @@ public abstract class GrammarDecorator<E extends GrammarElement> extends Grammar
      *
      * @param decorated the decorated grammar element.
      */
-    public void setDecorated(E decorated) {
-        this.decorated = decorated;
+    void setDecorated(GrammarElement decorated) {
+        if (decorated instanceof Recursive) {
+            Link link = new Link((Recursive) decorated, this);
+            link.setParent(this);
+            this.decorated = link;
+        } else {
+            if (decorated != null)
+                decorated.setParent(this);
+            this.decorated = decorated;
+        }
     }
 
     /**

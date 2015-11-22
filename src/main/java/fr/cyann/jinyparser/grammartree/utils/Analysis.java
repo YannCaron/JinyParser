@@ -141,12 +141,13 @@ public class Analysis {
             choice.replace(nextChild, subRecursive);
 
 			// replace the reference
-            GrammarDecorator link = (GrammarDecorator) cycle.get(cycle.size() - 1);
-            link.setDecorated(subRecursive);
+            Link link = (Link) cycle.get(cycle.size() - 1);
+            link.setRecursive(subRecursive);
 
             // build oneOrMore
-            sequence.remove(link);
-            sequence.getParent().replace(sequence, sequence(link, zeroOrOne(sequence)));
+            GrammarElement sequenceChild = cycle.get(sequenceIndex + 1);
+            sequence.remove(sequenceChild);
+            sequence.getParent().replace(sequence, sequence(sequenceChild, zeroOrOne(sequence)));
 
 
 

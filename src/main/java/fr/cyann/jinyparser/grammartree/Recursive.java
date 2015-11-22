@@ -63,15 +63,16 @@ public class Recursive extends GrammarDecorator implements NamedGrammar {
 	}
 
 	/**
-     * Get the grammar
-     * @return
-	 */
+     * Get the grammar.
+     *
+     * @return the grammar.
+     */
 	public GrammarElement getGrammar() {
         return decorated;
     }
 
-	/**
-	 * Set the grammar to delegate to.<br>
+    /**
+     * Set the grammar to delegate to.<br>
 	 * This call is mandatory before parsing. Elsewhere it throw an exception.
 	 *
 	 * @param grammar the grammar to delegate to.
@@ -81,6 +82,13 @@ public class Recursive extends GrammarDecorator implements NamedGrammar {
         this.decorated = grammar;
         return this;
 	}
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void setParent(GrammarElement parent) {
+    }
 
 	/**
 	 * {@inheritDoc}

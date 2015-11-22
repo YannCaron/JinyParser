@@ -13,15 +13,22 @@ package fr.cyann.jinyparser.grammartree;
  * The Link class definition.<br>
  * -
  */
-public class Link extends GrammarDecorator<Recursive> {
+public class Link extends GrammarDecorator {
 
     public Link(Recursive recursive, GrammarElement parent) {
         super(recursive);
         this.setParent(parent);
     }
 
-    public void setRecursive(Recursive recursive) {
+    @Override
+    void setDecorated(GrammarElement decorated) {
+        decorated.setParent(this);
+        this.decorated = decorated;
+    }
+
+    public Link setRecursive(Recursive recursive) {
         super.setDecorated(recursive);
+        return this;
     }
 
     @Override
@@ -37,7 +44,7 @@ public class Link extends GrammarDecorator<Recursive> {
     @Override
     public String toString() {
         return "Link {" +
-                "recursive='" + decorated.getName() + '\'' +
+                "recursive='" + ((Recursive) decorated).getName() + '\'' +
                 '}';
     }
 }
