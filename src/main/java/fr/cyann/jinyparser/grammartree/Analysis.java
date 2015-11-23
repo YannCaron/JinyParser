@@ -9,6 +9,7 @@ package fr.cyann.jinyparser.grammartree;/**
 
 import fr.cyann.jinyparser.exceptions.JinyException;
 import fr.cyann.jinyparser.utils.MultilingualMessage;
+import org.apache.log4j.Logger;
 
 import java.util.*;
 
@@ -18,6 +19,8 @@ import static fr.cyann.jinyparser.grammartree.GrammarFactory.*;
  * The Analysis definition.
  */
 public class Analysis {
+
+	final static Logger logger = Logger.getLogger(Analysis.class);
 
 	/**
 	 * The default grammar production name (for entry point).
@@ -114,15 +117,13 @@ public class Analysis {
 	public static GrammarElement convertLeftRecursion(GrammarElement root) {
 
 		BuildCyclesContext context = new BuildCyclesContext();
-		buildCyclesRecursive(context, root);
-		System.out.println("Cycles detected: ");
-		for (int i = 0; i < context.getCycles().size(); i++) {
-			List<GrammarElement> cycle = context.getCycles().get(i);
-			System.out.println(" - cycle: " + cycle);
-		}
+		findCycles(context, root);
 
 		for (int i = context.getCycles().size() - 1; i >= 0; i--) {
 			List<GrammarElement> cycle = context.getCycles().get(i);
+
+			// logging
+			logger.warn(String.format("Cycles detected: %s", cycle));
 
 			// find choice & sequence
 			Recursive recursive = (Recursive) cycle.get(0);
@@ -181,24 +182,25 @@ public class Analysis {
 	 * @param context The build cycle context.
 	 * @param element the element to explore.
 	 */
-	private static void buildCyclesRecursive(BuildCyclesContext context, GrammarElement element) {
+	private static void findCycles(BuildCyclesContext context, GrammarElement element) {
+
+		if (element instanceof Recursive) {
+			if (context.wasExplored((Recursive) element)) {
+				context.buildCycle(element);
+				context.setBroken(false);
+				return;
+			}
+		}
 
 		context.pushToPath(element);
 
 		try {
-			if (element instanceof Recursive) {
-				if (context.wasExplored(element)) {
-					context.buildCycle(element);
-					context.setBroken(false);
-					return;
-				}
-			}
 
 			if (element instanceof GrammarNode) {
 
 				for (GrammarElement child : ((GrammarNode) element)) {
 
-					buildCyclesRecursive(context, child);
+					findCycles(context, child);
 					if (context.isBroken()) {
 						if (element instanceof Sequence)
 							break;
@@ -209,7 +211,7 @@ public class Analysis {
 				}
 
 			} else if (element instanceof GrammarDecorator) {
-				buildCyclesRecursive(context, ((GrammarDecorator) element).getDecorated());
+				findCycles(context, ((GrammarDecorator) element).getDecorated());
 			} else {
 				context.setBroken(true);
 				return;
@@ -222,38 +224,44 @@ public class Analysis {
 	}
 
 	private static class BuildCyclesContext {
-		private final Set<GrammarElement> elementExplored;
+		private final Set<Recursive> recursives;
 		private final Stack<GrammarElement> paths;
 		private final List<List<GrammarElement>> cycles;
 		private boolean broken;
 
 		public BuildCyclesContext() {
-			elementExplored = new HashSet<GrammarElement>();
+			recursives = new HashSet<Recursive>();
 			paths = new Stack<GrammarElement>();
 			cycles = new ArrayList<List<GrammarElement>>();
 			broken = false;
 		}
 
-		// TODO: Does not works properly.... use a stack instead
-		public boolean wasExplored(GrammarElement element) {
-			boolean result = elementExplored.contains(element);
-			elementExplored.add(element);
-			return result;
+		public boolean wasExplored(Recursive element) {
+			return recursives.contains(element);
 		}
 
 		public void pushToPath(GrammarElement element) {
 			paths.push(element);
+
+			if (element instanceof Recursive) {
+				recursives.add((Recursive) element);
+			}
 		}
 
 		public void removeLastFromPath() {
-			paths.pop();
+			GrammarElement element = paths.pop();
+
+			if (element instanceof Recursive) {
+				recursives.remove(element);
+			}
+
 		}
 
 		public void buildCycle(GrammarElement startPoint) {
 			List<GrammarElement> list = new ArrayList<GrammarElement>();
-			int start = paths.search(startPoint);
+			int start = paths.indexOf(startPoint);
 			for (int i = start; i < paths.size(); i++) {
-				list.add(paths.get(i - 1)); // shift to get from first
+				list.add(paths.get(i)); // shift to get from first
 			}
 
 			cycles.add(list);

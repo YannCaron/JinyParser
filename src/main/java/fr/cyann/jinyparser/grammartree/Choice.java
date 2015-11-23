@@ -49,6 +49,7 @@ public class Choice extends GrammarNode {
 	 */
 	@Override
 	protected boolean parse(GrammarContext context) {
+		// TODO: Bug here
 		GrammarElement cache = context.retrieveFromPackrat(context.currentPosition());
 
 		if (cache != null) {
