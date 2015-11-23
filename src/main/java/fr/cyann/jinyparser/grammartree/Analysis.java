@@ -1,4 +1,4 @@
-package fr.cyann.jinyparser.grammartree.utils;/**
+package fr.cyann.jinyparser.grammartree;/**
  * Copyright (C) 04/11/15 Yann Caron aka cyann
  * <p/>
  * Cette œuvre est mise à disposition sous licence Attribution -
@@ -8,7 +8,6 @@ package fr.cyann.jinyparser.grammartree.utils;/**
  **/
 
 import fr.cyann.jinyparser.exceptions.JinyException;
-import fr.cyann.jinyparser.grammartree.*;
 import fr.cyann.jinyparser.utils.MultilingualMessage;
 
 import java.util.*;
@@ -23,9 +22,9 @@ public class Analysis {
 	/**
 	 * The default grammar production name (for entry point).
 	 */
-    private static final String DEFAULT_GRAMMAR_NAME = "Grammar";
-    private static final String COUNTERED_GRAMMAR = "%1$s%2$d";
-    private static final String LR_SUBSTITUTE_NAME = "%s";
+	private static final String DEFAULT_GRAMMAR_NAME = "Grammar";
+	private static final String COUNTERED_GRAMMAR = "%1$s%2$d";
+	private static final String LR_SUBSTITUTE_NAME = "%s";
 
 	private Analysis() {
 		throw new RuntimeException("Static class cannot be instantiated.");
@@ -39,7 +38,7 @@ public class Analysis {
 		result = processBnf(result);
 
 		// enhance LR
-        result = convertLRtoLLGrammar(result);
+		result = convertLeftRecursion(result);
 
 		// check names
 		enhanceProductionNames(result);
@@ -112,51 +111,61 @@ public class Analysis {
 	 * @param root the root element of the grammar tree.
 	 * @return the new root.
 	 */
-    public static GrammarElement convertLRtoLLGrammar(GrammarElement root) {
+	public static GrammarElement convertLeftRecursion(GrammarElement root) {
 
 		BuildCyclesContext context = new BuildCyclesContext();
 		buildCyclesRecursive(context, root);
 		System.out.println("Cycles detected: ");
-		for (int i = context.getCycles().size() - 1; i >= 0; i--) {
+		for (int i = 0; i < context.getCycles().size(); i++) {
 			List<GrammarElement> cycle = context.getCycles().get(i);
 			System.out.println(" - cycle: " + cycle);
+		}
 
-            // find choice & sequence
-            Recursive recursive = (Recursive) cycle.get(0);
-            int choiceIndex = firstByType(cycle, Choice.class, 0);
-            if (choiceIndex == -1) // TODO
-                throw new JinyException(MultilingualMessage.create("Infinite loop detected in recursive grammar [%s]").setArgs(cycle.get(0).toString()));
-			Choice choice = (Choice) cycle.get(choiceIndex);
+		for (int i = context.getCycles().size() - 1; i >= 0; i--) {
+			List<GrammarElement> cycle = context.getCycles().get(i);
 
-            int sequenceIndex = firstByType(cycle, Sequence.class, choiceIndex);
-            if (sequenceIndex == -1) // TODO
-                throw new JinyException(MultilingualMessage.create("Infinite loop detected in recursive grammar [%s]").setArgs(cycle.get(0).toString()));
-            Sequence sequence = (Sequence) cycle.get(sequenceIndex);
+			// find choice & sequence
+			Recursive recursive = (Recursive) cycle.get(0);
+			int choiceIndex = findIdFirstOfType(cycle, Choice.class, 0);
+			Choice choice = getElementOfType(cycle, Choice.class, choiceIndex);
 
-            // create sub expression
-            GrammarElement child = cycle.get(choiceIndex + 1);
-            GrammarElement nextChild = choice.getNextOf(child);
-            String name = String.format(LR_SUBSTITUTE_NAME, recursive.getName());
-            Recursive subRecursive = recursive(name).setGrammar(nextChild);
-            choice.replace(nextChild, subRecursive);
+			// find the next child after the child that link to recursive
+			int nextChoiceChildIndex = choice.getChildren().indexOf(cycle.get(choiceIndex + 1)) + 1;
+			GrammarElement nextChoiceChild = choice.getChildren().get(nextChoiceChildIndex);
 
-			// replace the reference
-            Link link = (Link) cycle.get(cycle.size() - 1);
-            link.setRecursive(subRecursive);
+			// construct the new recursive
+			String name = String.format(LR_SUBSTITUTE_NAME, recursive.getName());
+			Recursive subRecursive = recursive(name).setGrammar(nextChoiceChild);
 
-            // build oneOrMore
-            GrammarElement sequenceChild = cycle.get(sequenceIndex + 1);
-            sequence.remove(sequenceChild);
-            sequence.getParent().replace(sequence, sequence(sequenceChild, zeroOrOne(sequence)));
+			// replacement
+			choice.getChildren().set(nextChoiceChildIndex, subRecursive);
+			Link link = (Link) cycle.get(cycle.size() - 1);
+			link.setRecursive(subRecursive);
 
+			// build oneOrMore
+			int sequenceIndex = findIdFirstOfType(cycle, Sequence.class, choiceIndex);
+			Sequence sequence = getElementOfType(cycle, Sequence.class, sequenceIndex);
+			GrammarElement sequenceChild = cycle.get(sequenceIndex + 1);
+			sequence.getChildren().remove(sequenceChild);
+			sequence.getParent().replace(sequence, sequence(sequenceChild, zeroOrOne(sequence)));
 
+			// TODO: Switch production Create / Aggregate if necessary
 
 		}
 
 		return root;
 	}
 
-	private static int firstByType(List<GrammarElement> list, Class<? extends GrammarElement> type, int start) {
+	private static <T extends GrammarElement> T getElementOfType(List<GrammarElement> list, Class<T> type, int index) {
+		if (index == -1)
+			throw new JinyException(
+					MultilingualMessage
+							.create("Infinite loop detected in recursive grammar [%s]")
+							.setArgs(list.get(0).toString()));
+		return (T) list.get(index);
+	}
+
+	private static int findIdFirstOfType(List<GrammarElement> list, Class<? extends GrammarElement> type, int start) {
 		for (int i = start; i < list.size(); i++) {
 			if (type.isAssignableFrom(list.get(i).getClass())) {
 				return i;
@@ -225,6 +234,7 @@ public class Analysis {
 			broken = false;
 		}
 
+		// TODO: Does not works properly.... use a stack instead
 		public boolean wasExplored(GrammarElement element) {
 			boolean result = elementExplored.contains(element);
 			elementExplored.add(element);
@@ -261,109 +271,5 @@ public class Analysis {
 			this.broken = broken;
 		}
 	}
-
-
-/*
-	private static List<GrammarElement> buildPath(RecursiveContext context, GrammarElement element) {
-
-		List<GrammarElement> chain = new ArrayList<GrammarElement>();
-
-		int index = context.paths.search(element);
-
-		for (int i = index; i < context.paths.size(); i++) {
-			GrammarElement pathElement = context.paths.get(i);
-			chain.add(pathElement);
-		}
-		System.out.println("Loop detected ! " + chain);
-
-		return chain;
-	}
-
-	private static int addRecursively(RecursiveContext context, GrammarElement element) {
-
-		int count = 1;
-		context.paths.add(element);
-		for (GrammarElement child : element.depthFirstTraversal()) {
-			count++;
-			context.paths.add(child);
-		}
-
-		return count;
-	}
-
-	private static void recursive(RecursiveContext context, GrammarElement element, Tree<String> tree) {
-
-		context.paths.push(element);
-
-		if (element instanceof Recursive) {
-			if (context.wasExplored(element)) {
-				tree.addLeaf(((NamedGrammar) element).getName());
-
-				buildPath(context, element);
-
-				context.paths.pop();
-
-				return;
-			} else {
-				if (tree != tree.getRoot()) {
-					tree.addLeaf(((NamedGrammar) element).getName());
-				}
-				tree = tree.getRoot().addLeaf(((NamedGrammar) element).getName());
-			}
-		}
-
-		if (element instanceof GrammarNode) {
-
-			boolean first = true;
-
-			int count = 0;
-			for (GrammarElement child : ((GrammarNode) element)) {
-
-				if (element instanceof Choice && !first) {
-					tree = tree.getRoot().addLeaf(tree.getHead());
-				}
-				first = false;
-
-				//tree.addLeaf(child.toString());
-				recursive(context, child, tree);
-
-				if (element instanceof Sequence) {
-					if (child instanceof Recursive) {
-						count++;
-						context.paths.add(child);
-					} else {
-						count += addRecursively(context, child);
-					}
-				}
-
-			}
-
-			for (int i = 0; i < count; i++) context.paths.pop();
-
-
-		} else if (element instanceof GrammarDecorator) {
-			recursive(context, ((GrammarDecorator) element).getDecorated(), tree);
-		} else if (element instanceof Recursive) {
-			recursive(context, ((Recursive) element).getGrammar(), tree);
-		} else {
-			tree.addLeaf("inv");
-		}
-
-		context.paths.pop();
-
-	}
-
-	private static class RecursiveContext {
-		private final Set<GrammarElement> elementExplored = new HashSet<GrammarElement>();
-		public final Stack<GrammarElement> paths = new Stack<GrammarElement>();
-
-		boolean wasExplored(GrammarElement element) {
-			boolean result = elementExplored.contains(element);
-			elementExplored.add(element);
-			return result;
-		}
-
-
-	}*/
 
 }

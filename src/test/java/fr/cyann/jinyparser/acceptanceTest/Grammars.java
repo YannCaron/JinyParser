@@ -47,19 +47,19 @@ public class Grammars {
 		GrammarElement multiplySign = terminal("MultiplySign", lexMult);
 
 		// recursive
-		Recursive multiplication = recursive("Multiplication");
 		Recursive addition = recursive("Addition");
+		Recursive multiplication = recursive("Multiplication");
 		Recursive term = recursive("Term");
 
 		// non terminal
 
-        // <multiplication> := <term> [ { '*' <multiplication> } ]
-        multiplication.setGrammar(nonTerminal("Multiplication", AstBinaryExpression.class,
-				sequence(aggregate("left", term), zeroOrOne(sequence(aggregate("sign", multiplySign), create("right", multiplication))))).setVisitor(multiplicationVisitor));
-
-        // <addition> := <multiplication> [ { '+' <addition> } ]
-        addition.setGrammar(nonTerminal("Addition", AstBinaryExpression.class,
+		// <addition> := <multiplication> [ '+' <addition> ]
+		addition.setGrammar(nonTerminal("Addition", AstBinaryExpression.class,
 				sequence(aggregate("left", multiplication), zeroOrOne(sequence(aggregate("sign", addSign), create("right", addition))))).setVisitor(additionVisitor));
+
+		// <multiplication> := <term> [ '*' <multiplication> ]
+		multiplication.setGrammar(nonTerminal("Multiplication", AstBinaryExpression.class,
+				sequence(aggregate("left", term), zeroOrOne(sequence(aggregate("sign", multiplySign), create("right", multiplication))))).setVisitor(multiplicationVisitor));
 
 		// <term> := <number> | '(' <addition> ')'
 		term.setGrammar(choice(number, sequence(leftParenthesis, addition, rightParenthesis)));

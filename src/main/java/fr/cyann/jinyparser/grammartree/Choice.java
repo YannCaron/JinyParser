@@ -30,7 +30,6 @@ public class Choice extends GrammarNode {
 		int itPos = context.currentPosition();
 
 		for (GrammarElement child : this) {
-
 			context.markChar();
 			if (child.lookahead(context)) {
 				context.resumeChar();
@@ -56,7 +55,6 @@ public class Choice extends GrammarNode {
 			return cache.parse(context);
 		} else {
 			for (GrammarElement child : this) {
-
 				boolean lookaheadResult = launchLookahead(context, child);
 				if (lookaheadResult) {
 					child.parse(context);

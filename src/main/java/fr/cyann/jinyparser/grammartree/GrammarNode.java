@@ -35,8 +35,17 @@ public abstract class GrammarNode extends GrammarElement implements Iterable<Gra
         }
     }
 
-    /**
-     * {@inheritDoc}
+	/**
+	 * Get the children list.
+	 *
+	 * @return the children.
+	 */
+	List<GrammarElement> getChildren() {
+		return children;
+	}
+
+	/**
+	 * {@inheritDoc}
      */
     @Override
     public Iterator<GrammarElement> iterator() {
@@ -78,26 +87,6 @@ public abstract class GrammarNode extends GrammarElement implements Iterable<Gra
             }
         }
         return result;
-    }
-
-    /**
-     * Get the next element of specified grammar element in the children list.
-     *
-     * @param element the grammar element to search.
-     * @return the next grammar element in the children list.
-     */
-    public GrammarElement getNextOf(GrammarElement element) {
-        int index = children.indexOf(element);
-        return children.get(index + 1);
-    }
-
-    /**
-     * Remove the element of the list.
-     *
-     * @param element the element to remove
-     */
-    public void remove(GrammarElement element) {
-        children.remove(element);
     }
 
     /**

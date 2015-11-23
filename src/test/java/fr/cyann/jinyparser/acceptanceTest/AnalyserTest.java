@@ -50,8 +50,8 @@ public class AnalyserTest extends TestCase {
 		//         | '(' <expr> ')'
 		expr.setGrammar(
 				choice(
-                        nonTerminal("multiplication", sequence(aggregate(expr), create(multiplySign), aggregate(expr))),
-                        nonTerminal("addition", sequence(aggregate(expr), create(addSign), aggregate(expr))),
+						nonTerminal("multiplication", sequence(aggregate(expr), create(multiplySign), aggregate(expr))),
+						nonTerminal("addition", sequence(aggregate(expr), create(addSign), aggregate(expr))),
                         number,
                         sequence(leftParenthesis, expr, rightParenthesis)
                 )
@@ -59,6 +59,44 @@ public class AnalyserTest extends TestCase {
 
 		// process
 		return expr.process();
+	}
+
+	public static <C extends VisitorContext> GrammarElement.ProcessedGrammar llGrammar() {
+		// lexer
+		LexemCreator leftParenthesis = lexem(LexemType.SYMBOL, charIn("("));
+		LexemCreator rightParenthesis = lexem(LexemType.SYMBOL, charIn(")"));
+		LexemCreator lexNum = lexem(Grammars.NUMBER, oneOrMore(charIn('0', '9')));
+		LexemCreator lexAdd = lexem(Grammars.OPERATOR, charIn("+"));
+		LexemCreator lexMult = lexem(Grammars.OPERATOR, charIn("*"));
+
+		// terminal
+		GrammarElement number = terminal("Number", lexNum);
+		GrammarElement addSign = terminal("AddSign", lexAdd);
+		GrammarElement multiplySign = terminal("MultiplySign", lexMult);
+
+		// recursive
+		Recursive expression = recursive("Expression");
+		Recursive addition = recursive("Addition");
+		Recursive multiplication = recursive("Multiplication");
+		Recursive term = recursive("Term");
+
+		// non terminal
+		// <expression> := <addition> | <multiplication> | <term>
+		expression.setGrammar(choice(addition, multiplication, term));
+
+		// <addition> := <multiplication> [ '+' <expression> ]
+		addition.setGrammar(nonTerminal("Addition",
+				sequence(aggregate(multiplication), zeroOrOne(sequence(aggregate(addSign), create(expression))))));
+
+		// <multiplication> := <term> [ '*' <expression> ]
+		multiplication.setGrammar(nonTerminal("Multiplication",
+				sequence(aggregate(term), zeroOrOne(sequence(aggregate(multiplySign), create(expression))))));
+
+		// <term> := <number> | '(' <expression> ')'
+		term.setGrammar(choice(number, sequence(leftParenthesis, expression, rightParenthesis)));
+
+		// process
+		return expression.process();
 	}
 
 	public static <C extends VisitorContext> GrammarElement.ProcessedGrammar redundantArithmeticGrammar() {
@@ -100,7 +138,7 @@ public class AnalyserTest extends TestCase {
 		GrammarElement.ProcessedGrammar grammar = lrGrammar(null, null, null);
 
 		// source
-		String source = "7 + 10 * (4 + 7)";
+		String source = "7 + 10 + 4 + 7";
 
 		// to BNF
         System.out.println("Grammar tree:\n" + grammar.toBnf());
@@ -114,6 +152,23 @@ public class AnalyserTest extends TestCase {
         assertEquals("('7' '+' ('10' '*' ('4' '+' '7')))", c.getParseTree().toString());
 
 	}
+
+	public void testLLGrammarOnPEG() {
+
+		String source = "7 + 10 + 4 + 7";
+
+		// grammar
+		GrammarElement.ProcessedGrammar grammar = llGrammar();
+
+		// parse
+		GrammarContext c = grammar.parse(source);
+
+		System.out.println("Parse tree: " + c.getParseTree());
+
+		//assertEquals("('+' 'n7' ('*' 'n10' ('+' 'n4' 'n7')))", c.getParseTree().toString());
+
+	}
+
 
 	public void testRedundantGrammar() {
 
