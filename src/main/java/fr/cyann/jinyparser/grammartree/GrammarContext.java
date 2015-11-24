@@ -13,7 +13,9 @@ import fr.cyann.jinyparser.parsetree.NonTerminal;
 import fr.cyann.jinyparser.parsetree.ParsemElement;
 import fr.cyann.jinyparser.utils.StringLookaheadIterator;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Stack;
 
 /**
  * The GrammarContext class. A context pass through parser tree that contains all intermediates states of lexing / parsing.<br>
@@ -27,7 +29,6 @@ public class GrammarContext {
 	private final List<Lexem> lexer;
 	private final Stack<NonTerminal> pendingNonTerminals;
 	private final Stack<ParsemElement> parser;
-	private final Map<Integer, GrammarElement> packrat;
 
 	//region Char Iterator
 
@@ -43,7 +44,6 @@ public class GrammarContext {
 		lexer = new ArrayList<Lexem>();
 		pendingNonTerminals = new Stack<NonTerminal>();
 		parser = new Stack<ParsemElement>();
-		packrat = new HashMap<Integer, GrammarElement>();
 	}
 
 	/**
@@ -276,16 +276,6 @@ public class GrammarContext {
 	public ParsemElement getParseTree() {
 		if (parser.empty()) return null;
 		return parser.firstElement();
-	}
-
-	// region packrat
-	public void storeToPackrat(int pos, GrammarElement grammar) {
-		packrat.put(pos, grammar);
-	}
-	//endregion
-
-	public GrammarElement retrieveFromPackrat(int pos) {
-		return packrat.get(pos);
 	}
 
 	public String getPositionToString() {

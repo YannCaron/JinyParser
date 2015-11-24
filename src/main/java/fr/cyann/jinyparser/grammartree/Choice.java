@@ -7,6 +7,9 @@ package fr.cyann.jinyparser.grammartree;/**
  * ou écrivez à Creative Commons, 444 Castro Street, Suite 900, Mountain View, California, 94041, USA.
  **/
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * The Choice class. A compound grammar node that choosing among its children nodes to determine the appropriate grammar.<br>
  * Run as an <b>or</b> operator (BNF:+ sign); check if this or this or this is the appropriate grammar.<br>
@@ -14,11 +17,14 @@ package fr.cyann.jinyparser.grammartree;/**
  */
 public class Choice extends GrammarNode {
 
+	private final Map<Integer, GrammarElement> packratMemoizer;
+
 	/**
 	 * {@inheritDoc}
 	 */
     public Choice(GrammarElement[] children) {
         super(children);
+	    this.packratMemoizer = new HashMap<Integer, GrammarElement>();
     }
 
     /**
@@ -33,7 +39,7 @@ public class Choice extends GrammarNode {
 			context.markChar();
 			if (child.lookahead(context)) {
 				context.resumeChar();
-				context.storeToPackrat(itPos, child);
+				packratMemoizer.put(itPos, child);
 				return true;
 			}
 			context.rollbackChar();
@@ -49,8 +55,7 @@ public class Choice extends GrammarNode {
 	 */
 	@Override
 	protected boolean parse(GrammarContext context) {
-		// TODO: Bug here
-		GrammarElement cache = context.retrieveFromPackrat(context.currentPosition());
+		GrammarElement cache = packratMemoizer.get(context.currentPosition());
 
 		if (cache != null) {
 			return cache.parse(context);
