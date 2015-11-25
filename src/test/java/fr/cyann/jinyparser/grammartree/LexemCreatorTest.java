@@ -23,7 +23,7 @@ public class LexemCreatorTest extends TestCase {
 
         String source = " a b c ";
 
-	    GrammarElement grammar = oneOrMore(lexemCore(charIn("abc"), LexemType.SYMBOL));
+	    GrammarElement grammar = oneOrMore(lexemCore(LexemType.SYMBOL, charIn("abc")));
 	    assertFalse(grammar.lookahead(new GrammarContext(source)));
 
 	    grammar = oneOrMore(lexem(LexemType.SYMBOL, charIn("abc"))); // with separator management
@@ -35,7 +35,7 @@ public class LexemCreatorTest extends TestCase {
 
         String source = " a b c ";
 
-	    GrammarElement grammar = oneOrMore(lexemCore(charIn("abc"), LexemType.SYMBOL));
+	    GrammarElement grammar = oneOrMore(lexemCore(LexemType.SYMBOL, charIn("abc")));
 	    assertFalse(grammar.parse(new GrammarContext(source)));
 
 	    grammar = oneOrMore(lexem(LexemType.SYMBOL, charIn("abc"))); // with separator management

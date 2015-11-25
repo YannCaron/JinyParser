@@ -17,34 +17,53 @@ import java.util.Map;
  */
 public class Choice extends GrammarNode {
 
-	private final Map<Integer, GrammarElement> packratMemoizer;
+	private final Map<Integer, Integer> packratMemoizer;
+	private final Map<Integer, GrammarElement> packratMemoizer2;
 
 	/**
 	 * {@inheritDoc}
 	 */
-    public Choice(GrammarElement[] children) {
-        super(children);
-	    this.packratMemoizer = new HashMap<Integer, GrammarElement>();
-    }
+	public Choice(GrammarElement[] children) {
+		super(children);
+		this.packratMemoizer = new HashMap<Integer, Integer>();
+		this.packratMemoizer2 = new HashMap<Integer, GrammarElement>();
+	}
 
-    /**
-     * {@inheritDoc}
+	/**
+	 * {@inheritDoc}
 	 */
 	@Override
 	protected boolean lookahead(GrammarContext context) {
 
-		int itPos = context.currentPosition();
+		int pos = context.currentPosition();
+		//System.out.println(pos);
+
+		/*if (packratMemoizer.containsKey(pos)) {
+			//return packratMemoizer.get(pos).lookahead(context);
+			Integer cache = packratMemoizer.get(pos);
+
+			//if (cache == null) {
+			//	return false;
+			//} else {
+			if (cache != 0) {
+				for (int i = 0; i < cache; i++) context.nextCharLookahead();
+				return true;
+			}
+			//}
+		}*/
 
 		for (GrammarElement child : this) {
 			context.markChar();
 			if (child.lookahead(context)) {
+				//packratMemoizer.put(pos, context.currentPosition() - pos);
+				//packratMemoizer2.put(pos, child);
 				context.resumeChar();
-				packratMemoizer.put(itPos, child);
 				return true;
 			}
 			context.rollbackChar();
 
 		}
+		//packratMemoizer.put(pos, null);
 
 		return false;
 
@@ -55,11 +74,18 @@ public class Choice extends GrammarNode {
 	 */
 	@Override
 	protected boolean parse(GrammarContext context) {
-		GrammarElement cache = packratMemoizer.get(context.currentPosition());
+		int pos = context.currentPosition();
 
-		if (cache != null) {
-			return cache.parse(context);
-		} else {
+		if (packratMemoizer.containsKey(pos)) {
+			GrammarElement cache = packratMemoizer2.get(pos);
+
+			if (cache == null) {
+				return false;
+			} else {
+				return cache.parse(context);
+			}
+		} else
+
 			for (GrammarElement child : this) {
 				boolean lookaheadResult = launchLookahead(context, child);
 				if (lookaheadResult) {
@@ -69,9 +95,9 @@ public class Choice extends GrammarNode {
 
 			}
 
-			return false;
-		}
+		return false;
 	}
+
 
 	/**
 	 * {@inheritDoc}

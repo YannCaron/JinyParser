@@ -117,11 +117,11 @@ public final class GrammarFactory {
 	/**
 	 * Create a new token producer grammar element.
 	 *
-	 * @param decorated the grammar that decide if lexem will be produced.
 	 * @param lexemType the token type of the token to produce.
+	 * @param decorated the grammar that decide if lexem will be produced.
 	 * @return the new grammar element.
 	 */
-	public static LexemCreatorCore lexemCore(GrammarElement decorated, LexemType lexemType) {
+	public static LexemCreatorCore lexemCore(LexemType lexemType, GrammarElement decorated) {
 		return new LexemCreatorCore(decorated, lexemType);
 	}
 
@@ -171,7 +171,7 @@ public final class GrammarFactory {
 	 * @param <P>         the parsem type.
 	 * @return the production.
 	 */
-	public static <P extends Terminal> TerminalProduction<P> terminal(String name, Class<P> parsemClass, LexemCreator decorated) {
+	public static <P extends Terminal> TerminalProduction<P> terminal(String name, Class<P> parsemClass, LexemCreatorCore decorated) {
 		return new TerminalProduction(name, parsemClass, decorated);
 	}
 
@@ -182,7 +182,7 @@ public final class GrammarFactory {
 	 * @param decorated the decorated element.
 	 * @return the production.
 	 */
-	public static TerminalProduction<DefaultTerminal> terminal(String name, LexemCreator decorated) {
+	public static TerminalProduction<DefaultTerminal> terminal(String name, LexemCreatorCore decorated) {
 		return terminal(name, DefaultTerminal.class, decorated);
 	}
 

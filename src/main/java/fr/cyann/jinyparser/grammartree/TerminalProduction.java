@@ -23,7 +23,7 @@ public class TerminalProduction<P extends ParsemElement> extends GrammarProducti
 	/**
 	 * {@inheritDoc}
 	 */
-	public TerminalProduction(String name, Class<P> clazz, GrammarElement decorated) {
+	public TerminalProduction(String name, Class<P> clazz, LexemCreatorCore decorated) {
 		super(name, clazz, decorated);
 	}
 
