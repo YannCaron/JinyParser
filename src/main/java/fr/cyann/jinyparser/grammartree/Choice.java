@@ -55,6 +55,7 @@ public class Choice extends GrammarNode {
 		for (GrammarElement child : this) {
 			context.markChar();
 			if (child.lookahead(context)) {
+				// TODO: Packrat does not works properly.... difficulty to identify the position/choice. Conflict between choices at same position.
 				//packratMemoizer.put(pos, context.currentPosition() - pos);
 				//packratMemoizer2.put(pos, child);
 				context.resumeChar();

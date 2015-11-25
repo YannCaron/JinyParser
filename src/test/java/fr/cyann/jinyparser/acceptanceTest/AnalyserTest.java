@@ -50,12 +50,12 @@ public class AnalyserTest extends TestCase {
 		//         | '(' <expr> ')'
 		expr.setGrammar(
 				choice(
-						nonTerminal("multiplication", sequence(aggregate(expr), create(multiplySign), aggregate(expr))),
-						nonTerminal("addition", sequence(aggregate(expr), create(addSign), aggregate(expr))),
-                        number,
-                        sequence(leftParenthesis, expr, rightParenthesis)
-                )
-        );
+						nonTerminal("multiplication", sequence(create(expr), aggregate(multiplySign), aggregate(expr))),
+						nonTerminal("addition", sequence(create(expr), aggregate(addSign), aggregate(expr))),
+						number,
+						sequence(leftParenthesis, expr, rightParenthesis)
+				)
+		);
 
 		// process
 		return expr.process();

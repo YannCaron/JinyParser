@@ -150,11 +150,33 @@ public class Analysis {
 			sequence.getChildren().remove(sequenceChild);
 			sequence.getParent().replace(sequence, sequence(sequenceChild, zeroOrOne(sequence)));
 
-			// TODO: Switch production Create / Aggregate if necessary
+			// switch production create / aggregate
+			NonTerminalAggregator headAggregator = findSubAggregator(sequenceChild, true);
+			if (headAggregator != null) {
+				NonTerminalAggregator tailFirstAggregator = findSubAggregator(sequence, false);
+				headAggregator.setCreate(false);
+				if (tailFirstAggregator != null)
+					tailFirstAggregator.setCreate(true);
+			}
 
 		}
 
 		return root;
+	}
+
+	private static NonTerminalAggregator findSubAggregator(GrammarElement parent, boolean create) {
+		if (parent instanceof NonTerminalAggregator) {
+			NonTerminalAggregator aggregator = (NonTerminalAggregator) parent;
+			if (aggregator.isCreate() == create) return aggregator;
+		}
+
+		for (GrammarElement child : parent.depthFirstTraversal()) {
+			if (child instanceof NonTerminalAggregator) {
+				NonTerminalAggregator aggregator = (NonTerminalAggregator) child;
+				if (aggregator.isCreate() == create) return aggregator;
+			}
+		}
+		return null;
 	}
 
 	private static <T extends GrammarElement> T getElementOfType(List<GrammarElement> list, Class<T> type, int index) {

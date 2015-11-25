@@ -221,8 +221,8 @@ public final class GrammarFactory {
 	 * @param decorated the decorated element.
 	 * @return the sub production.
 	 */
-	public static NonTerminalCreator create(String fieldName, GrammarElement decorated) {
-		return new NonTerminalCreator(fieldName, decorated);
+	public static NonTerminalAggregator create(String fieldName, GrammarElement decorated) {
+		return new NonTerminalAggregator(fieldName, true, decorated);
 	}
 
 	/**
@@ -233,8 +233,8 @@ public final class GrammarFactory {
 	 * @param decorated the decorated element.
 	 * @return the sub production.
 	 */
-	public static NonTerminalCreator create(GrammarElement decorated) {
-		return new NonTerminalCreator(DefaultNonTerminal.SUB_NODE_IDENTITY, decorated);
+	public static NonTerminalAggregator create(GrammarElement decorated) {
+		return create(DefaultNonTerminal.SUB_NODE_IDENTITY, decorated);
 	}
 
 	/**
@@ -245,7 +245,7 @@ public final class GrammarFactory {
 	 * @return the new grammar element.
 	 */
 	public static NonTerminalAggregator aggregate(String fieldName, GrammarElement decorated) {
-		return new NonTerminalAggregator(fieldName, decorated);
+		return new NonTerminalAggregator(fieldName, false, decorated);
 	}
 
 	/**

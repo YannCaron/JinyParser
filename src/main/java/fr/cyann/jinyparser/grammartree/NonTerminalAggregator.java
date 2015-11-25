@@ -20,6 +20,7 @@ import fr.cyann.jinyparser.utils.MultilingualMessage;
 public class NonTerminalAggregator extends GrammarDecorator {
 
 	protected final String fieldName;
+	private boolean create;
 
 	/**
 	 * Default constructor.
@@ -27,9 +28,28 @@ public class NonTerminalAggregator extends GrammarDecorator {
 	 * @param fieldName the name of the field to drop.
 	 * @param decorated the decorated element.
 	 */
-	public NonTerminalAggregator(String fieldName, GrammarElement decorated) {
+	public NonTerminalAggregator(String fieldName, boolean create, GrammarElement decorated) {
 		super(decorated);
 		this.fieldName = fieldName;
+		this.create = create;
+	}
+
+	/**
+	 * Create getter. Indicate if aggregator will incorporate the non terminal to stack.
+	 *
+	 * @return the getter value.
+	 */
+	public boolean isCreate() {
+		return create;
+	}
+
+	/**
+	 * Create setter. Set if aggregator will incorporate the non terminal to stack or not.
+	 *
+	 * @param create the create value.
+	 */
+	public void setCreate(boolean create) {
+		this.create = create;
 	}
 
 	/**
@@ -78,11 +98,26 @@ public class NonTerminalAggregator extends GrammarDecorator {
 
 				context.getLastPending().aggregate(fieldName, elementToAggregate);
 
-			}
+				if (create) {
+					context.incorporateLastPending();
+				}
 
+			}
 
 		}
 
 		return res;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 *
+	 * @param context
+	 */
+	@Override
+	void buildBnf(BnfContext context) {
+		super.buildBnf(context);
+		if (create)
+			context.append("_CX");
 	}
 }
