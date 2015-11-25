@@ -64,7 +64,6 @@ public class LeftRecursionProcessor implements AnalyseProcessor {
 				findCycles(context, ((GrammarDecorator) element).getDecorated());
 			} else {
 				context.setBroken(true);
-				return;
 			}
 
 		} finally {
@@ -163,27 +162,27 @@ public class LeftRecursionProcessor implements AnalyseProcessor {
 	// endregion
 
 	private static class BuildCyclesContext {
-		private final Set<Recursive> recursives;
+		private final Set<Recursive> recursiveSet;
 		private final Stack<GrammarElement> paths;
 		private final List<List<GrammarElement>> cycles;
 		private boolean broken;
 
 		public BuildCyclesContext() {
-			recursives = new HashSet<Recursive>();
+			recursiveSet = new HashSet<Recursive>();
 			paths = new Stack<GrammarElement>();
 			cycles = new ArrayList<List<GrammarElement>>();
 			broken = false;
 		}
 
 		public boolean wasExplored(Recursive element) {
-			return recursives.contains(element);
+			return recursiveSet.contains(element);
 		}
 
 		public void pushToPath(GrammarElement element) {
 			paths.push(element);
 
 			if (element instanceof Recursive) {
-				recursives.add((Recursive) element);
+				recursiveSet.add((Recursive) element);
 			}
 		}
 
@@ -191,7 +190,7 @@ public class LeftRecursionProcessor implements AnalyseProcessor {
 			GrammarElement element = paths.pop();
 
 			if (element instanceof Recursive) {
-				recursives.remove(element);
+				recursiveSet.remove(element);
 			}
 
 		}

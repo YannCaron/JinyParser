@@ -153,7 +153,7 @@ public abstract class AbstractTree<E> implements Tree<E> {
 	 */
 	@Override
 	public final String printTree(int increment) {
-		String s = "";
+		String s;
 		String inc = "";
 		for (int i = 0; i < increment; ++i) {
 			inc = inc + " ";

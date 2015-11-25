@@ -41,7 +41,7 @@ public interface TreeIterable<E> {
 	/**
 	 * Get the ascending order iterable of the grammar element.
 	 *
-	 * @return
+	 * @return the iterable.
 	 */
 	Iterable<E> ascendingTraversal();
 
@@ -53,7 +53,7 @@ public interface TreeIterable<E> {
 	Iterable<E> depthFirstTraversal();
 
 	/**
-	 * Get the breadth first order iterable of the rammar element.
+	 * Get the breadth first order iterable of the grammar element.
 	 *
 	 * @return the iterable.
 	 */

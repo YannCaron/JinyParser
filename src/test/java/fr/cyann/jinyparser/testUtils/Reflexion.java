@@ -34,9 +34,13 @@ public class Reflexion {
 			}
 		}
 
-        field.setAccessible(true);
-        return (T) field.get(o);
-    }
+		if (field != null) {
+			field.setAccessible(true);
+			return (T) field.get(o);
+		}
+
+		return null;
+	}
 
 
 }

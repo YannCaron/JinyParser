@@ -172,7 +172,7 @@ public final class GrammarFactory {
 	 * @return the production.
 	 */
 	public static <P extends Terminal> TerminalProduction<P> terminal(String name, Class<P> parsemClass, LexemCreatorCore decorated) {
-		return new TerminalProduction(name, parsemClass, decorated);
+		return new TerminalProduction<P>(name, parsemClass, decorated);
 	}
 
 	/**
@@ -293,8 +293,7 @@ public final class GrammarFactory {
 	 * @return the new grammar element.
 	 */
 	public static Choice choice(GrammarElement... elements) {
-		Choice choice = new Choice(elements);
-		return choice;
+		return new Choice(elements);
 	}
 
 	public static Recursive recursive(String name) {

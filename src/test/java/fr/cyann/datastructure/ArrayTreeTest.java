@@ -29,6 +29,7 @@ public class ArrayTreeTest extends TestCase {
 			assertEquals("2.1.1", root.get(1).get(0).get(0).getHead());
 			fail("Should throw an exception !");
 		} catch (Exception e) {
+			System.out.println("OK");
 		}
 
 		root.get(1).get(0).addLeaf("2.1.1");

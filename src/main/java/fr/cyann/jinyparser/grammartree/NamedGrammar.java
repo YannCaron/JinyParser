@@ -16,7 +16,7 @@ public interface NamedGrammar {
 	 * Get if named production is hidden or not.<br>
 	 * Useful to avoid Recursive and Production nesting.
 	 *
-	 * @return
+	 * @return true if hidden.
 	 */
 	boolean isHidden();
 

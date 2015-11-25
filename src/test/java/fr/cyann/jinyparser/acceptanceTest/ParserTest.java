@@ -14,8 +14,6 @@ import fr.cyann.jinyparser.grammartree.GrammarElement;
 import fr.cyann.jinyparser.lexem.LexemType;
 import junit.framework.TestCase;
 
-import static fr.cyann.jinyparser.grammartree.GrammarFactory.charIn;
-
 /**
  * The DefaultParseContextTest definition.
  */
@@ -44,10 +42,6 @@ public class ParserTest extends TestCase {
 	public void testTrivialParsingError() {
 
 		String source = "7 + 10 % 4";
-
-		// term
-		GrammarElement digit = charIn('0', '9');
-		GrammarElement sign = charIn("+");
 
 		// grammar
 		GrammarElement.ProcessedGrammar grammar = Grammars.arithmeticWithLevelAndParenthesis(null, null, null);
