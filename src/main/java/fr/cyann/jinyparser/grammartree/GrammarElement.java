@@ -10,6 +10,7 @@ package fr.cyann.jinyparser.grammartree;
  **/
 
 import fr.cyann.jinyparser.exceptions.JinyException;
+import fr.cyann.jinyparser.grammartree.analysis.Analyser;
 import fr.cyann.jinyparser.tree.AscendingIterator;
 import fr.cyann.jinyparser.tree.BreadthFirstIterator;
 import fr.cyann.jinyparser.tree.DepthFirstIterator;
@@ -156,7 +157,7 @@ public abstract class GrammarElement implements TreeIterable<GrammarElement> {
 	 * @return the processed grammar object.
 	 */
 	public ProcessedGrammar process() {
-		GrammarElement root = Analysis.analyse(this);
+		GrammarElement root = Analyser.analyse(this);
 		return new ProcessedGrammar(root);
 	}
 

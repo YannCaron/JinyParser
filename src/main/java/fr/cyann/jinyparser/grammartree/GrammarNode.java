@@ -40,7 +40,7 @@ public abstract class GrammarNode extends GrammarElement implements Iterable<Gra
 	 *
 	 * @return the children.
 	 */
-	List<GrammarElement> getChildren() {
+	public List<GrammarElement> getChildren() {
 		return children;
 	}
 

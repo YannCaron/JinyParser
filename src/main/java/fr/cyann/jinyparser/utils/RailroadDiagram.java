@@ -7,7 +7,8 @@ package fr.cyann.jinyparser.utils;/**
  * ou écrivez à Creative Commons, 444 Castro Street, Suite 900, Mountain View, California, 94041, USA.
  **/
 
-import java.io.UnsupportedEncodingException;
+import java.io.IOException;
+import java.net.URISyntaxException;
 import java.net.URLEncoder;
 
 import static fr.cyann.jinyparser.grammartree.GrammarElement.ProcessedGrammar;
@@ -17,21 +18,16 @@ import static fr.cyann.jinyparser.grammartree.GrammarElement.ProcessedGrammar;
  */
 public class RailroadDiagram {
 
-    public static final String BOTTLE_CAPS_URL_FORMAT = "http://bottlecaps.de/rr/ui?ebnf=%s";
+	public static final String BOTTLE_CAPS_URL_FORMAT = "http://bottlecaps.de/rr/ui?ebnf=%s";
 
-    private RailroadDiagram() {
-        throw new RuntimeException("Cannot instantiate static class");
-    }
+	private RailroadDiagram() {
+		throw new RuntimeException("Cannot instantiate static class");
+	}
 
-	public static void Browse(ProcessedGrammar root) {
+	public static void Browse(ProcessedGrammar root) throws IOException, URISyntaxException {
 		String urlFormat = BOTTLE_CAPS_URL_FORMAT;
-        try {
-	        String url = String.format(urlFormat, URLEncoder.encode(root.toBnf(), "UTF-8"));
-	        Internet.Browse(url);
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-        }
-
-    }
+		String url = String.format(urlFormat, URLEncoder.encode(root.toBnf(), "UTF-8"));
+		Internet.Browse(url);
+	}
 
 }

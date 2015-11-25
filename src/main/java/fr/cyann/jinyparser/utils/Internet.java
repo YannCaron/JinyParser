@@ -20,29 +20,17 @@ import java.net.URISyntaxException;
  */
 public class Internet {
 
-    private Internet() {
-	    throw new RuntimeException("Static class cannot be instantiated !");
-    }
+	private Internet() {
+		throw new RuntimeException("Static class cannot be instantiated !");
+	}
 
-    public static void Browse(String url) {
-        if (Desktop.isDesktopSupported()) {
-            Desktop desktop = Desktop.getDesktop();
-            try {
-                desktop.browse(new URI(url));
-            } catch (IOException e) {
-                // TODO : Exception
-                e.printStackTrace();
-            } catch (URISyntaxException e) {
-                e.printStackTrace();
-            }
-        } else {
-            Runtime runtime = Runtime.getRuntime();
-            try {
-                runtime.exec("xdg-open " + url);
-            } catch (IOException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            }
-        }
-    }
+	public static void Browse(String url) throws IOException, URISyntaxException {
+		if (Desktop.isDesktopSupported()) {
+			Desktop desktop = Desktop.getDesktop();
+			desktop.browse(new URI(url));
+		} else {
+			Runtime runtime = Runtime.getRuntime();
+			runtime.exec("xdg-open " + url);
+		}
+	}
 }
