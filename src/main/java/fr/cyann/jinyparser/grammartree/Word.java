@@ -12,7 +12,6 @@ package fr.cyann.jinyparser.grammartree;/**
  */
 public class Word extends GrammarLeaf {
 
-
 	private final String word;
 	private final boolean caseSensitive;
 

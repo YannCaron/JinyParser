@@ -20,9 +20,9 @@ public class LexemCreator extends LexemCreatorCore {
 
 	/**
 	 * A default separator grammar.<br>
-	 * <i>' ' | '\t' | '\n'(new line)</i>
+	 * <i>' ' | '\t' | '\n'</i>
 	 */
-	private static final GrammarElement DEFAULT_SEPARATOR = zeroOrMore(charIn(" \t\n"));
+	public static final GrammarElement DEFAULT_SEPARATOR = zeroOrMore(charIn(" \t\r\n"));
 
 	private final GrammarElement separator;
 

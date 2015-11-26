@@ -23,6 +23,8 @@ import java.util.Stack;
  */
 public class GrammarContext {
 
+	public static String SEPARATOR = System.getProperty("line.separator");
+
 	private final StringLookaheadIterator iterator;
 	private final SourcePosition positionManager;
 	private final StringBuilder term;
@@ -90,6 +92,22 @@ public class GrammarContext {
 		iterator.next();
 	}
 
+	private boolean isCurrentSeparator() {
+
+		iterator.mark();
+
+		for (int i = 0; i < SEPARATOR.length() && iterator.hasNext(); i++) {
+			if (iterator.current() != SEPARATOR.charAt(i)) {
+				iterator.rollback();
+				return false;
+			}
+			iterator.next();
+		}
+
+		iterator.resume();
+		return true;
+	}
+
 	/**
 	 * Jump to next character in the source code and process current word.
 	 */
@@ -97,7 +115,7 @@ public class GrammarContext {
 		term.append(iterator.current());
 		iterator.next();
 
-		if (iterator.current() == '\n') {
+		if (isCurrentSeparator() || iterator.current() == '\n') {
 			positionManager.newLine();
 		} else {
 			positionManager.increment();
