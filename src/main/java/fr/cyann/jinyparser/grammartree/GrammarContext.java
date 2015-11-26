@@ -101,7 +101,10 @@ public class GrammarContext {
 				iterator.rollback();
 				return false;
 			}
-			iterator.next();
+
+			if (i < SEPARATOR.length() - 1) {
+				iterator.next();
+			}
 		}
 
 		iterator.resume();

@@ -114,20 +114,21 @@ public final class GrammarFactory {
 		return new Repeat(decorated);
 	}
 
-	/**
-	 * Create a new token producer grammar element.
-	 *
-	 * @param lexemType the token type of the token to produce.
-	 * @param decorated the grammar that decide if lexem will be produced.
-	 * @return the new grammar element.
-	 */
-	public static LexemCreatorCore lexemCore(LexemType lexemType, GrammarElement decorated) {
-		return new LexemCreatorCore(decorated, lexemType);
-	}
-
 	// endregion
 
 	// region production
+
+	/**
+	 * Grammar element that produce lexem (process token on lexer).<br>
+	 * Create also a new token producer grammar element that manage separators.
+	 *
+	 * @param lexemType the token type of the token to produce.
+	 * @param decorated the grammar element to decorate.
+	 * @return the new grammar element.
+	 */
+	public static LexemCreator lexem(LexemType lexemType, GrammarElement separator, GrammarElement decorated) {
+		return new LexemCreator(lexemType, separator, decorated);
+	}
 
 	/**
 	 * Grammar element that produce lexem (process token on lexer) of DEFAULT lexemType.<br>
@@ -136,8 +137,8 @@ public final class GrammarFactory {
 	 * @param decorated the grammar element to decorate.
 	 * @return the new grammar element.
 	 */
-	public static LexemCreator lexem(GrammarElement decorated) {
-		return new LexemCreator(LexemType.DEFAULT, decorated);
+	public static LexemCreator lexem(GrammarElement separator, GrammarElement decorated) {
+		return lexem(LexemType.DEFAULT, separator, decorated);
 	}
 
 	/**
@@ -153,6 +154,17 @@ public final class GrammarFactory {
 	}
 
 	/**
+	 * Grammar element that produce lexem (process token on lexer) of DEFAULT lexemType.<br>
+	 * Create also a new token producer grammar element that manage separators.
+	 *
+	 * @param decorated the grammar element to decorate.
+	 * @return the new grammar element.
+	 */
+	public static LexemCreator lexem(GrammarElement decorated) {
+		return lexem(LexemType.DEFAULT, decorated);
+	}
+
+	/**
 	 * Create a production that create a terminal parsem when decorated element (a lexem creator) is parser.
 	 *
 	 * @param name        the name of the production.
@@ -161,7 +173,7 @@ public final class GrammarFactory {
 	 * @param <P>         the parsem type.
 	 * @return the production.
 	 */
-	public static <P extends Terminal> TerminalProduction<P> terminal(String name, Class<P> parsemClass, LexemCreatorCore decorated) {
+	public static <P extends Terminal> TerminalProduction<P> terminal(String name, Class<P> parsemClass, LexemCreator decorated) {
 		return new TerminalProduction<P>(name, parsemClass, decorated);
 	}
 
@@ -172,7 +184,7 @@ public final class GrammarFactory {
 	 * @param decorated the decorated element.
 	 * @return the production.
 	 */
-	public static TerminalProduction<DefaultTerminal> terminal(String name, LexemCreatorCore decorated) {
+	public static TerminalProduction<DefaultTerminal> terminal(String name, LexemCreator decorated) {
 		return terminal(name, DefaultTerminal.class, decorated);
 	}
 
