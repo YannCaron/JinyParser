@@ -125,16 +125,6 @@ public final class GrammarFactory {
 		return new LexemCreatorCore(decorated, lexemType);
 	}
 
-	/**
-	 * Create a new line incrementer grammar element.
-	 *
-	 * @param decorated the grammar element to decorate.
-	 * @return the new grammar element.
-	 */
-	public static LineIncrementer lineIncrementer(GrammarElement decorated) {
-		return new LineIncrementer(decorated);
-	}
-
 	// endregion
 
 	// region production

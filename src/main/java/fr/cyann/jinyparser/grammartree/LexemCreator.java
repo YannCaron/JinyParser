@@ -9,7 +9,8 @@ package fr.cyann.jinyparser.grammartree;/**
 
 import fr.cyann.jinyparser.lexem.LexemType;
 
-import static fr.cyann.jinyparser.grammartree.GrammarFactory.*;
+import static fr.cyann.jinyparser.grammartree.GrammarFactory.charIn;
+import static fr.cyann.jinyparser.grammartree.GrammarFactory.zeroOrMore;
 
 /**
  * The LexemCreator class. Grammar element that help to manage the separator characters between two real grammar.
@@ -21,8 +22,7 @@ public class LexemCreator extends LexemCreatorCore {
 	 * A default separator grammar.<br>
 	 * <i>' ' | '\t' | '\n'(new line)</i>
 	 */
-	private static final GrammarElement DEFAULT_SEPARATOR =
-			zeroOrMore(choice(charIn(" \t"), lineIncrementer(charIn("\n"))));
+	private static final GrammarElement DEFAULT_SEPARATOR = zeroOrMore(charIn(" \t\n"));
 
 	private final GrammarElement separator;
 

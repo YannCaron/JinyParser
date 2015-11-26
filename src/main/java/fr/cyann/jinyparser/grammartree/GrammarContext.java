@@ -96,7 +96,12 @@ public class GrammarContext {
 	public void nextCharParser() {
 		term.append(iterator.current());
 		iterator.next();
-		positionManager.increment();
+
+		if (iterator.current() == '\n') {
+			positionManager.newLine();
+		} else {
+			positionManager.increment();
+		}
 	}
 
 	//endregion
@@ -126,13 +131,6 @@ public class GrammarContext {
 	 */
 	public String getTerm() {
 		return term.toString();
-	}
-
-	/**
-	 * Jump to next line.
-	 */
-	public void newLine() {
-		positionManager.newLine();
 	}
 
 	/**
