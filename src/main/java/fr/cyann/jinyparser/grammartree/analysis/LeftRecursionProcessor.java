@@ -143,7 +143,9 @@ public class LeftRecursionProcessor implements AnalyseProcessor {
 			Sequence sequence = getElementOfType(cycle, Sequence.class, sequenceIndex);
 			GrammarElement sequenceChild = cycle.get(sequenceIndex + 1);
 			sequence.getChildren().remove(sequenceChild);
-			sequence.getParent().replace(sequence, sequence(sequenceChild, zeroOrOne(sequence)));
+			// TODO: Does not respect the level of operations
+			// TODO: Does not works with complicated grammars like Wiki test
+			sequence.getParent().replace(sequence, sequence(sequenceChild, zeroOrMore(sequence)));
 
 			// switch production create / aggregate
 			NonTerminalAggregator headAggregator = findSubAggregator(sequenceChild, true);
