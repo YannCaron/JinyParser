@@ -61,13 +61,13 @@ public class AnalyserTest extends TestCase {
 		return expr.process();
 	}
 
-	public void testLRGrammarOnPEG() {
+    public void testLRGrammarOnPEG1() {
 
 		// grammar
 		GrammarElement.ProcessedGrammar grammar = lrGrammar(null, null, null);
 
 		// source
-		String source = "7 + 10 + 4 + 7";
+        String source = "7 + 10 * 4 + 7";
 
 		// to BNF
         System.out.println("Grammar tree:\n" + grammar.toBnf());
@@ -78,10 +78,30 @@ public class AnalyserTest extends TestCase {
 
 		System.out.println("Parse tree: " + c.getParseTree());
 
-		//assertEquals("('7' '+' ('10' '*' ('4' '+' '7')))", c.getParseTree().toString());
+        //assertEquals("('7' '+' ('10' '*' '4') '+' '7'))", c.getParseTree().toString());
 
 	}
 
+    public void testLRGrammarOnPEG2() {
+
+        // grammar
+        GrammarElement.ProcessedGrammar grammar = lrGrammar(null, null, null);
+
+        // source
+        String source = "(7 + 10) * 4 + 7";
+
+        // to BNF
+        System.out.println("Grammar tree:\n" + grammar.toBnf());
+        System.out.println();
+
+        // parse
+        GrammarContext c = grammar.parse(source);
+
+        System.out.println("Parse tree: " + c.getParseTree());
+
+        //assertEquals("(('7' '+' '10') '*' '4') '+' '7')", c.getParseTree().toString());
+
+    }
 
 
 }

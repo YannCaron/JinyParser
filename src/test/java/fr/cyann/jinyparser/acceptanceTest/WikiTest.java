@@ -70,7 +70,7 @@ public class WikiTest extends TestCase {
 		System.out.println(grammar.toBnf());
 
 		// source
-		String source = "7 + 10 * 4 + 7";
+        String source = "(7 + 10) * 4 + 7";
 
 		// parse
 		GrammarContext c = grammar.parse(source);

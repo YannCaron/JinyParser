@@ -9,6 +9,7 @@ package fr.cyann.jinyparser.grammartree;/**
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Stack;
 
 /**
  * The Choice class. A compound grammar node that choosing among its children nodes to determine the appropriate grammar.<br>
@@ -17,7 +18,8 @@ import java.util.Map;
  */
 public class Choice extends GrammarNode {
 
-	private final Map<Integer, Integer> packratMemoizer;
+    static Stack<Integer> identity = new Stack<Integer>();
+    private final Map<Integer, Integer> packratMemoizer;
 	private final Map<Integer, GrammarElement> packratMemoizer2;
 
 	/**
@@ -34,6 +36,8 @@ public class Choice extends GrammarNode {
 	 */
 	@Override
 	protected boolean lookahead(GrammarContext context) {
+
+        System.out.println(identity);
 
 		int pos = context.currentPosition();
 		//System.out.println(pos);
@@ -52,21 +56,26 @@ public class Choice extends GrammarNode {
 			//}
 		}*/
 
-		for (GrammarElement child : this) {
-			context.markChar();
+        int counter = 0;
+        for (GrammarElement child : this) {
+
+            identity.push(counter++);
+            context.markChar();
 			if (child.lookahead(context)) {
 				// TODO: Packrat does not works properly.... difficulty to identify the position/choice. Conflict between choices at same position.
 				//packratMemoizer.put(pos, context.currentPosition() - pos);
 				//packratMemoizer2.put(pos, child);
 				context.resumeChar();
-				return true;
+                identity.pop();
+                return true;
 			}
 			context.rollbackChar();
 
 		}
 		//packratMemoizer.put(pos, null);
 
-		return false;
+        identity.pop();
+        return false;
 
 	}
 

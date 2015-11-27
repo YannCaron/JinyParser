@@ -163,9 +163,10 @@ public class LeftRecursionProcessor implements AnalyseProcessor {
             GrammarElement sequenceChild = cycle.get(sequenceIndex + 1);
 
             sequence.getChildren().remove(sequenceChild);
-            link = findFirstChildOfType(sequence, Link.class);
-            if (link != null) link.setRecursive(subRecursive);
-            sequence.getParent().replace(sequence, sequence(sequenceChild, zeroOrMore(sequence)));
+            // TODO : Grammar does not works with parenthesis
+            /*link = findFirstChildOfType(sequence, Link.class);
+            if (link != null) link.setRecursive(subRecursive);*/
+            sequence.getParent().replace(sequence, sequence(sequenceChild, zeroOrOne(sequence)));
 
             // switch production create / aggregate
             NonTerminalAggregator headAggregator = findSubAggregator(sequenceChild, true);

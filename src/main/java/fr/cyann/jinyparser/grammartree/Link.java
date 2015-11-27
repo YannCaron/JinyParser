@@ -27,8 +27,12 @@ public class Link extends GrammarDecorator {
         return this;
     }
 
+    public Recursive getRecursive() {
+        return (Recursive) getDecorated();
+    }
+
     public Link setRecursive(Recursive recursive) {
-        super.setDecorated(recursive);
+        this.setDecorated(recursive);
         return this;
     }
 
