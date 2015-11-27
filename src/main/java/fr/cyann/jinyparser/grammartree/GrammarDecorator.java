@@ -30,6 +30,26 @@ public abstract class GrammarDecorator extends GrammarElement {
         setDecorated(decorated);
     }
 
+    // region equals and hashCode
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        GrammarDecorator that = (GrammarDecorator) o;
+
+        return !(decorated != null ? !decorated.equals(that.decorated) : that.decorated != null);
+
+    }
+
+    @Override
+    public int hashCode() {
+        return decorated != null ? decorated.hashCode() : 0;
+    }
+
+    // endregion
+
     /**
      * {@inheritDoc}
      */
@@ -54,7 +74,7 @@ public abstract class GrammarDecorator extends GrammarElement {
      *
      * @param decorated the decorated grammar element.
      */
-    void setDecorated(GrammarElement decorated) {
+    GrammarDecorator setDecorated(GrammarElement decorated) {
         if (decorated instanceof Recursive) {
             Link link = new Link((Recursive) decorated, this);
             link.setParent(this);
@@ -64,6 +84,8 @@ public abstract class GrammarDecorator extends GrammarElement {
                 decorated.setParent(this);
             this.decorated = decorated;
         }
+
+        return this;
     }
 
     /**

@@ -39,8 +39,8 @@ public class WikiTest extends TestCase {
 		// terminal
 		GrammarElement number = terminal("number", lexNum);
 		GrammarElement addOp = terminal("addOp", lexAdd);
-		GrammarElement subOp = terminal("minusOp", lexSub);
-		GrammarElement multOp = terminal("multOp", lexMult);
+        GrammarElement subOp = terminal("subOp", lexSub);
+        GrammarElement multOp = terminal("multOp", lexMult);
 		GrammarElement divOp = terminal("divOp", lexDiv);
 
 		// recursive
@@ -54,11 +54,11 @@ public class WikiTest extends TestCase {
 		//         | '(' <expr> ')'
 		expr.setGrammar(
 				choice(
-						nonTerminal("hiOperation", sequence(create(expr), aggregate(addOp), aggregate(expr))),        // E ::= E ('+' | '-') E
-						nonTerminal("lowOperation", sequence(create(expr), aggregate(multOp), aggregate(expr))),        //     | E ('*' | '/') Edetermin
-						number,                                                                                                        //     | Number
-						sequence(lexLParent, expr, lexRParent)                                                                        //     | '(' E ')'
-				)
+                        nonTerminal("hiOperation", sequence(create(expr), aggregate(choice(addOp, subOp)), aggregate(expr))),   // E ::= E ('+' | '-') E
+                        nonTerminal("lowOperation", sequence(create(expr), aggregate(choice(multOp, divOp)), aggregate(expr))), //     | E ('*' | '/') Edetermin
+                        number,                                                                                                 //     | Number
+                        sequence(lexLParent, expr, lexRParent)                                                                  //     | '(' E ')'
+                )
 		);
 
 		// grammar

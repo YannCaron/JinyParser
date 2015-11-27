@@ -21,9 +21,10 @@ public class Link extends GrammarDecorator {
     }
 
     @Override
-    void setDecorated(GrammarElement decorated) {
+    GrammarDecorator setDecorated(GrammarElement decorated) {
         decorated.setParent(this);
         this.decorated = decorated;
+        return this;
     }
 
     public Link setRecursive(Recursive recursive) {

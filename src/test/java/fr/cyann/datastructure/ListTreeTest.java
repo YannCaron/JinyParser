@@ -10,10 +10,10 @@ import junit.framework.TestCase;
  * Pour voir une copie de cette licence, visitez http://creativecommons.org/licenses/by-nc-sa/3.0/fr/
  * ou écrivez à Creative Commons, 444 Castro Street, Suite 900, Mountain View, California, 94041, USA.
  **/
-public class ArrayTreeTest extends TestCase {
+public class ListTreeTest extends TestCase {
 
 	public void testGet() throws Exception {
-		ArrayTree<String> root = new ArrayTree<String>("root");
+        ListTree<String> root = new ListTree<String>("root");
 
 		root.addLeaf("1");
 		root.addLeaf("2");
@@ -40,7 +40,7 @@ public class ArrayTreeTest extends TestCase {
 
 	public void testArrayTree() throws Exception {
 
-		ArrayTree<String> root = new ArrayTree<String>("root");
+        ListTree<String> root = new ListTree<String>("root");
 
 		root.addLeaf("1");
 		root.addLeaf("2");

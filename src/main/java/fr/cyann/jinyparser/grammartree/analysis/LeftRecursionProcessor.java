@@ -7,12 +7,17 @@ package fr.cyann.jinyparser.grammartree.analysis;/**
  * ou écrivez à Creative Commons, 444 Castro Street, Suite 900, Mountain View, California, 94041, USA.
  **/
 
+import fr.cyann.datastructure.Tree;
+import fr.cyann.datastructure.UniqueListTree;
 import fr.cyann.jinyparser.exceptions.JinyException;
 import fr.cyann.jinyparser.grammartree.*;
 import fr.cyann.jinyparser.utils.MultilingualMessage;
 import org.apache.log4j.Logger;
 
-import java.util.*;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.Stack;
 
 import static fr.cyann.jinyparser.grammartree.GrammarFactory.*;
 
@@ -21,203 +26,218 @@ import static fr.cyann.jinyparser.grammartree.GrammarFactory.*;
  */
 public class LeftRecursionProcessor implements AnalyseProcessor {
 
-	final static Logger logger = Logger.getLogger(LeftRecursionProcessor.class);
+    final static Logger logger = Logger.getLogger(LeftRecursionProcessor.class);
 
-	// region inner class
+    // region inner class
 
-	/**
-	 * Gives the infinite cycles; e.g. all the cycles present in the graph that do not produce any lexem (in other words, all the cycles that do not contains any GrammarLeaf element like "Word", "CharIn" etc.).<br>
-	 * Inspired from the Tarjan's Algorithms. But backtrack when a sub-rule that create lexem was found.
-	 *
-	 * @param context The build cycle context.
-	 * @param element the element to explore.
-	 */
-	private static void findCycles(BuildCyclesContext context, GrammarElement element) {
+    /**
+     * Gives all the unique infinite cycles; e.g. all the cycles present in the graph that do not produce any lexem (in other words, all the cycles that do not contains any GrammarLeaf element like "Word", "CharIn" etc.).<br>
+     * Inspired from the Tarjan's Algorithms. But backtrack when a sub-rule that create lexem was found.<br>
+     * For uniqueness purpose, it needs a tree dictionary algorithm (see BuildCyclesContext).
+     *
+     * @param context The build cycle context.
+     * @param element the element to explore.
+     */
+    private static void findCycles(BuildCyclesContext context, GrammarElement element) {
 
-		if (element instanceof Recursive) {
-			if (context.wasExplored((Recursive) element)) {
-				context.buildCycle(element);
-				context.setBroken(false);
-				return;
-			}
-		}
+        if (element instanceof Recursive) {
+            if (context.wasExplored((Recursive) element)) {
+                context.buildCycle(element);
+                context.setBroken(false);
+                return;
+            }
+        }
 
-		context.pushToPath(element);
+        context.pushToPath(element);
 
-		try {
+        try {
 
-			if (element instanceof GrammarNode) {
+            if (element instanceof GrammarNode) {
 
-				for (GrammarElement child : ((GrammarNode) element)) {
+                for (GrammarElement child : ((GrammarNode) element)) {
 
-					findCycles(context, child);
-					if (context.isBroken()) {
-						if (element instanceof Sequence)
-							break;
-						else
-							context.setBroken(false);
-					}
+                    findCycles(context, child);
+                    if (context.isBroken()) {
+                        if (element instanceof Sequence)
+                            break;
+                        else
+                            context.setBroken(false);
+                    }
 
-				}
+                }
 
-			} else if (element instanceof GrammarDecorator) {
-				findCycles(context, ((GrammarDecorator) element).getDecorated());
-			} else {
-				context.setBroken(true);
-			}
+            } else if (element instanceof GrammarDecorator) {
+                findCycles(context, ((GrammarDecorator) element).getDecorated());
+            } else {
+                context.setBroken(true);
+            }
 
-		} finally {
-			context.removeLastFromPath();
-		}
+        } finally {
+            context.removeLastFromPath();
+        }
 
-	}
+    }
 
-	// endregion
+    // endregion
 
-	// region utils
+    // region utils
 
-	private static NonTerminalAggregator findSubAggregator(GrammarElement parent, boolean create) {
-		if (parent instanceof NonTerminalAggregator) {
-			NonTerminalAggregator aggregator = (NonTerminalAggregator) parent;
-			if (aggregator.isCreate() == create) return aggregator;
-		}
+    private static NonTerminalAggregator findSubAggregator(GrammarElement parent, boolean create) {
+        if (parent instanceof NonTerminalAggregator) {
+            NonTerminalAggregator aggregator = (NonTerminalAggregator) parent;
+            if (aggregator.isCreate() == create) return aggregator;
+        }
 
-		for (GrammarElement child : parent.depthFirstTraversal()) {
-			if (child instanceof NonTerminalAggregator) {
-				NonTerminalAggregator aggregator = (NonTerminalAggregator) child;
-				if (aggregator.isCreate() == create) return aggregator;
-			}
-		}
-		return null;
-	}
+        for (GrammarElement child : parent.depthFirstTraversal()) {
+            if (child instanceof NonTerminalAggregator) {
+                NonTerminalAggregator aggregator = (NonTerminalAggregator) child;
+                if (aggregator.isCreate() == create) return aggregator;
+            }
+        }
+        return null;
+    }
 
-	private static int findIdFirstOfType(List<GrammarElement> list, Class<? extends GrammarElement> type, int start) {
-		for (int i = start; i < list.size(); i++) {
-			if (type.isAssignableFrom(list.get(i).getClass())) {
-				return i;
-			}
-		}
-		return -1;
-	}
+    private static <E extends GrammarElement> E findFirstChildOfType(GrammarElement parent, Class<E> type) {
+        for (GrammarElement element : parent.depthFirstTraversal()) {
+            if (element.getClass().isAssignableFrom(type)) {
+                return (E) element;
+            }
 
-	private static <T extends GrammarElement> T getElementOfType(List<GrammarElement> list, Class<T> type, int index) {
-		if (index == -1)
-			throw new JinyException(
-					MultilingualMessage
-							.create("Infinite loop detected in recursive grammar [%s]")
-							.setArgs(list.get(0).toString()));
-		return (T) list.get(index);
-	}
+        }
 
-	@Override
-	public GrammarElement analyse(GrammarElement root) {
-		BuildCyclesContext context = new BuildCyclesContext();
-		findCycles(context, root);
+        return null;
+    }
 
-		for (int i = context.getCycles().size() - 1; i >= 0; i--) {
-			List<GrammarElement> cycle = context.getCycles().get(i);
+    private static int findIdFirstOfType(List<GrammarElement> list, Class<? extends GrammarElement> type, int start) {
+        for (int i = start; i < list.size(); i++) {
+            if (type.isAssignableFrom(list.get(i).getClass())) {
+                return i;
+            }
+        }
+        return -1;
+    }
 
-			// logging
-			logger.warn(String.format("Cycles detected: %s", cycle));
+    private static <E extends GrammarElement> E getElementOfType(List<GrammarElement> list, Class<E> type, int index) {
+        if (index == -1)
+            throw new JinyException(
+                    MultilingualMessage
+                            .create("Infinite loop detected in recursive grammar [%s]")
+                            .setArgs(list.get(0).toString()));
+        return (E) list.get(index);
+    }
 
-			// find choice & sequence
-			Recursive recursive = (Recursive) cycle.get(0);
-			int choiceIndex = findIdFirstOfType(cycle, Choice.class, 0);
-			Choice choice = getElementOfType(cycle, Choice.class, choiceIndex);
+    @Override
+    public GrammarElement analyse(GrammarElement root) {
+        BuildCyclesContext context = new BuildCyclesContext();
+        findCycles(context, root);
+        List<List<GrammarElement>> cycles = context.getCycles();
 
-			// find the next child after the child that link to recursive
-			int nextChoiceChildIndex = choice.getChildren().indexOf(cycle.get(choiceIndex + 1)) + 1;
-			GrammarElement nextChoiceChild = choice.getChildren().get(nextChoiceChildIndex);
+        for (int i = cycles.size() - 1; i >= 0; i--) {
+            List<GrammarElement> cycle = cycles.get(i);
 
-			// construct the new recursive
-			String name = String.format(Analyser.LR_SUBSTITUTE_NAME, recursive.getName());
-			Recursive subRecursive = recursive(name).setGrammar(nextChoiceChild);
+            // logging
+            logger.warn(String.format("Cycles detected: %s", cycle));
 
-			// replacement
-			choice.getChildren().set(nextChoiceChildIndex, subRecursive);
-			Link link = (Link) cycle.get(cycle.size() - 1);
-			link.setRecursive(subRecursive);
 
-			// build oneOrMore
-			int sequenceIndex = findIdFirstOfType(cycle, Sequence.class, choiceIndex);
-			Sequence sequence = getElementOfType(cycle, Sequence.class, sequenceIndex);
-			GrammarElement sequenceChild = cycle.get(sequenceIndex + 1);
-			sequence.getChildren().remove(sequenceChild);
-			// TODO: Does not respect the level of operations
-			// TODO: Does not works with complicated grammars like Wiki test
-			sequence.getParent().replace(sequence, sequence(sequenceChild, zeroOrMore(sequence)));
+            // find choice & sequence
+            Recursive recursive = (Recursive) cycle.get(0);
+            int choiceIndex = findIdFirstOfType(cycle, Choice.class, 0);
+            Choice choice = getElementOfType(cycle, Choice.class, choiceIndex);
 
-			// switch production create / aggregate
-			NonTerminalAggregator headAggregator = findSubAggregator(sequenceChild, true);
-			if (headAggregator != null) {
-				NonTerminalAggregator tailFirstAggregator = findSubAggregator(sequence, false);
-				headAggregator.setCreate(false);
-				if (tailFirstAggregator != null)
-					tailFirstAggregator.setCreate(true);
-			}
+            // find the next child after the child that link to recursive
+            int nextChoiceChildIndex = choice.getChildren().indexOf(cycle.get(choiceIndex + 1)) + 1;
+            GrammarElement nextChoiceChild = choice.getChildren().get(nextChoiceChildIndex);
 
-		}
+            // construct the new recursive
+            String name = String.format(Analyser.LR_SUBSTITUTE_NAME, recursive.getName());
+            Recursive subRecursive = recursive(name).setGrammar(nextChoiceChild);
 
-		return root;
-	}
+            // replacement
+            choice.getChildren().set(nextChoiceChildIndex, subRecursive);
+            Link link = (Link) cycle.get(cycle.size() - 1);
+            link.setRecursive(subRecursive);
 
-	// endregion
+            // build oneOrMore
+            int sequenceIndex = findIdFirstOfType(cycle, Sequence.class, choiceIndex);
+            Sequence sequence = getElementOfType(cycle, Sequence.class, sequenceIndex);
+            GrammarElement sequenceChild = cycle.get(sequenceIndex + 1);
 
-	private static class BuildCyclesContext {
-		private final Set<Recursive> recursiveSet;
-		private final Stack<GrammarElement> paths;
-		private final List<List<GrammarElement>> cycles;
-		private boolean broken;
+            sequence.getChildren().remove(sequenceChild);
+            link = findFirstChildOfType(sequence, Link.class);
+            if (link != null) link.setRecursive(subRecursive);
+            sequence.getParent().replace(sequence, sequence(sequenceChild, zeroOrMore(sequence)));
 
-		public BuildCyclesContext() {
-			recursiveSet = new HashSet<Recursive>();
-			paths = new Stack<GrammarElement>();
-			cycles = new ArrayList<List<GrammarElement>>();
-			broken = false;
-		}
+            // switch production create / aggregate
+            NonTerminalAggregator headAggregator = findSubAggregator(sequenceChild, true);
+            if (headAggregator != null) {
+                NonTerminalAggregator tailFirstAggregator = findSubAggregator(sequence, false);
+                headAggregator.setCreate(false);
+                if (tailFirstAggregator != null)
+                    tailFirstAggregator.setCreate(true);
+            }
 
-		public boolean wasExplored(Recursive element) {
-			return recursiveSet.contains(element);
-		}
 
-		public void pushToPath(GrammarElement element) {
-			paths.push(element);
+        }
 
-			if (element instanceof Recursive) {
-				recursiveSet.add((Recursive) element);
-			}
-		}
+        return root;
+    }
 
-		public void removeLastFromPath() {
-			GrammarElement element = paths.pop();
+    // endregion
 
-			if (element instanceof Recursive) {
-				recursiveSet.remove(element);
-			}
+    private static class BuildCyclesContext {
+        private final Set<Recursive> recursiveSet;
+        private final Stack<GrammarElement> paths;
+        private final UniqueListTree<GrammarElement> cycleDictionary;
 
-		}
+        private boolean broken;
 
-		public void buildCycle(GrammarElement startPoint) {
-			List<GrammarElement> list = new ArrayList<GrammarElement>();
-			int start = paths.indexOf(startPoint);
-			for (int i = start; i < paths.size(); i++) {
-				list.add(paths.get(i)); // shift to get from first
-			}
+        public BuildCyclesContext() {
+            recursiveSet = new HashSet<Recursive>();
+            paths = new Stack<GrammarElement>();
+            cycleDictionary = new UniqueListTree<GrammarElement>(new Word("root"));
+            broken = false;
+        }
 
-			cycles.add(list);
-		}
+        public boolean wasExplored(Recursive element) {
+            return recursiveSet.contains(element);
+        }
 
-		public List<List<GrammarElement>> getCycles() {
-			return cycles;
-		}
+        public void pushToPath(GrammarElement element) {
+            paths.push(element);
 
-		public boolean isBroken() {
-			return broken;
-		}
+            if (element instanceof Recursive) {
+                recursiveSet.add((Recursive) element);
+            }
+        }
 
-		public void setBroken(boolean broken) {
-			this.broken = broken;
-		}
-	}
+        public void removeLastFromPath() {
+            GrammarElement element = paths.pop();
+
+            if (element instanceof Recursive) {
+                recursiveSet.remove(element);
+            }
+
+        }
+
+        public void buildCycle(GrammarElement startPoint) {
+            int start = paths.indexOf(startPoint);
+            Tree<GrammarElement> node = cycleDictionary;
+            for (int i = start; i < paths.size(); i++) {
+                node = node.addLeaf(paths.get(i));
+            }
+        }
+
+        public List<List<GrammarElement>> getCycles() {
+            return cycleDictionary.toTableNoRoot();
+        }
+
+        public boolean isBroken() {
+            return broken;
+        }
+
+        public void setBroken(boolean broken) {
+            this.broken = broken;
+        }
+    }
 
 }

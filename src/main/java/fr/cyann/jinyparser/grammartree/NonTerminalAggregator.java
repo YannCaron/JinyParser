@@ -116,8 +116,9 @@ public class NonTerminalAggregator extends GrammarDecorator {
 	 */
 	@Override
 	void buildBnf(BnfContext context) {
-		super.buildBnf(context);
+        if (create) context.append("CX(");
+        super.buildBnf(context);
 		if (create)
-			context.append("_CX");
-	}
+            context.append(")");
+    }
 }
