@@ -31,9 +31,9 @@ public class Analyser {
 	public static GrammarElement analyse(GrammarElement root) {
 
 		List<AnalyseProcessor> analysers = new ArrayList<AnalyseProcessor>();
-		analysers.add(new BnfProcessor());
-		analysers.add(new LeftRecursionProcessor());
-		analysers.add(new UniqueNameProcessor());
+        /*analysers.add(new BnfProcessor());
+        analysers.add(new LeftRecursionProcessor());
+		analysers.add(new UniqueNameProcessor());*/
 
 		GrammarElement result = root;
 		for (AnalyseProcessor element : analysers) {

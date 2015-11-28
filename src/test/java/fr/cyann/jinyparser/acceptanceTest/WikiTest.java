@@ -55,7 +55,7 @@ public class WikiTest extends TestCase {
 		expr.setGrammar(
 				choice(
                         nonTerminal("hiOperation", sequence(create(expr), aggregate(choice(addOp, subOp)), aggregate(expr))),   // E ::= E ('+' | '-') E
-                        nonTerminal("lowOperation", sequence(create(expr), aggregate(choice(multOp, divOp)), aggregate(expr))), //     | E ('*' | '/') Edetermin
+                        nonTerminal("lowOperation", sequence(create(expr), aggregate(choice(multOp, divOp)), aggregate(expr))), //     | E ('*' | '/') E
                         number,                                                                                                 //     | Number
                         sequence(lexLParent, expr, lexRParent)                                                                  //     | '(' E ')'
                 )
