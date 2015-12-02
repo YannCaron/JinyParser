@@ -11,10 +11,7 @@ package fr.cyann.jinyparser.grammartree;
 
 import fr.cyann.jinyparser.exceptions.JinyException;
 import fr.cyann.jinyparser.grammartree.analysis.Analyser;
-import fr.cyann.jinyparser.tree.AscendingIterator;
-import fr.cyann.jinyparser.tree.BreadthFirstIterator;
-import fr.cyann.jinyparser.tree.DepthFirstIterator;
-import fr.cyann.jinyparser.tree.TreeIterable;
+import fr.cyann.jinyparser.tree.*;
 import fr.cyann.jinyparser.utils.MultilingualMessage;
 
 import java.util.Iterator;
@@ -114,12 +111,12 @@ public abstract class GrammarElement implements TreeIterable<GrammarElement> {
 	/**
 	 * {@inheritDoc}
 	 */
-	@Override
-	public Iterable<GrammarElement> depthFirstTraversal() {
+	//@Override
+	public Iterable<GrammarElement> depthFirstTraversal(final PruningStrategy<GrammarElement> pruningStrategy) {
 		return new Iterable<GrammarElement>() {
 			@Override
 			public Iterator<GrammarElement> iterator() {
-				return new DepthFirstIterator<GrammarElement>(GrammarElement.this);
+				return new DepthFirstIterator<GrammarElement>(GrammarElement.this, pruningStrategy);
 			}
 		};
 	}
@@ -128,11 +125,11 @@ public abstract class GrammarElement implements TreeIterable<GrammarElement> {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public Iterable<GrammarElement> breadthFirstTraversal() {
+	public Iterable<GrammarElement> breadthFirstTraversal(final PruningStrategy<GrammarElement> pruningStrategy) {
 		return new Iterable<GrammarElement>() {
 			@Override
 			public Iterator<GrammarElement> iterator() {
-				return new BreadthFirstIterator<GrammarElement>(GrammarElement.this);
+				return new BreadthFirstIterator<GrammarElement>(GrammarElement.this, pruningStrategy);
 			}
 		};
 	}
@@ -167,6 +164,12 @@ public abstract class GrammarElement implements TreeIterable<GrammarElement> {
 	 * @param context the bnf context to build on.
 	 */
 	abstract void buildBnf(BnfContext context);
+
+	protected String toBnf() {
+		BnfContext context = new BnfContext();
+		this.buildBnf(context);
+		return context.toString();
+	}
 
 	/**
 	 * Represent a processed grammar. e.g an analysed grammar.

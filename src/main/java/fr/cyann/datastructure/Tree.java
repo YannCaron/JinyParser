@@ -15,6 +15,8 @@ package fr.cyann.datastructure;
  **/
 public interface Tree<E> extends Iterable<Tree<E>> {
 
+	// TODO : Integrate iterators with pruning strategy
+
 	/**
 	 * Get the element.
 	 *

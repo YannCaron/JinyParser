@@ -7,9 +7,7 @@ package fr.cyann.jinyparser.tree;/**
  * ou écrivez à Creative Commons, 444 Castro Street, Suite 900, Mountain View, California, 94041, USA.
  **/
 
-import java.util.HashSet;
 import java.util.Iterator;
-import java.util.Set;
 import java.util.Stack;
 
 /**
@@ -17,18 +15,19 @@ import java.util.Stack;
  */
 public class DepthFirstIterator<E extends TreeIterable<E>> implements Iterator<E> {
 
+	private final PruningStrategy<E> pruningStrategy;
 	private final Stack<E> stack;
-	private final Set<E> iterated;
 
 	/**
 	 * Default constructor.
 	 *
 	 * @param root the element of the tree to start with.
+	 * @param pruningStrategy
 	 */
 
-	public DepthFirstIterator(E root) {
+	public DepthFirstIterator(E root, PruningStrategy<E> pruningStrategy) {
+		this.pruningStrategy = pruningStrategy;
 		stack = new Stack<E>();
-		iterated = new HashSet<E>();
 		stack.push(root);
 	}
 
@@ -47,9 +46,7 @@ public class DepthFirstIterator<E extends TreeIterable<E>> implements Iterator<E
 	public E next() {
 		E current = stack.pop();
 
-		if (!iterated.contains(current)) {
-			iterated.add(current);
-
+		if (pruningStrategy.shouldContinue(current)) {
 			current.depthFirstPush(stack);
 		}
 

@@ -10,16 +10,20 @@ package fr.cyann.jinyparser.grammartree.analysis;/**
 import fr.cyann.jinyparser.grammartree.GrammarElement;
 import fr.cyann.jinyparser.grammartree.GrammarProduction;
 import fr.cyann.jinyparser.grammartree.Recursive;
+import fr.cyann.jinyparser.tree.InfiniteLoopPruning;
 
 /**
- * The BnfProcessor definition. Process the grammar tree and prepare it for BNF generation.
+ * The BnfAnalyser definition. Process the grammar tree and prepare it for BNF generation.
  */
-public class BnfProcessor implements AnalyseProcessor {
+public class BnfAnalyser implements GrammarTreeAnalyser {
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public GrammarElement analyse(GrammarElement root) {
 		// hide nested recursive and productions
-		for (GrammarElement element : root.depthFirstTraversal()) {
+		for (GrammarElement element : root.depthFirstTraversal(new InfiniteLoopPruning<GrammarElement>())) {
 			if (element instanceof Recursive) {
 				Recursive recursive = (Recursive) element;
 				if (recursive.getGrammar() instanceof GrammarProduction) {

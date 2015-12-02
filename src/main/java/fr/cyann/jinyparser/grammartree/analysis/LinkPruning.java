@@ -1,5 +1,5 @@
 package fr.cyann.jinyparser.grammartree.analysis;/**
- * Copyright (C) 25/11/15 Yann Caron aka cyann
+ * Copyright (C) 02/12/15 Yann Caron aka cyann
  * <p/>
  * Cette œuvre est mise à disposition sous licence Attribution -
  * Pas d’Utilisation Commerciale - Partage dans les Mêmes Conditions 3.0 France.
@@ -8,12 +8,17 @@ package fr.cyann.jinyparser.grammartree.analysis;/**
  **/
 
 import fr.cyann.jinyparser.grammartree.GrammarElement;
+import fr.cyann.jinyparser.grammartree.Link;
+import fr.cyann.jinyparser.tree.PruningStrategy;
 
 /**
- * The AnalyseProcessor definition, a generic interface for all analyser processors.
+ * The LinkPruning definition.
  */
-public interface AnalyseProcessor {
+public class LinkPruning implements PruningStrategy<GrammarElement> {
 
-	GrammarElement analyse(GrammarElement root);
+	@Override
+	public boolean shouldContinue(GrammarElement element) {
+		return !(element instanceof Link);
+	}
 
 }

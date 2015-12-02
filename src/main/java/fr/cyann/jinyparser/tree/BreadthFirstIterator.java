@@ -7,24 +7,26 @@ package fr.cyann.jinyparser.tree;/**
  * ou écrivez à Creative Commons, 444 Castro Street, Suite 900, Mountain View, California, 94041, USA.
  **/
 
-import java.util.*;
+import java.util.ArrayDeque;
+import java.util.Iterator;
+import java.util.Queue;
 
 /**
  * The DepthFirstIterator definition.
  */
 public class BreadthFirstIterator<E extends TreeIterable<E>> implements Iterator<E> {
 
+	private final PruningStrategy<E> pruningStrategy;
 	private final Queue<E> queue;
-	private final Set<E> iterated;
 
 	/**
 	 * Default constructor.
 	 *
 	 * @param root the element of the tree to start with.
 	 */
-	public BreadthFirstIterator(E root) {
+	public BreadthFirstIterator(E root, PruningStrategy<E> pruningStrategy) {
+		this.pruningStrategy = pruningStrategy;
 		queue = new ArrayDeque<E>();
-		iterated = new HashSet<E>();
 		queue.add(root);
 	}
 
@@ -43,9 +45,7 @@ public class BreadthFirstIterator<E extends TreeIterable<E>> implements Iterator
 	public E next() {
 		E current = queue.poll();
 
-		if (!iterated.contains(current)) {
-			iterated.add(current);
-
+		if (pruningStrategy.shouldContinue(current)) {
 			current.breadthFirstAdd(queue);
 		}
 

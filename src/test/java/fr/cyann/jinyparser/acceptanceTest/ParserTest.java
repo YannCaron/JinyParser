@@ -136,6 +136,22 @@ public class ParserTest extends TestCase {
 
 	}
 
+	public void testOperatorLevelWithParenthesisRightParserComplex() {
+
+		String source = "(7 + 10) * (4 + 7) + 7 * 5 + 1";
+
+		// grammar
+		GrammarElement.ProcessedGrammar grammar = Grammars.arithmeticWithLevelAndParenthesis(null, null, null);
+
+		// parse
+		GrammarContext c = grammar.parse(source);
+
+		System.out.println("Parse tree: " + c.getParseTree());
+
+		assertEquals("('+' ('*' ('+' 'n7' 'n10') ('+' 'n4' 'n7')) ('+' ('*' 'n7' 'n5') 'n1'))", c.getParseTree().toString());
+
+	}
+
 	public void testIfParser() {
 
 		String source = "if () {} elseif () {} elseif () {} else {} ";

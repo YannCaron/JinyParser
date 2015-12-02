@@ -15,41 +15,41 @@ package fr.cyann.jinyparser.grammartree;
  */
 public class Link extends GrammarDecorator {
 
-    public Link(Recursive recursive, GrammarElement parent) {
-        super(recursive);
-        this.setParent(parent);
-    }
+	public Link(Recursive recursive, GrammarElement parent) {
+		super(recursive);
+		this.setParent(parent);
+	}
 
-    @Override
-    GrammarDecorator setDecorated(GrammarElement decorated) {
-        decorated.setParent(this);
-        this.decorated = decorated;
-        return this;
-    }
+	@Override
+	GrammarDecorator setDecorated(GrammarElement decorated) {
+		decorated.setParent(this);
+		this.decorated = decorated;
+		return this;
+	}
 
-    public Recursive getRecursive() {
-        return (Recursive) getDecorated();
-    }
+	public Recursive getRecursive() {
+		return (Recursive) getDecorated();
+	}
 
-    public Link setRecursive(Recursive recursive) {
-        this.setDecorated(recursive);
-        return this;
-    }
+	public Link setRecursive(Recursive recursive) {
+		this.setDecorated(recursive);
+		return this;
+	}
 
-    @Override
-    protected boolean lookahead(GrammarContext context) {
-        return decorated.lookahead(context);
-    }
+	@Override
+	protected boolean lookahead(GrammarContext context) {
+		return decorated.lookahead(context);
+	}
 
-    @Override
-    protected boolean parse(GrammarContext context) {
-        return decorated.parse(context);
-    }
+	@Override
+	protected boolean parse(GrammarContext context) {
+		return decorated.parse(context);
+	}
 
-    @Override
-    public String toString() {
-        return "Link {" +
-                "recursive='" + ((Recursive) decorated).getName() + '\'' +
-                '}';
-    }
+	@Override
+	public String toString() {
+		return "Link {" +
+				"recursive='" + ((Recursive) decorated).getName() + '\'' +
+				'}';
+	}
 }

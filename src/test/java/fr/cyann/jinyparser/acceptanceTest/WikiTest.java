@@ -48,8 +48,8 @@ public class WikiTest extends TestCase {
 
 		// non terminal
 
-		// <expr> := <expr> '*' <expr>
-		//		   | <expr> '+' <expr>
+		// <expr> := <expr> ('+' | '-') <expr>
+		//		   | <expr> ('*' | '/') <expr>
 		//         | <num>
 		//         | '(' <expr> ')'
 		expr.setGrammar(

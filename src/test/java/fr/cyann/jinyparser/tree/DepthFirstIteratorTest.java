@@ -31,7 +31,7 @@ public class DepthFirstIteratorTest extends TestCase {
 
 		List<GrammarElement> result = new ArrayList<GrammarElement>();
 
-		for (GrammarElement g : g0.depthFirstTraversal()) {
+		for (GrammarElement g : g0.depthFirstTraversal(new NoPruning())) {
 			result.add(g);
 		}
 

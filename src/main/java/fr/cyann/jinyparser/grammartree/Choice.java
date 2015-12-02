@@ -37,7 +37,7 @@ public class Choice extends GrammarNode {
 	@Override
 	protected boolean lookahead(GrammarContext context) {
 
-        System.out.println(identity);
+		//System.out.println(identity);
 
 		int pos = context.currentPosition();
 		//System.out.println(pos);

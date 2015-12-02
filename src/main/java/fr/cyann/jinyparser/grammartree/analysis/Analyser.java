@@ -30,13 +30,16 @@ public class Analyser {
 
 	public static GrammarElement analyse(GrammarElement root) {
 
-		List<AnalyseProcessor> analysers = new ArrayList<AnalyseProcessor>();
-        /*analysers.add(new BnfProcessor());
-        analysers.add(new LeftRecursionProcessor());
-		analysers.add(new UniqueNameProcessor());*/
+		// TODO : Epsilon production elimination
+		// TODO : Cycles (A ++> A) elimination
+
+		List<GrammarTreeAnalyser> analysers = new ArrayList<GrammarTreeAnalyser>();
+		analysers.add(new BnfAnalyser());
+		analysers.add(new DirectLeftRecursionAnalyser());
+		analysers.add(new UniqueNameAnalyser());
 
 		GrammarElement result = root;
-		for (AnalyseProcessor element : analysers) {
+		for (GrammarTreeAnalyser element : analysers) {
 			result = element.analyse(result);
 		}
 

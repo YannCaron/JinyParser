@@ -92,10 +92,10 @@ public abstract class GrammarNode extends GrammarElement implements Iterable<Gra
     /**
      * {@inheritDoc}
      */
-    /*@Override
+    @Override
     public String toString() {
         return this.getClass().getSimpleName() + " {" +
                 "childrenCount=" + children.size() +
                 "}";
-    }*/
+    }
 }

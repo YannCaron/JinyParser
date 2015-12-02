@@ -31,7 +31,7 @@ public class BreadthFirstIteratorTest extends TestCase {
 
 		List<GrammarElement> result = new ArrayList<GrammarElement>();
 
-		for (GrammarElement g : g0.breadthFirstTraversal()) {
+		for (GrammarElement g : g0.breadthFirstTraversal(new NoPruning())) {
 			result.add(g);
 		}
 

@@ -50,13 +50,13 @@ public interface TreeIterable<E> {
 	 *
 	 * @return the iterable.
 	 */
-	Iterable<E> depthFirstTraversal();
+	Iterable<E> depthFirstTraversal(PruningStrategy<E> pruningStrategy);
 
 	/**
 	 * Get the breadth first order iterable of the grammar element.
 	 *
 	 * @return the iterable.
 	 */
-	Iterable<E> breadthFirstTraversal();
+	Iterable<E> breadthFirstTraversal(PruningStrategy<E> pruningStrategy);
 
 }

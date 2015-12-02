@@ -9,22 +9,26 @@ package fr.cyann.jinyparser.grammartree.analysis;/**
 
 import fr.cyann.jinyparser.grammartree.GrammarElement;
 import fr.cyann.jinyparser.grammartree.NamedGrammar;
+import fr.cyann.jinyparser.tree.InfiniteLoopPruning;
 
 import java.util.HashMap;
 import java.util.Map;
 
 /**
- * The UniqueNameProcessor definition. Process the grammar tree and evaluate there production names are twice. Increment a counter for them.
+ * The UniqueNameAnalyser definition. Process the grammar tree and evaluate there production names are twice. Increment a counter for them.
  */
-public class UniqueNameProcessor implements AnalyseProcessor {
+public class UniqueNameAnalyser implements GrammarTreeAnalyser {
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public GrammarElement analyse(GrammarElement root) {
 
 		Map<String, NamedGrammar> elementNames = new HashMap<String, NamedGrammar>();
 		Map<String, Integer> counters = new HashMap<String, Integer>();
 
-		for (GrammarElement element : root.depthFirstTraversal()) {
+		for (GrammarElement element : root.depthFirstTraversal(new InfiniteLoopPruning<GrammarElement>())) {
 			if (element instanceof NamedGrammar) {
 
 				NamedGrammar production = (NamedGrammar) element;
