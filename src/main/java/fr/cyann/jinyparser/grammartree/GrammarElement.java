@@ -32,7 +32,7 @@ public abstract class GrammarElement implements TreeIterable<GrammarElement> {
 
     private GrammarElement parent;
 
-	// region properties
+    // region properties
     /**
      * Get if element has parent.
      *
@@ -60,7 +60,7 @@ public abstract class GrammarElement implements TreeIterable<GrammarElement> {
     }
 	// endregion
 
-	// region parsing
+    // region parsing
     /**
      * The lookahead searching method. Used to find if following term / grammar
      * is valid without consuming the lexemes.
@@ -97,7 +97,7 @@ public abstract class GrammarElement implements TreeIterable<GrammarElement> {
     protected abstract boolean parse(GrammarContext context);
 
 	// endregion
-	// region iterator
+    // region iterator
     /**
      * {@inheritDoc}
      */
@@ -137,7 +137,7 @@ public abstract class GrammarElement implements TreeIterable<GrammarElement> {
         };
     }
 
-	// endregion
+    // endregion
     /**
      * Replace the child element by another.
      *
